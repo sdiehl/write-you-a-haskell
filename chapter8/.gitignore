@@ -1,0 +1,12 @@
+*.sw[po]
+*.o
+*.so
+cabal.sandbox.config
+.cabal-sandbox
+dist/
+*.hi
+*.o
+includes
+*.html
+*.agdai
+*.history

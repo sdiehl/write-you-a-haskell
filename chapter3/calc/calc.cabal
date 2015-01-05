@@ -1,0 +1,24 @@
+name:                calc
+version:             0.1.0.0
+license:             MIT
+license-file:        LICENSE
+author:              Stephen Diehl
+maintainer:          stephen.m.diehl@gmail.com
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+executable calc
+  build-depends:       
+    base                 >= 4.6 && <4.7,
+    mtl                  >= 2.2 && <3.0,
+    filepath             >= 1.3 && <1.4,
+    text                 >= 1.1 && <1.2,
+    pretty               >= 1.1 && <1.2,
+    process              >= 1.1 && <1.2,
+    directory            >= 1.2 && <1.3,
+    haskeline            >= 0.7 && <0.8,
+    containers           >= 0.5 && <0.6,
+    parsec               >= 3.1 && <3.2
+  default-language:    Haskell2010
+  main-is:             Main.hs
