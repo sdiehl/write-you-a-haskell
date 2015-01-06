@@ -452,7 +452,8 @@ Applicatives
 -------------
 
 Applicatives allowing sequencing parts of some contextual computation, but not
-binding variables therein. Applicatives are strictly less general than monads.
+binding variables therein. Applicatives are strictly less expressive than
+monads.
 
 ```haskell
 pure :: Applicative f => a -> f a
