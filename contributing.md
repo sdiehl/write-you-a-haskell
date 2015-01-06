@@ -8,7 +8,7 @@ Git Repo
 --------
 
 ```bash
-$ git clone git@github.com:sdiehl/write_you_a_haskell.git
+$ git clone https://github.com/sdiehl/write-you-a-haskell.git
 $ make
 ```
 
