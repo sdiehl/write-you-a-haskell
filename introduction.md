@@ -56,7 +56,7 @@ Prerequisites
 An intermediate understanding at the level of the *Real World Haskell* book is
 recommended.  We will shy away from advanced type-level programming that is
 often present in modern Haskell and will make heavy use of more value-level
-constructs.  Although a strong familiarity monads, monad transformers,
+constructs.  Although a strong familiarity with monads, monad transformers,
 applicatives, and the standard Haskell data structures is strongly recommended.
 
 Some familiarity with the standard 3rd party libraries will be useful. Many of
