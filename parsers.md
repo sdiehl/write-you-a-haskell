@@ -190,7 +190,7 @@ newtype Parser s a = Parser { parse :: s -> [(a,s)] }
 ```
 
 For the first couple of simple parsers we will use the String type for
-simplicities sake, but later will generalize our parsers to use the ``Text``
+simplicity's sake, but later will generalize our parsers to use the ``Text``
 type. The combinators and parsing logic will not change, only the lexer and
 language definitions types will change slightly to a generalized form.
 
@@ -210,7 +210,7 @@ we defined in our toy library.
 ``<|>``       The choice operator tries to parse the first argument before proceeding to the second. Can be chained sequentially to a generate a sequence of options.
 ``many``      Consumes an arbitrary number of patterns matching the given pattern and returns them as a list.
 ``many1``     Like many but requires at least one match. 
-``optional``  Optionally parses a given pattern returning it's value as a Maybe.
+``optional``  Optionally parses a given pattern returning its value as a Maybe.
 ``try``       Backtracking operator will let us parse ambiguous matching expressions and restart with a different pattern.
 ``parens``    Parsers the given pattern surrounded by parentheses.
 

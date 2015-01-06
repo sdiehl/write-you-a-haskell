@@ -121,7 +121,7 @@ the world in any *observable* way.
 
 The implementation may perform effects, but central to this definition is the
 unobservability of such effects.  A function is said to *referentially
-transparent* if replacing a function with it's computed value output yields the
+transparent* if replacing a function with its computed value output yields the
 same observable behavior.
 
 By contrast impure functions are ones which allow unrestricted and observable
@@ -143,7 +143,7 @@ function f() {
 ```
 
 The behavior of a pure function is independent of where and when it is
-evaluated, whereas the sequence a impure function is intrinsically tied to it's
+evaluated, whereas the sequence a impure function is intrinsically tied to its
 behavior.
 
 Functional programming is defined simply as programming strictly with pure

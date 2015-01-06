@@ -116,7 +116,7 @@ data Maybe a = Nothing | Just a
 Values
 ------
 
-A list is an homogeneously inductively defined sum type of linked cells parameterized over the type of it's
+A list is an homogeneously inductively defined sum type of linked cells parameterized over the type of its
 values.
 
 ```haskell
@@ -139,7 +139,7 @@ List have special value-level syntax
 (1 : (2 : (3 : []))) = [1,2,3]
 ```
 
-A tuple is a heterogeneous product type parameterized over both the type of it's two values.
+A tuple is a heterogeneous product type parameterized over both the type of its two values.
 
 Tuples also have special value-level syntax.
 
@@ -333,7 +333,7 @@ the instance search always converges to a single type to make the process of res
 globally unambiguous.
 
 For instance the Functor typeclass allows us to "map" a function generically over any type of kind (``* ->
-*``) applying it on it's internal structure.
+*``) applying it on its internal structure.
 
 ```haskell
 class Functor f where
@@ -522,7 +522,7 @@ IO
 A value of type IO a is a computation which, when performed, does some I/O
 before returning a value of type ``a``. The notable feature of Haskell is that
 IO is still pure, a ``IO a`` is simply a value which stands for a computation
-which when performed would perform IO and there is no way to peek into it's
+which when performed would perform IO and there is no way to peek into its
 contents without running it.
 
 For instance the following function does not print the numbers 1 to 5 to the screen, it instead builds a list
