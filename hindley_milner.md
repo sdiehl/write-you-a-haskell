@@ -18,12 +18,12 @@ There is nothing more practical than a good theory.
 Hindley-Milner Inference
 ========================
 
-The Hindley-Milner system ( sometimes also referred to as the
-Damas-Hindley-Milner or HM) is a family of type systems admit the serendipitous
-property of having a tractable algorithm for determining types from untyped
-syntax. This is achieved by a process known as *unification*, whereby the types
-for a well-typed program give rise to a set of constraints that when solved
-always have a unique *principal type*.
+The Hindley-Milner type system ( also referred to as Damas-Hindley-Milner or HM
+) is a family of type systems that admit the serendipitous property of having a
+tractable algorithm for determining types from untyped syntax. This is achieved
+by a process known as *unification*, whereby the types for a well-structured
+program give rise to a set of constraints that when solved always have a unique
+*principal type*.
 
 The simplest Hindley Milner type system is defined by a very short set of rules.
 The first four rules describe the judgements by which we can each syntactic
@@ -46,9 +46,9 @@ we can in effect run the typing rules "backwards" and whenever we don't have a
 known type for an subexpression, we "guess" by putting a fresh variable in its
 place, collecting constraints about its usage induced by subsequent typing
 judgements.  This is the essence of *type inference* in the ML family of
-languages, that by generation and solving of a class of *unification problems*
-we can reconstruct the types uniquely from the syntax.  The algorithm itself is
-largely the just the structured use of a unification solver,
+languages, that by the generation and solving of a class of unification problems
+we can reconstruct the types uniquely from the syntax. The algorithm itself is
+largely just the structured use of a unification solver,
 
 However full type inference leaves us in a bit a bind, since while the problem
 of inference is tractable within this simple language and trivial extensions
