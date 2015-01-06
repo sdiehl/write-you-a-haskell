@@ -248,12 +248,15 @@ type Name = String
 
 data Expr
   = Var Name
-  | Lit Name
+  | Lit Lit
   | Op PrimOp [Expr]
   | Let Name [Name] Expr
 
 data Lit 
   = LitInt Int
+
+data PrimOp
+  = Add
 ```
 
 So for example the following string is parsed into the resulting ``Expr`` value.
