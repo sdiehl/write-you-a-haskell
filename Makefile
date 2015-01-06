@@ -19,7 +19,7 @@ includes: includes.hs
 	./includes < $< | $(PANDOC) -c -s -f $(IFORMAT) --latex-engine=xelatex $(FLAGS) -o $@
 
 top:
-	./includes < tutorial.md | $(PANDOC) -c $(STYLE) --template $(TEMPLATE) -s -f $(IFORMAT) -t html $(FLAGS) -o tutorial.html
+	./includes < index.md | $(PANDOC) -c $(STYLE) --template $(TEMPLATE) -s -f $(IFORMAT) -t html $(FLAGS) -o tutorial.html
 
 clean:
 	-rm pages/*.html
