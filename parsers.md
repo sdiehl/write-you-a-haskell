@@ -316,8 +316,8 @@ runInputT :: Settings IO -> InputT IO a -> IO a
 getInputLine :: String -> InputT IO (Maybe String)
 ```
 
-When the user pressed enters a ``EOF`` or sends a ``SIGQUIT`` to input, ``getInputLine``  will yield
-``Nothing`` and can handle the exit logic.
+When the user enters a ``EOF`` or sends a ``SIGQUIT`` to input, ``getInputLine``
+will yield ``Nothing`` and can handle the exit logic.
 
 ```haskell
 process :: String -> IO ()
