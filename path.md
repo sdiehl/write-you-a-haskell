@@ -42,7 +42,7 @@ compiler pipeline.*
 Haskell: A Rich Language
 -----------------------
 
-Haskell itself is a beautifully simple language at it's core, although the
+Haskell itself is a beautifully simple language at its core, although the
 implementation of GHC is arguably anything but simple! The more one digs into
 the implementation the more it becomes apparent that a lot of care and
 forethought was given to making the frontend language as expressive as it is.
@@ -81,7 +81,7 @@ Scope
 -----
 
 Considering our project is intended to be a simple toy language, we are not
-going to implement all of Haskell 2010. Doing so in it's entirety would actually
+going to implement all of Haskell 2010. Doing so in its entirety would actually
 be a fairly involved effort. However we will implement a sizable chunk of the
 functionality, certainly enough to write non-trivial programs and implement most
 of the standard Prelude.
@@ -126,7 +126,7 @@ the [Haskell 98](https://www.haskell.org/onlinereport/) or [Haskell
 specifications.  However in terms of the colloquial usage of the term Haskell,
 there does seem to be some growing feeling that the "Haskell language family"
 does exist as a definable subset of the functional programming design space,
-although many people disagree what it's defining features are. In this sense we
+although many people disagree what its defining features are. In this sense we
 will most certainly be writing a language in the Haskell family.
 
 Intermediate Forms
@@ -385,7 +385,7 @@ conflict with later passes.
 
 Ensuring that all names are unique in the syntax tree will allow us more safety
 later on during program transformation, to know that names cannot implicitly
-capture and the program can be transformed without changing it's meaning.
+capture and the program can be transformed without changing its meaning.
 
 Datatypes
 ---------
@@ -532,7 +532,7 @@ although unlike GHC we will effectively just be using vanilla System-F without
 all of the extensions ( equality witness, casts, roles, etc ) that GHC uses to
 implement more complicated features like GADTs and type families. 
 
-This is one of the most defining feature of GHC Haskell, is it's compilation
+This is one of the most defining feature of GHC Haskell, is its compilation
 into a statically typed intermediate Core language. It is a well-engineers
 detail of GHC's design that has informed much of how Haskell the language has
 evolved as a language with a exceedingly large frontend language that all melts
@@ -978,7 +978,7 @@ Fixity Declarations
 -------------------
 
 Fixity declarations are exceedingly simple, the store either arity of the
-declaration along with it's associativity (Left, Right, Non-Associative) and the
+declaration along with its associativity (Left, Right, Non-Associative) and the
 infix symbol.
 
 ```haskell

@@ -537,7 +537,7 @@ returnIO a = VEffect $ return a
 ```
 
 Effectively we're just recreating the same conceptual relationship that Haskell
-IO has with it's runtime, but instead our host language uses Haskell as the
+IO has with its runtime, but instead our host language uses Haskell as the
 runtime!
 
 Full Source

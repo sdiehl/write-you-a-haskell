@@ -47,7 +47,7 @@ StandardML, etc. The variation we will discuss first is known as **untyped
 lambda calculus**, by contrast later we will discuss the **typed lambda
 calculus** which is an extension thereof.
 
-A lambda expression is said to bind it's enclosing variable. So the lambda here
+A lambda expression is said to bind its enclosing variable. So the lambda here
 binds the name $x$.
 
 $$
@@ -239,7 +239,7 @@ $$
 By convention we will always use a *capture-avoiding* substitution.
 Substitution will only proceed if the variable is not in the set of free
 variables of the expression, and if it does then a fresh variable will be
-created in it's place.
+created in its place.
 
 $$
 (\lambda a. e) x \to [x / a] e \quad \text{if}\ x \notin \FV{e}
@@ -487,7 +487,7 @@ class Pretty p where
 ```
 
 The ``p`` variable will indicate our depth within the current structure we're
-printing and allow us to print out differently to disambiguate it from it's
+printing and allow us to print out differently to disambiguate it from its
 surroundings if necessary.
 
 ```haskell

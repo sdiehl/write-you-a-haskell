@@ -43,8 +43,8 @@ $$
 
 Milner's observation was that since the typing rules map uniquely onto syntax,
 we can in effect run the typing rules "backwards" and whenever we don't have a
-known type for an subexpression, we "guess" by putting a fresh variable in it's
-place, collecting constraints about it's usage induced by subsequent typing
+known type for an subexpression, we "guess" by putting a fresh variable in its
+place, collecting constraints about its usage induced by subsequent typing
 judgements.  This is the essence of *type inference* in the ML family of
 languages, that by generation and solving of a class of *unification problems*
 we can reconstruct the types uniquely from the syntax.  The algorithm itself is
@@ -688,7 +688,7 @@ Constraint Solver
 The Writer layer for the Infer monad contains the generated set of constraints
 emitted from inference pass. Once inference has completed we are left with a
 resulting type signature full of meaningless unique fresh variables and a set of
-constraints that we must solve to refine the type down to it's principle type.
+constraints that we must solve to refine the type down to its principle type.
 
 The constraints are pulled out solved by a separate ``Solve`` monad which holds
 the Unifier ( most general unifier ) solution that when applied to generated
@@ -704,7 +704,7 @@ type Solve a = StateT Unifier (ExceptT TypeError Identity) a
 ```
 
 The unification logic is also identical to before, except it is now written
-independent of inference and stores it's partial state inside of the Solve
+independent of inference and stores its partial state inside of the Solve
 monad's state layer.
 
 ```haskell
@@ -837,7 +837,7 @@ data Value
 ```
 
 The interpreter is set up an Identity monad. Later it will become a more
-complicated monad, but for now it's quite simple. The value environment will
+complicated monad, but for now its quite simple. The value environment will
 explicitly threaded around, and whenever a closure is created we simply store a
 copy of the local environment in the closure.
 

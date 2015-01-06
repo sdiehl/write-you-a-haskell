@@ -24,7 +24,7 @@ area of research with many degrees of freedom in the design space.
 
 *As stated in the introduction, this is a very large topic and we are only going
 to cover enough of it to get through writing the type checker for our language,
-not the subject in it's full generality.* The classic text that everyone reads
+not the subject in its full generality.* The classic text that everyone reads
 is *Types and Programming Languages* or ( TAPL ) and discusses the topic more in
 depth. In fact we will follow TAPL very closely with a bit of a Haskell flavor.
 
@@ -442,7 +442,7 @@ Simply Typed Lambda Calculus
 The *simply typed lambda calculus* ( STLC ) of Church and Curry is an extension
 of the lambda calculus that annotates each lambda binder with a type term, The
 STLC is *explictly typed*, all types are present directly on the binders and to
-determine the type of any variable in scope we need only traverse to it's
+determine the type of any variable in scope we need only traverse to its
 enclosing scope.
 
 $$
