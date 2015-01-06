@@ -23,7 +23,7 @@ Damas-Hindley-Milner or HM) is a family of type systems admit the serendipitous
 property of having a tractable algorithm for determining types from untyped
 syntax. This is achieved by a process known as *unification*, whereby the types
 for a well-typed program give rise to a set of constraints that when solved
-always have a unique *princple type*.
+always have a unique *principal type*.
 
 The simplest Hindley Milner type system is defined by a very short set of rules.
 The first four rules describe the judgements by which we can each syntactic
@@ -688,7 +688,7 @@ Constraint Solver
 The Writer layer for the Infer monad contains the generated set of constraints
 emitted from inference pass. Once inference has completed we are left with a
 resulting type signature full of meaningless unique fresh variables and a set of
-constraints that we must solve to refine the type down to it's principle type.
+constraints that we must solve to refine the type down to it's principal type.
 
 The constraints are pulled out solved by a separate ``Solve`` monad which holds
 the Unifier ( most general unifier ) solution that when applied to generated
@@ -729,7 +729,7 @@ The solver function simply iterates over the set of constraints, composing them
 and applying the resulting constraint solution over the intermediate solution
 eventually converting on the *most general unifier* which yields the final
 subsitution which when applied over the inferred type signature, yields the
-principle type solution for the expression.
+principal type solution for the expression.
 
 ```haskell
 -- Unification solver
