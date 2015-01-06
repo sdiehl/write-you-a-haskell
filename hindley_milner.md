@@ -48,7 +48,7 @@ place, collecting constraints about its usage induced by subsequent typing
 judgements.  This is the essence of *type inference* in the ML family of
 languages, that by the generation and solving of a class of unification problems
 we can reconstruct the types uniquely from the syntax. The algorithm itself is
-largely just the structured use of a unification solver,
+largely just the structured use of a unification solver.
 
 However full type inference leaves us in a bit a bind, since while the problem
 of inference is tractable within this simple language and trivial extensions

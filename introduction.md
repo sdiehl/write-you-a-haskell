@@ -172,7 +172,7 @@ $$
 \t{Pair} \ u \ v = \Lambda X . \lambda x^{U \rightarrow V \rightarrow X} . x u v
 $$
 
-In all the languages we will implement the types present during compilation are
+In all the languages which we will implement the types present during compilation are
 *erased*. Although they are present in the evaluation semantics, the runtime
 cannot dispatch on types of values at runtime. Types by definition only exist at
 compile-time in the static semantics of the language.
@@ -280,7 +280,7 @@ Haskell's frontend is very large and many constructs are simplified down. For
 example ``where`` clauses and operation sections are the most common examples.
 Where clauses are effectively syntactic sugar for let bindings and operator
 sections are desugared into lambdas with the left or right
-hand side argument into a fresh variable.
+hand side argument applied being a fresh variable.
 
 Type Inference
 --------------
@@ -336,7 +336,7 @@ let f x = x + 1
 
 Quite often this process will involve another intermediate representation which
 abstracts over the process of assigning and moving values between CPU registers
-and main memory. LLVM and GHC's Cmm are two target languages to serve this
+and main memory. LLVM and GHC's Cmm are two target languages serving this
 purpose.
 
 ```haskell
@@ -368,7 +368,7 @@ f:
 
 ```
 
-An ultimately this code will be assembled into platform specific instructions by
+And ultimately this code will be assembled into platform specific instructions by
 the *native code generator*, encoded as a predefined sequence of CPU
 instructions defined by the processor specification.
 

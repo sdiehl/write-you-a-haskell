@@ -29,7 +29,7 @@ knowledge of functional programming.
 Functions
 ---------
 
-Functional are the primary building block of all of Haskell logic.
+Functions are the primary building block of all of Haskell logic.
 
 ```haskell
 add :: Integer -> Integer -> Integer
@@ -42,8 +42,8 @@ add (x,y) = x + y
 
 In Haskell all functions are pure, the only thing a function may do is return a value.
 
-All functions in Haskell are curried, for example a function of 3 arguments takes up to 3 arguments and for
-anything less than 3 it yields a partially applied function which when given additional arguments yields a
+All functions in Haskell are curried, for example a function of three arguments takes up to three arguments and for
+anything less than three it yields a partially applied function which when given additional arguments yields a
 another function or the resulting value if saturated.
 
 ```haskell
@@ -54,7 +54,7 @@ h :: Int -> Int
 h = g 2 3 
 ```
 
-Haskell supports higher functions, functions which take functions and yield other functions.
+Haskell supports higher-order functions, functions which take functions and yield other functions.
 
 ```haskell
 compose f g = \x -> f (g x)
@@ -68,7 +68,7 @@ iterate f x = x : (iterate f (f x))
 Datatypes
 ---------
 
-Constructors for datatypes come in two flavors, *sum types* and *product types*
+Constructors for datatypes come in two flavors, *sum types* and *product types*.
 
 A sum type consists of multiple options of *type constructors* under the same
 type. The two cases can be used at all locations the type is specified, and are
@@ -128,7 +128,7 @@ a = [1,2,3]
 a = Cons 1 (Cons 2 (Cons 3 Nil))
 ```
 
-List have special value-level syntax
+List have special value-level syntax:
 
 ```haskell
 (:) = Cons
@@ -139,7 +139,7 @@ List have special value-level syntax
 (1 : (2 : (3 : []))) = [1,2,3]
 ```
 
-A tuple is a heterogeneous product type parameterized over both the type of its two values.
+A tuple is a heterogeneous product type parameterized over the types of its two values.
 
 Tuples also have special value-level syntax.
 
@@ -156,7 +156,7 @@ a = Pair 1 2
 (,) = Pair
 ```
 
-Tuples are allowed can defined (with compiler support) up to 15 fields in GHC.
+Tuples are allowed (with compiler support) up to 15 fields in GHC.
 
 Pattern matching
 ----------------
@@ -168,7 +168,7 @@ mapping separate cases to separate code paths.
 data Either a b = Left a | Right b
 
 maybe :: b -> (a -> b) -> Maybe a -> b
-maybe n f Nothing = n
+maybe n f Nothing  = n
 maybe n f (Just a) = f a
 ```
 
@@ -192,7 +192,7 @@ List and tuples have special pattern syntax.
 
 ```haskell
 length :: [a] -> Int
-length [] = 0
+length []     = 0
 length (x:xs) = 1 + (length xs)
 ```
 
@@ -230,10 +230,10 @@ factorial n = n * factorial (n - 1)
 Functions can be defined to recurse mutually on each other.
 
 ```haskell
-even 0 = True;
+even 0 = True
 even n = odd (n-1)
 
-odd 0 = False;
+odd 0 = False
 odd n = even (n-1)
 ```
 
@@ -256,8 +256,8 @@ The runtime has the task of determining which thunks are to be evaluated by the
 order in which they are connected to the main function node, this is the essence
 of all evaluation in Haskell and is called *graph reduction*. 
 
-For example, the following the following self referential functions are allowed
-in Haskell and generates an infinite lists of values which is only evaluated up
+For example, the following self-referential functions are allowed
+in Haskell and generate infinite lists of values which are only evaluated up
 to the depth that it is needed.
 
 ```haskell
@@ -278,7 +278,7 @@ take 5 squares
 
 This also admits diverging terms, called *bottoms* which have no normal form.
 What is unique about Haskell is that these values can be threaded around and
-will not cause the program program and don't diverge unless actually used.
+don't diverge unless actually used.
 
 ```haskell
 bot = bot
@@ -329,7 +329,7 @@ typeclass is used over an polymorphic type an implicit dictionary parameter is a
 the implementation of the necessary functionality is passed with the polymorphic value.
 
 Typeclass are "open" and additional instances can always be added, but the defining feature of a typeclass is
-the instance search always converges to a single type to make the process of resolving overloaded identifiers
+that the instance search always converges to a single type to make the process of resolving overloaded identifiers
 globally unambiguous.
 
 For instance the Functor typeclass allows us to "map" a function generically over any type of kind (``* ->
@@ -340,8 +340,8 @@ class Functor f where
   fmap :: (a -> b) -> f a -> f b
 
 instance Functor [] where
-  fmap f [] = []
-  fmap f (x:xs) f x : fmap f xs
+  fmap f []     = []
+  fmap f (x:xs) = f x : fmap f xs
 
 instance Functor ((,) a) where
   fmap f (a,b) = (a, f b)
@@ -350,7 +350,7 @@ instance Functor ((,) a) where
 Operators
 ---------
 
-In Haskell infix operators are simply functions, and quite often are used in
+In Haskell infix operators are simply functions, and quite often they are used in
 place of alphanumerical names when the functions involved combine in common ways
 and are subject to algebraic laws.
 
@@ -372,7 +372,7 @@ Operators can be written in section form:
 (+)  =	\x y -> x+y
 ```
 
-Any binary function can be written in prefix form by surrounding the name in
+Any binary function can be written in infix form by surrounding the name in
 backticks.
 
 ```haskell
@@ -386,7 +386,7 @@ A monad is a typeclass with two functions ``bind`` and ``return``.
 
 ```haskell
 class Monad m where
-  bind :: m a -> (a -> m b) -> m b
+  bind   :: m a -> (a -> m b) -> m b
   return :: a -> m a
 ```
 
@@ -396,7 +396,7 @@ The bind function is usually written as an infix operator.
 infixl 1 >>=
 
 class Monad m where
-  (>>=) :: m a -> (a -> m b) -> m b
+  (>>=)  :: m a -> (a -> m b) -> m b
   return :: a -> m a
 ```
 
@@ -423,7 +423,7 @@ m >>= return ≡ m
 
 Haskell has a level of syntactic sugar for monads known as do-notation. In this
 form binds are written sequentially in block form which extract the variable
-from the binder of th
+from the binder.
 
 ```haskell
 do { a <- f ; m } ≡ f >>= \a -> do { m }
@@ -451,18 +451,13 @@ f >>= \a ->
 Applicatives
 -------------
 
-Applicatives allowing sequencing parts of some contextual computation, but not
+Applicatives allow sequencing parts of some contextual computation, but not
 binding variables therein. Applicatives are strictly less expressive than
 monads.
 
 ```haskell
-pure :: Applicative f => a -> f a
-(<*>) :: f (a -> b) -> f a -> f b
-```
-
-```haskell
 class Functor f => Applicative f where
-  pure :: a -> f a
+  pure  :: a -> f a
   (<*>) :: f (a -> b) -> f a -> f b
 
 (<$>) :: Functor f => (a -> b) -> f a -> f b
@@ -490,7 +485,7 @@ example1 = (+) <$> m1 <*> m2
 
 Applicative also has functions ``*>`` and ``<*`` that sequence applicative
 actions while discarding the value of one of the arguments. The operator *>
-discard the left while ``<*`` discards the right. For example in a monadic
+discards the left while ``<*`` discards the right. For example in a monadic
 parser combinator library the ``*>`` would parse with first parser argument but
 return the second.
 
@@ -522,7 +517,7 @@ IO
 
 A value of type IO a is a computation which, when performed, does some I/O
 before returning a value of type ``a``. The notable feature of Haskell is that
-IO is still pure, a ``IO a`` is simply a value which stands for a computation
+IO is still pure, a value of type ``IO a`` is simply a value which stands for a computation
 which when performed would perform IO and there is no way to peek into its
 contents without running it.
 
@@ -530,16 +525,16 @@ For instance the following function does not print the numbers 1 to 5 to the scr
 of IO computations.
 
 ```haskell
-fmap print [1..5] :: [IO Integer]
+fmap print [1..5] :: [IO ()]
 ```
 
-Which we can manipulate a just an ordinary first class list of values, for instance.
+Which we can manipulate just as an ordinary list of values, for instance.
 
 ```haskell
-reverse (fmap print [1..5]) :: [IO Integer]
+reverse (fmap print [1..5]) :: [IO ()]
 ```
 
-Using ``sequence_`` we can then build a composite compoutation of each of the IO
+Using ``sequence_`` we can then build a composite computation of each of the IO
 actions in the list sequenced in time the same order as the list, the resulting
 ``IO`` computation can be evaluated in ``main`` or the GHCi repl which
 effectively is embedded inside of ``IO``.
@@ -561,14 +556,14 @@ effectively is embedded inside of ``IO``.
 ```
 
 The IO monad is a special monad wired into the runtime, it is a degenerate case
-and most monads in Haskell having nothing to do with effects.
+and most monads in Haskell have nothing to do with effects in this sense.
 
 ```haskell
 putStrLn :: String -> IO ()
-print :: Show a => a -> IO ()
+print    :: Show a => a -> IO ()
 ```
 
-The type of the ``main`` is always ``IO ()``.
+The type of ``main`` is always ``IO ()``.
 
 ```haskell
 main :: IO ()
@@ -587,10 +582,10 @@ Monad Transformers
 
 Monads can be combined together to form composite monads. Each of the composite
 monads consists of *layers* of different monad functionality. For example we can
-combine a an erorr reporting monad with a state monad to encapsulate a certain
-set of computations that need both functionality. The use of monad transformers
-,while not always neccessary, is nevertheless often one of primary ways of
-structuring modern Haskell programs.
+combine a an error reporting monad with a state monad to encapsulate a certain
+set of computations that need both functionality. The use of monad transformers,
+while not always neccessary, is nevertheless often one of the primary ways to
+structure modern Haskell programs.
 
 ```haskell
 class MonadTrans t where
@@ -607,9 +602,9 @@ The implementation of monad transformers is comprised of two different
 complementary libraries, ``transformers`` and ``mtl``. Transformers provides the
 base monad transformer layers and ``mtl`` uses a language extension called
 functional dependencies to allow implicitly lifting between several layers of a
-monad transformer stack without redundant lifts.
+monad transformer stack without explicit lifts.
 
-Using transformers we simply import that *Trans* variants of each of the layers
+Using transformers we simply import the *Trans* variants of each of the layers
 we want to compose and then wrap them in a newtype.
 
 ```haskell
@@ -633,9 +628,9 @@ evalStack :: Stack a -> IO [Int]
 evalStack m = execWriterT (evalStateT (unStack m) 0)
 ```
 
-Using mtl and ``GeneralizedNewtypeDeriving`` can produce the same stack but with
+Using mtl and ``GeneralizedNewtypeDeriving`` we can produce the same stack but with
 a simpler forward facing interface to the transformer stack. Under the hood mtl
-is using a extension called ``FunctionalDependencies`` to automatically infer
+is using an extension called ``FunctionalDependencies`` to automatically infer
 which layer of a transformer stack a function belongs to and can automatically
 lift into it.
 
@@ -697,11 +692,11 @@ main = print $ execState test 0
 
 **ReaderT**
 
-Reader monad allows a fixed value to be passed around inside the monadic
+The Reader monad allows a fixed value to be passed around inside the monadic
 context. 
 
 ```haskell
-ask :: Reader r r                              -- get the value
+ask   :: Reader r r                            -- get the value
 local :: (r -> r) -> Reader r a -> Reader r a  -- run a monadic action, with the value modified by a function
 ```
 
@@ -736,14 +731,14 @@ The writer monad lets us emit a lazy stream of values from within a monadic
 context. The primary function ``tell`` adds a value to the writer context.
 
 ```haskell
-tell :: w -> Writer w ()
+tell :: (Monoid w) => w -> Writer w ()
 ```
 
 The monad is either devalued with the collected values or without.
 
 ```haskell
-execWriter :: Writer w a -> w
-runWriter :: Writer w a -> (a, w)
+execWriter :: (Monoid w) => Writer w a -> w
+runWriter  :: (Monoid w) => Writer w a -> (a, w)
 ```
 
 ```haskell
@@ -752,7 +747,7 @@ import Control.Monad.Writer
 type MyWriter = Writer [Int] String
 
 example :: MyWriter
-example  = do
+example = do
   tell [1..5]
   tell [5..10]
   return "foo"
@@ -769,7 +764,7 @@ type.
 
 ```haskell
 throwError :: e -> Except e a
-runExcept :: Except e a -> Either e a
+runExcept  :: Except e a -> Either e a
 ```
 For example:
 

@@ -1,7 +1,7 @@
 digraph G {
-  rankdir=BT
+  rankdir=TB
   node [shape=box]
-  IO -> StateT      [label = "  execWriterT"]
-  StateT -> WriterT [label = "  evalStateT"]
-  WriterT -> Stack  [label = "  unStack"]
+  WriterT -> IO      [label = "  execWriterT"]
+  StateT  -> WriterT [label = "  evalStateT"]
+  Stack   -> StateT  [label = "  unStack"]
 }
