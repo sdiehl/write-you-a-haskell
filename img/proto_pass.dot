@@ -1,0 +1,5 @@
+digraph G {
+  rankdir=LR
+  node [shape=box]
+  Parse -> Rename -> Typecheck -> Desugar -> ToCore -> Evaluate
+}

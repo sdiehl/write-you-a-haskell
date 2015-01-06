@@ -1,0 +1,358 @@
+/* stephendiehl.com stylesheet */
+
+@import url(http://fonts.googleapis.com/css?family=Signika);
+
+html {
+    overflow-y: scroll;
+}
+
+body {
+  font-size: 14px;
+  font-family: HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #332;
+}
+
+h1, h2, h3, h4, h5 {
+  color: #332;
+  font-family: "Signika";
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+pre code {
+  font: 15px/19px Inconsolata, Monaco,"Lucida Console",Terminal,"Courier New",Courier;
+}
+
+table th {
+   border-right: 1em solid transparent;
+}
+
+table td {
+   border-right: 1em solid transparent;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+hr {
+  border: 0px;
+  height: 0;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 100px;
+}
+
+/* Logo */
+
+.logo {
+  text-align: center;
+}
+
+.tagline {
+  font-family: Georgia;
+  font-size: 18px;
+  font-style: italic;
+  line-height: 1.45;
+  color: #383838;
+}
+
+.author {
+}
+
+.halfbreak {
+  padding-bottom: 100px;
+}
+
+.break {
+  padding-bottom: 200px;
+}
+
+/* TOC Links */
+
+a { 
+  color: #111111;
+  text-decoration: none;
+}
+
+.body li a {
+  text-decoration: underline;
+}
+
+/* Math */
+
+.MathJax_Display {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* Body Links */
+ 
+p a { 
+  text-decoration: underline;
+}
+
+li code, p code, table code {
+  font-size: 12px;
+  border: 1px solid #ccc;
+  margin-left: 3px;
+  margin-right: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+}
+
+/* Language Extensions Table */
+
+.table-striped .verical {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+}
+
+.table-striped .striped-header td {
+  /*border-bottom: 1px solid black;*/
+}
+
+.table-striped .striped-header td {
+  padding-left: 10px; 
+  padding-right: 10px; 
+  font-weight: bold;
+  font-size: 8pt;
+}
+
+.table-striped {
+  text-align: center;
+  border-spacing: 0px;
+  padding: 0px;
+}
+
+.table-striped td:first-child {
+  text-align: left;
+}
+
+.table-striped td:nth-child(5) {
+  text-align: left;
+  padding-right: 10px;
+}
+
+.table-striped td:nth-child(6) {
+  text-align: left;
+  padding-right: 10px;
+}
+
+
+.table-striped a {
+  text-decoration: underline;
+}
+
+.table-striped
+
+.table-striped tr:nth-child(even) {
+  background-color: white;
+}
+
+.table-striped tr:nth-child(odd) {
+  background-color: #eeeeee;
+}
+
+/*  */
+
+.center {
+    text-align: center;
+}
+
+.bigger img {
+    width: 120%;
+    height: 120%;
+}
+
+pre {
+  font-size: 0.9em;
+
+  margin-bottom: 18px;
+  margin-top: 18px;
+
+  border-left: 1px solid #ccc;
+
+}
+
+h1 {
+  margin-top: 0px;
+}
+
+.annotation {
+    font-size: 10pt;
+}
+
+.annotation pre {
+    display: block;
+    margin: 0;
+    padding: 7px 10px;
+    overflow-x: auto;
+}
+
+.annotation.span2 {
+    /* Override bootstrap */
+    margin-left: 0px !important;
+    margin-top: 18px !important;
+}
+
+.annotation pre code {
+    border: 0;
+    padding: 0;
+    background: transparent;
+}
+
+blockquote {
+  font-family: Georgia, serif;
+  font-size: 18px;
+  font-style: italic;
+  width: 500px;
+  margin: 0.25em 0;
+  padding: 0.25em 40px;
+  line-height: 1.45;
+  position: relative;
+  color: #383838;
+  left: 20px;
+}
+
+blockquote:before {
+  display: block;
+  content: "\201C";
+  font-size: 80px;
+  position: absolute;
+  left: -20px;
+  top: -20px;
+  color: #7a7a7a;
+}
+
+blockquote cite {
+  color: #999999;
+  font-size: 14px;
+  display: block;
+  margin-top: 5px;
+}
+ 
+blockquote cite:before {
+  content: "\2014 \2009";
+}
+
+ul.sections {
+    list-style: none;
+    padding:0 0 5px 0;
+    margin:0;
+}
+
+code.sourceCode {
+    padding: 0;
+    background: inherit;
+}
+
+pre.sourceCode {
+    padding: 10px;
+}
+
+ul.sections > li > div {
+    -moz-box-sizing: border-box;    /* firefox */
+    -ms-box-sizing: border-box;     /* ie */
+    -webkit-box-sizing: border-box; /* webkit */
+    -khtml-box-sizing: border-box;  /* konqueror */
+    box-sizing: border-box;         /* css3 */
+}
+
+
+/* Make the naviation centered and larger on small screens */
+/*----------------------  (> 481px) ---------------------*/
+
+@media only screen and (max-width: 481px) {
+
+  .toc > ul {
+      font-size: 18px;
+  }
+
+  .toc ul {
+      padding-left: 0;
+  }
+
+  .toc ul ul {
+      padding-left: 0.8em;
+  }
+
+  .toc li {
+      list-style-type: none;
+  }
+
+}
+
+@media only screen and (min-width: 1025px) {
+  body {
+      padding: 10px;
+  }
+
+  .toc ul ul {
+      padding-left: 0.8em;
+  }
+
+  .toc > ul {
+      margin-top: 0px;
+      font-size: 12px;
+  }
+
+  .toc li {
+      line-height: 15px !important;
+      list-style-type: none;
+  }
+
+
+  .toc:hover {
+    opacity: 1.0;
+    transition: opacity .25s ease-in-out;
+    -moz-transition: opacity .25s ease-in-out;
+    -webkit-transition: opacity .25s ease-in-out;
+  }
+
+  .toc { 
+    text-decoration: none;
+    font-size: 8pt;
+    line-height: 0.9;
+    opacity: 0.5;
+    height: 100%;
+
+    transition: opacity .25s ease-in-out;
+    -moz-transition: opacity .25s ease-in-out;
+    -webkit-transition: opacity .25s ease-in-out;
+  }
+
+  .toc a:hover { 
+    text-decoration: underline;
+  }
+
+
+  .side {
+      position: fixed;
+      width: 270px !important;
+      margin-left: 0px;
+      z-index: 1000;
+  }
+
+  .side ul ul {
+    display: none;
+  }
+
+  .side ul ul.active {
+    display: block;
+  }
+
+  .side .active {
+      font-weight: bold;
+  }
+
+  .body {
+      margin-left: 270px !important;
+  }
+
+}

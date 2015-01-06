@@ -1,0 +1,5 @@
+digraph G {
+  rankdir=LR
+  node [shape=box]
+  Frontend -> "Core Language" -> "Compiler IR" -> "Machine Code" 
+}

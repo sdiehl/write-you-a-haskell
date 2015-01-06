@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Write You a Haskell ( Stephen Diehl )</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+    <style type="text/css">
+      $header-includes$
+    </style>
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="css/colors.css" rel="stylesheet">
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49839533-1', 'stephendiehl.com');
+      ga('send', 'pageview');
+
+    </script>
+
+    $if(highlighting-css)$
+      <style type="text/css">
+    $highlighting-css$
+      </style>
+    $endif$
+    $for(css)$
+    <link rel="stylesheet" href="$css$" $if(html5)$$else$type="text/css" $endif$/>
+    $endfor$
+    $if(math)$
+    $if(html5)$
+    $else$
+      $math$
+    $endif$
+    $endif$
+    $for(header-includes)$
+      $header-includes$
+    $endfor$
+  </head>
+
+  <body>
+
+    <div>
+
+        <div class="row">
+
+          <div class="span3 side toc">
+              <ul>
+              <li><a href="tutorial.html">Index</a></li>
+              <li><a href="https://github.com/sdiehl/write-you-a-haskell">Github</a></li>
+              <li><a href="http://dev.stephendiehl.com/fun/rss/atom.xml">RSS</a></li>
+              </ul>
+              $toc$
+          </div>
+
+          <div class="span9 body">
+<!--<h1>Implementing a Functional Language in Haskell</h1>--!>
+$body$
+          </div>
+        </div>
+
+    </div>
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="nav.js"></script>
+  </body>
+</html>
