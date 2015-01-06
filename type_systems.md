@@ -39,10 +39,10 @@ $$
 1 : \t{Nat}
 $$
 
-These facts exist within a preset universe of discourse with a set of facts,
-properties, conventions, and rules of logical deduction about types and terms
-called a *type system*.  Within a given system, we will have several properties
-about these terms. For example:
+These facts exist within a preset universe of discourse called a *type system*
+with definitions, properties, conventions, and rules of logical deduction about
+types and terms. Within a given system, we will have several properties about
+these terms. For example:
 
 * **(A1)** 0 is a natural number.
 * **(A2)** For a natural number $n$, $\mathtt{succ}(n)$ is a natural number.
