@@ -486,17 +486,8 @@ class Pretty p where
   pp = ppr 0
 ```
 
-The ``p`` variable will indicate our depth within the current structure we're
-printing and allow us to print out differently to disambiguate it from its
-surroundings if necessary.
-
-```haskell
-parensIf ::  Bool -> Doc -> Doc
-parensIf True = parens
-parensIf False = id
-```
-
-We create two helper functions to collapse our lambda bindings to print them out as single lambda expressions.
+First, we create two helper functions that collapse our lambda
+bindings so we can print them out as single lambda expressions.
 
 ```haskell
 viewVars :: Expr -> [Name]
@@ -507,6 +498,18 @@ viewBody :: Expr -> Expr
 viewBody (Lam _ a) = viewBody a
 viewBody x = x
 ```
+
+Then we create a helper function for parenthesizing subexpressions.
+
+```haskell
+parensIf ::  Bool -> Doc -> Doc
+parensIf True = parens
+parensIf False = id
+```
+
+Finally, we define ``ppr``. The ``p`` variable will indicate our depth
+within the current structure we're printing and allow us to print out
+differently to disambiguate it from its surroundings if necessary.
 
 ```haskell
 instance Pretty Expr where
