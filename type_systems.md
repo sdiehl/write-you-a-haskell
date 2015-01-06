@@ -655,7 +655,7 @@ Notation Reference
 ==================
 
 The notation introduced here will be used throughout the construction on the
-Haskell compiler. For reference here is a reference or each of the notational
+Haskell compiler. For reference here is a list of each of the notational
 conventions we will use. Some of these terms are not yet introduced.
 
 <p class="halfbreak">

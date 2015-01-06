@@ -255,7 +255,7 @@ Conversion and Equivalences
 **Alpha equivelance**
 
 $$
-(\lambda x.e) \overset{\alpha} = (\lambda y. e [x / y])
+(\lambda x.e) \overset{\alpha} = (\lambda y. [x / y] e)
 $$
 
 Alpha equivalence is the property ( when using named binders ) that changing the
@@ -274,7 +274,7 @@ by a lambda expression with the argument to the lambda throughout the body of
 the expression.
 
 $$
-(\lambda x.a) y  \overset{\beta}{\rightarrow}  a [x / y]
+(\lambda x.a) y  \overset{\beta}{\rightarrow}  [x / y] a
 $$
 
 **Eta-reduction**
