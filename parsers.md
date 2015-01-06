@@ -26,8 +26,8 @@ of the parser.
 NanoParsec
 ----------
 
-So now let's build our own toy parser combinator library which we'll call **NanoParsec** just to get the feel
-of how these things are built.
+So now let's build our own toy parser combinator library which we'll call
+**NanoParsec** just to get the feel of how these things are built.
 
 ~~~~ {.haskell slice="chapter3/parsec.hs" lower=1 upper=8}
 ~~~~
@@ -273,7 +273,7 @@ Evaluation
 ----------
 
 Our small language gives rise has two syntactic classes, values and expressions.
-Values are in *normal norm* and cannot be reduced further. These consist of
+Values are in *normal form* and cannot be reduced further. These consist of
 ``True`` and ``False`` values and literal numbers. 
 
 ~~~~ {.haskell slice="chapter3/calc/Eval.hs" lower=8 upper=17}
