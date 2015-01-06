@@ -223,6 +223,7 @@ Other parameters include indicating what characters are to be handled as keyword
 identifiers or operators.
 
 ```haskell
+langDef :: Tok.LanguageDef ()
 langDef = Tok.LanguageDef
   { Tok.commentStart    = "{-"
   , Tok.commentEnd      = "-}"
@@ -242,7 +243,7 @@ langDef = Tok.LanguageDef
 
 Given the token definition we can create the lexer functions.
 
-~~~~ {.haskell slice="chapter3/calc/Parser.hs" lower=17 upper=33}
+~~~~ {.haskell slice="chapter3/calc/Parser.hs" lower=31 upper=47}
 ~~~~
 
 **Abstract Syntax Tree**
@@ -260,13 +261,13 @@ a set of patterns to a construct in our ``Expr`` type. The toplevel entry point
 to our parser is the ``expr`` function which we can parse with by using the
 Parsec function ``parse``.
 
-~~~~ {.haskell slice="chapter3/calc/Parser.hs" lower=32 upper=80}
+~~~~ {.haskell slice="chapter3/calc/Parser.hs" lower=46 upper=94}
 ~~~~
 
 The toplevel function we'll expose from our Parse module is the ``parseExpr``
 which will be called as the entry point in our REPL.
 
-~~~~ {.haskell slice="chapter3/calc/Parser.hs" lower=85 upper=86}
+~~~~ {.haskell slice="chapter3/calc/Parser.hs" lower=99 upper=100}
 ~~~~
 
 Evaluation
