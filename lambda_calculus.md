@@ -216,13 +216,13 @@ Substitution
 ------------
 
 Evaluation of a lambda term ($(\lambda x.e) a$) proceeds by substitution of all
-occurrences of the variable $x$ with the argument $a$ in $e$, a single
+occurrences of the variable $x$ with the argument $a$ in $e$. A single
 substitution step is called a *reduction*. We write the substitution application
 in brackets before the expression it is to be applied over, $[x / a]e$ maps the
 variable $x$ to the new replacement $a$ over the expression $e$.
 
 $$
-(\lambda a. e) x \to [x / a] e
+(\lambda x. e) a \to [x / a] e
 $$ 
 
 A substitution metavariable will be written as $[s]$.
@@ -242,7 +242,7 @@ variables of the expression, and if it does then a fresh variable will be
 created in its place.
 
 $$
-(\lambda a. e) x \to [x / a] e \quad \text{if}\ x \notin \FV{e}
+(\lambda x. e) a \to [x / a] e \quad \text{if}\ x \notin \FV{e}
 $$ 
 
 There are several binding libraries and alternative implementations of the
