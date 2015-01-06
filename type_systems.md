@@ -134,7 +134,7 @@ dynamics of the language. This equivalence is modeled by two properties that
 relate the types and evaluation semantics:
 
 * **Progress** :  If an expression is well typed then either it is a value, or it can be further evaluated by an available evaluation rule.
-* **Preservation** : If an expression $e$ has type $\tau$, and is evaluated to $e'$, then $e'$ has type $t$.
+* **Preservation** : If an expression $e$ has type $\tau$, and is evaluated to $e'$, then $e'$ has type $\tau$.
 
 Types
 -----
