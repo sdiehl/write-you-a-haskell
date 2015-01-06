@@ -231,10 +231,10 @@ Functions can be defined to recurse mutually on each other.
 
 ```haskell
 even 0 = True;
-even n = odd (n-1);
+even n = odd (n-1)
 
 odd 0 = False;
-odd n = even (n-1);
+odd n = even (n-1)
 ```
 
 Laziness
