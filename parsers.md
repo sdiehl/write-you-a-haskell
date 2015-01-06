@@ -54,7 +54,7 @@ Recall that in Haskell in the String type is itself defined to be a list of
 
 ```haskell
 "1+2*3"
-["1", "+", "2", "*", "3"]
+['1', '+', '2', '*', '3']
 ```
 
 We advance the parser by extracting a single character from the parser stream
