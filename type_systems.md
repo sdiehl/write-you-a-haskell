@@ -171,14 +171,14 @@ Under this set of definitions many of so-called dynamically typed language often
 only have a single static type. For instance in Python all static types are
 subsumed by the ``PyObject``, and it is only at runtime that the tag
 ``PyTypeObject *ob_type`` is discriminated on to give rise to Python notion of
-"types". Again, this is not the kind of type we will discuss, the tradeoffs that
-these languages make is that often have trivial static semantics while the
+"types". Again, this is not the kind of type we will discuss. The tradeoffs that
+these languages make is that they often have trivial static semantics while the
 dynamics for the language are often exceedingly complicated. Languages like
 Haskell and OCaml are the opposite point in this design space.
 
 Types will usually be written as $\tau$ and can consist of many different
 constructions to the point where the type language may become as rich as the
-value level language. For now let's simple consider three simple types, two
+value level language. For now let's only consider three simple types, two
 *ground types* ($\t{Nat}$ and $\t{Bool}$) and an *arrow type*.
 
 $$
@@ -189,9 +189,9 @@ $$
 \end{align*}
 $$
 
-The arrow type will be the type of function expressions, the left argument is
-input type while right is the output type. The arrow type will by convention
-associate on the right.
+The arrow type will be the type of function expressions, the left argument being
+the input type and the output type on the right. The arrow type will by convention
+associate to the right.
 
 $$
 \tau_1 \to \tau_2 \to \tau_3 \to \tau_4 \quad = \quad \tau_1 \to (\tau_2 \to (\tau_3 \to \tau_4))
@@ -244,9 +244,9 @@ e ::=\ & \t{True} \\
 \end{align*}
 $$
 
-The small step evaluation semantics for this little language are uniquely by the
-following 9 rules. They describe each step that an expression may take during
-evaluation which may or may not terminate and converge on a value.
+The small step evaluation semantics for this little language are uniquely
+defined by the following 9 rules. They describe each step that an expression may
+take during evaluation which may or may not terminate and converge on a value.
 
 $$
 \begin{array}{cl}
@@ -262,9 +262,9 @@ $$
 \end{array}
 $$
 
-The evaluation logic for out interpreter simply reduced an expression by the
+The evaluation logic for our interpreter simply reduced an expression by the
 predefined evaluation rules until either it reached a normal norm ( a value ) or
-because stuck.
+because it got stuck.
 
 ```haskell
 nf :: Expr -> Expr
@@ -312,7 +312,7 @@ pattern matches gives us a hint of where things might "go wrong" whenever a
 boolean is used in the place of a number and vice versa. We'd like to statically
 enforce this invariant at compile-time instead, and so we'll introduce a small
 type system to handle the two syntactic categories of terms that exist. The
-abstract type of natural numbers and the type of booleans.
+abstract type of natural numbers and the type of booleans:
 
 $$
 \begin{align*}
@@ -353,7 +353,7 @@ evaluation.
 
 To check the well-formedness of an expression we implement a piece of logic
 known as *type checker* which determines whether the term has a well-defined
-type in terms of typing rules, and if so returns it or fails when an exception
+type in terms of typing rules, and if so returns it or fails with an exception
 in the case where it does not.
 
 ```haskell
@@ -440,9 +440,9 @@ Simply Typed Lambda Calculus
 ============================
 
 The *simply typed lambda calculus* ( STLC ) of Church and Curry is an extension
-of the lambda calculus that annotates each lambda binder with a type term, The
+of the lambda calculus that annotates each lambda binder with a type term. The
 STLC is *explictly typed*, all types are present directly on the binders and to
-determine the type of any variable in scope we need only traverse to its
+determine the type of any variable in scope we only need to traverse to its
 enclosing scope.
 
 $$
@@ -453,8 +453,8 @@ e :=\ & x \\
 \end{align*}
 $$
 
-The simplest STLC language is simply these three terms, however we will add a
-numeric literal and boolean literal terms so that we can write meaningful
+The simplest STLC language is these three terms, however we will add
+numeric and boolean literal terms so that we can write meaningful
 examples.
 
 $$
@@ -469,7 +469,7 @@ e :=\ & x \\
 \end{align*}
 $$
 
-We can consider a very simple type system for our that will consist of ``int``
+We can consider a very simple type system for our language that will consist of ``int``
 and ``Bool`` types and function types.
 
 $$
@@ -483,11 +483,11 @@ $$
 Type Checker
 ------------
 
-The typing rules are quite simple, and again we the nice property that there is
+The typing rules are quite simple, and again we get the nice property that there is
 a one-to-one mapping between each syntax term and a typing rule.
 
-* **T-Var** Variables are simply pulled from the context
-* **T-Lam** lambda's introduce a typed variable into the environment when
+* **T-Var** Variables are simply pulled from the context.
+* **T-Lam** lambdas introduce a typed variable into the environment when
   inferring the body.
 * **T-App** Applications of a lambda with type ``t1 -> t2`` to a value of type
   ``t1`` yields a value of type ``t2``.
@@ -517,7 +517,7 @@ $$
  \displaystyle {(\lambda x: \tau . e_1) v_2 \to [x / v_2] e_1 } & \trule{E-AppLam} \\ \\
  \displaystyle \ite{\t{True}}{e_2}{e_3} \rightarrow e_2 & \trule{E-IfTrue} \\ \\
  \displaystyle \ite{\t{False}}{e_2}{e_3} \rightarrow e_3 & \trule{E-IfFalse} \\ \\
- \displaystyle \frac{e_1 \to e_1'}{\ite{e_1}{e_2}{e_3} \to \ite{e_1'}{e_2'}{e_3'}} & \trule{E-If} \\ \\
+ \displaystyle \frac{e_1 \to e_1'}{\ite{e_1}{e_2}{e_3} \to \ite{e_1'}{e_2}{e_3}} & \trule{E-If} \\ \\
 \end{array}
 $$
 
@@ -543,9 +543,9 @@ lookupVar x = do
 
 The typechecker will be a ``ExceptT`` + ``Reader`` monad transformer stack, with
 the reader holding the typing environment. There are three possible failure
-modes for the our simply type lambda calculus typechecker.
+modes for the our simply typed lambda calculus typechecker:
 
-* The case where we try to unify two unlike types.
+* The case when we try to unify two unlike types.
 * The case when we try to apply a non-function to an argument.
 * The case when a variable is referred to that is not in scope.
 
@@ -558,7 +558,7 @@ data TypeError
 type Check = ExceptT TypeError (Reader Env)
 ```
 
-There is a direct equivalence between syntax pattern here and the equivalent
+There is a direct equivalence between syntax patterns here and the equivalent
 typing judgement for it. This will not always be the case in general though. The
 implementation of the type checker is as follows:
 
@@ -591,7 +591,7 @@ Evaluation
 Fundamentally the evaluation of the typed lambda calculus is no different than
 the untyped lambda calculus, nor could it be since the syntactic addition of
 types is purely a static construction and cannot have any manifestation at
-runtime by definition. The only difference is that the simple typed lambda
+runtime by definition. The only difference is that the simply typed lambda
 calculus admits strictly less programs than the untyped lambda calculus.
 
 The foundational idea in compilation of static typed languages is that a typed
@@ -600,10 +600,10 @@ information but preserves the evaluation semantics of the typed program. If our
 program has *type safety* then it can never "go wrong" at runtime.
 
 Of course the converse is not true, programs that do not "go wrong" are not
-necessarily well-typed. Although whether we can prove whether a non well-typed
-program cannot go wrong is orthogonal issue. The game that we as statically
-typed language implementors play is fundamentally is one of restriction, we take
-the space of all programs draw a large line around the universe of discourse of
+necessarily well-typed, although whether we can prove whether a non well-typed
+program cannot go wrong is an orthogonal issue. The game that we as statically
+typed language implementors play is fundamentally one of restriction: we take
+the space of all programs and draw a large line around the universe of discourse of
 programs that we are willing to consider, since these are the only programs that
 we can prove properties for.
 
@@ -654,7 +654,7 @@ Stlc> (\x : Int . (\y : Int . x))
 Notation Reference
 ==================
 
-The notation introduced here will be used throughout the construction on the
+The notation introduced here will be used throughout the construction of the
 Haskell compiler. For reference here is a list of each of the notational
 conventions we will use. Some of these terms are not yet introduced.
 
