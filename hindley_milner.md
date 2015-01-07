@@ -167,10 +167,13 @@ Context
 -------
 
 The typing context or environment is the central container around which all
-information during the inference process is stored and queried.
+information during the inference process is stored and queried.  In Haskell our
+implementation will simply be a newtype wrapper around a Map` of ``Var`` to
+``Scheme`` types.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=19 upper=19}
-~~~~
+```haskell
+newtype TypeEnv = TypeEnv (Map.Map Var Scheme)
+```
 
 The two primary operations are *extension*  and *restriction* which introduce or
 remove named quantities from the context.
@@ -183,11 +186,13 @@ $$
 \Gamma, x:\tau = (\Gamma \backslash x) \cup \{ x :\tau \}
 $$
 
-In Haskell our implementation will simply be a newtype wrapper around a Map`
-of ``Var`` to ``Scheme`` types.
+Operations over the context are simply the usual Set operations on the
+underlying map.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=43 upper=44}
-~~~~
+```haskell
+extend :: TypeEnv -> (Var, Scheme) -> TypeEnv
+extend (TypeEnv env) (x, s) = TypeEnv $ Map.insert x s env
+```
 
 Infer Monad
 -----------
@@ -196,14 +201,19 @@ All our logic for type inference will live inside of the ``Infer`` monad. Which
 is a monad transformer stack of ``ExcpetT`` + ``State``, allowing various error
 reporting and statefully holding the fresh name supply.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=22 upper=22}
-~~~~
+```haskell
+type Infer a = ExceptT TypeError (State Unique) a
+```
 
 Running the logic in the monad results in either a type error or a resulting
 type scheme.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=31 upper=34}
-~~~~
+```haskell
+runInfer :: Infer (Subst, Type) -> Either TypeError Scheme
+runInfer m = case evalState (runExceptT m) initUnique of
+  Left err  -> Left err
+  Right res -> Right $ closeOver res
+```
 
 Substitution
 ------------
@@ -255,8 +265,9 @@ $$
 Our implementation of a substitution in Haskell is simply a Map from type
 variables to types.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=23 upper=23}
-~~~~
+```haskell
+type Subst = Map.Map TVar Type
+```
 
 Composition of substitutions ( $s_1 \circ s_2$, ``s1 `compose` s2`` ) can be encoded simply
 as operations over the underlying map. Importantly note that in our
@@ -264,16 +275,46 @@ implementation we have chosen the substitution to be left-biased, it is up to
 the implementation of the inference algorithm to ensure that clashes do not
 occur between substitutions.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=79 upper=83}
-~~~~
+```haskell
+nullSubst :: Subst
+nullSubst = Map.empty
+
+compose :: Subst -> Subst -> Subst
+s1 `compose` s2 = Map.map (apply s1) s2 `Map.union` s1
+```
 
 The implementation in Haskell is via a series of implementations of a
 ``Substitutable`` typeclass which exposes the ``apply`` which applies the
 substitution given over the structure of the type replacing type variables as
 specified.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=52 upper=76}
-~~~~
+```haskell
+class Substitutable a where
+  apply :: Subst -> a -> a
+  ftv   :: a -> Set.Set TVar
+
+instance Substitutable Type where
+  apply _ (TCon a)       = TCon a
+  apply s t@(TVar a)     = Map.findWithDefault t a s
+  apply s (t1 `TArr` t2) = apply s t1 `TArr` apply s t2
+
+  ftv TCon{}         = Set.empty
+  ftv (TVar a)       = Set.singleton a
+  ftv (t1 `TArr` t2) = ftv t1 `Set.union` ftv t2
+
+instance Substitutable Scheme where
+  apply s (Forall as t)   = Forall as $ apply s' t
+                            where s' = foldr Map.delete s as
+  ftv (Forall as t) = ftv t `Set.difference` Set.fromList as
+
+instance Substitutable a => Substitutable [a] where
+  apply = fmap . apply
+  ftv   = foldr (Set.union . ftv) Set.empty
+
+instance Substitutable TypeEnv where
+  apply s (TypeEnv env) =  TypeEnv $ Map.map (apply s) env
+  ftv (TypeEnv env) = ftv $ Map.elems env
+```
 
 Throughout both the typing rules and substitutions we will require a fresh
 supply of names. In this naive version we will simply use an infinite list of
@@ -281,8 +322,16 @@ strings and slice into n'th element of list per a index that we hold in a State
 monad. This is a simplest implementation possible, and later we will adapt this
 name generation technique to be more robust.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=104 upper=111}
-~~~~
+```haskell
+letters :: [String]
+letters = [1..] >>= flip replicateM ['a'..'z']
+
+fresh :: Infer Type
+fresh = do
+  s <- get
+  put s{count = count s + 1}
+  return $ TVar $ TV (letters !! count s)
+```
 
 The creation of fresh variables will be essential for implementing the inference
 rules. Whenever we encounter the first use a variable within some expression we
@@ -363,13 +412,30 @@ The occurs check will forbid the existence of many of the pathological livering
 terms we discussed when covering the untyped lambda calculus, including the
 omega combinator.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=101 upper=102}
-~~~~
+```haskell
+occursCheck ::  Substitutable a => TVar -> a -> Bool
+occursCheck a t = a `Set.member` ftv t
+```
 
 The unify function lives in the Infer monad and yields a subsitution:
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=85 upper=99}
-~~~~
+```haskell
+unify ::  Type -> Type -> Infer Subst
+unify (l `TArr` r) (l' `TArr` r')  = do
+    s1 <- unify l l'
+    s2 <- unify (apply s1 r) (apply s1 r')
+    return (s2 `compose` s1)
+
+unify (TVar a) t = bind a t
+unify t (TVar a) = bind a t
+unify (TCon a) (TCon b) | a == b = return nullSubst
+unify t1 t2 = throwError $ UnificationFail t1 t2
+
+bind ::  TVar -> Type -> Infer Subst
+bind a t | t == TVar a     = return nullSubst
+         | occursCheck a t = throwError $ InfiniteType a t
+         | otherwise       = return $ Map.singleton a t
+```
 
 Generalization and Instantiation
 --------------------------------
@@ -412,8 +478,17 @@ $$
 These map very intuitively into code that simply manipulates the Haskell ``Set``
 objects of variables and the fresh name supply:
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=113 upper=121}
-~~~~
+```haskell
+instantiate ::  Scheme -> Infer Type
+instantiate (Forall as t) = do
+  as' <- mapM (const fresh) as
+  let s = Map.fromList $ zip as as'
+  return $ apply s t
+
+generalize :: TypeEnv -> Type -> Scheme
+generalize env t  = Forall as t
+    where as = Set.toList $ ftv t `Set.difference` ftv env
+```
 
 By convention let-bindings are generalized as much as possible. So for
 instance in the following definition ``f`` is generalized across the body of the
@@ -458,8 +533,56 @@ applying partial substitutions from unification across each partially inferred
 subexpression and the local environment. If an error is encountered the
 ``throwError`` is called in the ``Infer`` monad and an error is reported.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=138 upper=185}
-~~~~
+```haskell
+infer :: TypeEnv -> Expr -> Infer (Subst, Type)
+infer env ex = case ex of
+
+  Var x -> lookupEnv env x
+
+  Lam x e -> do
+    tv <- fresh
+    let env' = env `extend` (x, Forall [] tv)
+    (s1, t1) <- infer env' e
+    return (s1, apply s1 tv `TArr` t1)
+
+  App e1 e2 -> do
+    tv <- fresh
+    (s1, t1) <- infer env e1
+    (s2, t2) <- infer (apply s1 env) e2
+    s3       <- unify (apply s2 t1) (TArr t2 tv)
+    return (s3 `compose` s2 `compose` s1, apply s3 tv)
+
+  Let x e1 e2 -> do
+    (s1, t1) <- infer env e1
+    let env' = apply s1 env
+        t'   = generalize env' t1
+    (s2, t2) <- infer (env' `extend` (x, t')) e2
+    return (s1 `compose` s2, t2)
+
+  If cond tr fl -> do
+    (s1, t1) <- infer env cond
+    (s2, t2) <- infer env tr
+    (s3, t3) <- infer env fl
+    s4 <- unify t1 typeBool
+    s5 <- unify t2 t3
+    return (s5 `compose` s4 `compose` s3 `compose` s2 `compose` s1, apply s5 t2)
+
+  Fix e1 -> do
+    (s1, t) <- infer env e1
+    tv <- fresh
+    s2 <- unify (TArr tv tv) t
+    return (s2, apply s1 tv)
+
+  Op op e1 e2 -> do
+    (s1, t1) <- infer env e1
+    (s2, t2) <- infer env e2
+    tv <- fresh
+    s3 <- unify (TArr t1 (TArr t2 tv)) (ops Map.! op)
+    return (s1 `compose` s2 `compose` s3, apply s3 tv)
+
+  Lit (LInt _)  -> return (nullSubst, typeInt)
+  Lit (LBool _) -> return (nullSubst, typeBool)
+```
 
 Let's walk through each of the rule derivations and look how it translates into
 code:
@@ -469,14 +592,21 @@ code:
 The ``T-Var`` rule, simply pull the type of the variable out of the typing
 context.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=141 upper=141}
-~~~~
+```haskell
+  Var x -> lookupEnv env x
+```
 
 The function ``lookupVar`` looks up the local variable reference in typing
 environment and if found it instantiates a fresh copy.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=131 upper=136}
-~~~~
+```haskell
+lookupEnv :: TypeEnv -> Var -> Infer (Subst, Type)
+lookupEnv (TypeEnv env) x = do
+  case Map.lookup x env of
+    Nothing -> throwError $ UnboundVariable (show x)
+    Just s  -> do t <- instantiate s
+                  return (nullSubst, t)
+```
 
 $$
 \begin{array}{cl}
@@ -491,8 +621,13 @@ environment and then the body of the expression is inferred with this scope. The
 output type is a fresh type variable and is unified with the resulting inferred
 type.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=143 upper=147}
-~~~~
+```haskell
+  Lam x e -> do
+    tv <- fresh
+    let env' = env `extend` (x, Forall [] tv)
+    (s1, t1) <- infer env' e
+    return (s1, apply s1 tv `TArr` t1)
+```
 
 $$
 \begin{array}{cl}
@@ -510,8 +645,14 @@ types, apply the constraints from the first argument over the result second
 inferred type and then unify the two types with the excepted form of the entire
 application expression.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=149 upper=154}
-~~~~
+```haskell
+  App e1 e2 -> do
+    tv <- fresh
+    (s1, t1) <- infer env e1
+    (s2, t2) <- infer (apply s1 env) e2
+    s3       <- unify (apply s2 t1) (TArr t2 tv)
+    return (s3 `compose` s2 `compose` s1, apply s3 tv)
+```
 
 $$
 \begin{array}{cl}
@@ -525,8 +666,14 @@ As mentioned previously, let will be generalized so we will create a local
 typing environment for the body of the let expression and add the generalized
 inferred type let bound value to the typing environment of the body.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=156 upper=161}
-~~~~
+```haskell
+  Let x e1 e2 -> do
+    (s1, t1) <- infer env e1
+    let env' = apply s1 env
+        t'   = generalize env' t1
+    (s2, t2) <- infer (env' `extend` (x, t')) e2
+    return (s1 `compose` s2, t2)
+```
 
 $$
 \begin{array}{cl}
@@ -540,11 +687,24 @@ There are several builtin operations, we haven't mentioned up to now because the
 typing rules are trivial. We simply unify with the preset type signature of the
 operation.
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=177 upper=182}
-~~~~
+```haskell
+ Op op e1 e2 -> do
+    (s1, t1) <- infer env e1
+    (s2, t2) <- infer env e2
+    tv <- fresh
+    s3 <- unify (TArr t1 (TArr t2 tv)) (ops Map.! op)
+    return (s1 `compose` s2 `compose` s3, apply s3 tv)
+```
 
-~~~~ {.haskell slice="chapter7/poly/Infer.hs" lower=123 upper=129}
-~~~~
+```haskell
+ops :: Map.Map Binop Type
+ops = Map.fromList [
+      (Add, (typeInt `TArr` (typeInt `TArr` typeInt)))
+    , (Mul, (typeInt `TArr` (typeInt `TArr` typeInt)))
+    , (Sub, (typeInt `TArr` (typeInt `TArr` typeInt)))
+    , (Eql, (typeInt `TArr` (typeInt `TArr` typeBool)))
+  ]
+```
 
 $$
 \begin{array}{cl}
@@ -1167,5 +1327,5 @@ Poly> fib 16
 Full Source
 ===========
 
-* [PolyML](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter7/poly)
-* [PolyML - Constraint Generation](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter7/poly_constraints)
+* [Poly](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter7/poly)
+* [Poly - Constraint Generation](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter7/poly_constraints)
