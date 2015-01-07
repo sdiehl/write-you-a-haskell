@@ -46,8 +46,8 @@ dominant models:
 * Call-by-need: arguments passed unevaluated but an expression is only evaluated
   once and shared upon subsequent references
 
-Given an expression ``f x`` the reduction in different evaluation models
-proceeds differently:
+Given an expression $f x$ the reduction in different evaluation models proceeds
+differently:
 
 *Call-by-value*:
 
