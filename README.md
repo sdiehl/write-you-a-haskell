@@ -1,12 +1,12 @@
 <p align="center">
   <a href="http://dev.stephendiehl.com/fun/">
-    <img src="https://github.com/sdiehl/write-you-a-haskell/raw/master/misc/Haskell-Logo.png"/>
+    <img src="https://github.com/sdiehl/write-you-a-haskell/raw/master/img/Haskell-Logo.png"/>
   </a>
 </p>
 
 <p align="center">
   <a href="http://dev.stephendiehl.com/fun/">
-    <img src="https://github.com/sdiehl/write-you-a-haskell/raw/master/misc/cover.png"/>
+    <img src="https://github.com/sdiehl/write-you-a-haskell/raw/master/img/cover.png"/>
   </a>
   <br/>
   <em>Building a modern functional compiler from first principles.</em>
