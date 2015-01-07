@@ -1,5 +1,5 @@
-PolyML
-======
+Poly
+====
 
 A simple ML dialect with definitions, let polymorphism and a fixpoint operator. Uses syntax directed HM type
 inference.
