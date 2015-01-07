@@ -244,9 +244,9 @@ e ::=\ & \t{True} \\
 \end{align*}
 $$
 
-The small step evaluation semantics for this little language are defined by the
-following 9 rules. They describe each step that an expression may take during
-evaluation which may or may not terminate and converge on a value.
+The small step evaluation semantics for this little language are uniquely
+defined by the following 9 rules. They describe each step that an expression may
+take during evaluation which may or may not terminate and converge on a value.
 
 $$
 \begin{array}{cl}
