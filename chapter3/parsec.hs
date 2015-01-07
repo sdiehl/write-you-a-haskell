@@ -124,7 +124,7 @@ parens m = do
 -- digit = "0" | "1" | ... | "8" | "9".
 -- expr = term { addop term }.
 -- term = factor { mulop factor }.
--- factor = "(" expr ")" | var | number.
+-- factor = "(" expr ")" | number.
 -- addop = "+" | "-".
 -- mulop = "*".
 
