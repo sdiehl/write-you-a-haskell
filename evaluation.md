@@ -31,15 +31,15 @@ reduced is non-strict.
 Evaluation Models
 -----------------
 
-There many different models, and various hybrids thereof. We will consider three
+There are many different models, and various hybrids thereof. We will consider three
 dominant models:
 
-* Call-by-value: arguments evaluated before function entered
+* Call-by-value: arguments are evaluated before a function is entered
 * Call-by-name: arguments passed unevaluated
 * Call-by-need: arguments passed unevaluated but an expression is only evaluated
-  once and shared upon subsequent reference
+  once and shared upon subsequent references
 
-Given an expression ``f x`` in the reduction in different evaluation models
+Given an expression ``f x`` the reduction in different evaluation models
 proceeds differently:
 
 *Call-by-value*:
@@ -69,11 +69,11 @@ Call-by-value
 
 Call by value is an extremely common evaluation model. Many programming
 languages both imperative and functional use this evaluation strategy. The
-essence of call-by-value is that there two categories of expressions: *terms*
+essence of call-by-value is that there are two categories of expressions: *terms*
 and *values*. Values are lambda expressions and other terms which are in normal
-form and cannot be reduced further. All arguments to lambda will be reduced to
+form and cannot be reduced further. All arguments to a function will be reduced to
 normal form *before* they are bound inside the lambda and reduction only
-proceeds once the argument is reduced.
+proceeds once the arguments are reduced.
 
 For a simple arithmetic expression, the reduction proceeds as follows. Notice
 how the subexpression ``(2 + 2)`` is evaluated to normal form before being
@@ -102,9 +102,9 @@ Call-by-value interpreter
 
 For a simple little lambda calculus the call-by-value interpreter is quite
 simple. Part of the runtime evaluation of lambda calculus involves the creation
-of *closures*, environments which hold the locally variables in scope. In our
+of *closures*, environments which hold the local variables in scope. In our
 little language there are two possible values which reduction may converge on,
-the **VInt** and **VClosure**.
+**VInt** and **VClosure**.
 
 ```haskell
 data Expr
@@ -117,9 +117,7 @@ data Expr
 
 data PrimOp = Add | Mul
   deriving Show
-```
 
-```haskell
 data Value
   = VInt Int
   | VClosure Expr Env
@@ -131,9 +129,9 @@ emptyEnv :: Env
 emptyEnv = []
 ```
 
-The evaluator function simply maps the local scope and the term to the final
-value. Whenever a variable is referred to it is lookup in the environment,
-whenever a lambda is entered it extends the environment with the local scope of
+The evaluator function simply maps the local scope and a term to the final
+value. Whenever a variable is referred to it is looked up in the environment.
+Whenever a lambda is entered it extends the environment with the local scope of
 the closure.
 
 ```haskell
@@ -151,13 +149,13 @@ eval env term = case term of
 
 evalPrim :: PrimOp -> Value -> Value -> Value
 evalPrim Add (VInt a) (VInt b) = VInt (a + b)
-evalPrim Mul (VInt a) (VInt b) = VInt (a + b)
+evalPrim Mul (VInt a) (VInt b) = VInt (a * b)
 ```
 
 Call-by-name
 ------------
 
-In call-by-name evaluation, the arguments to lambda expression are substituted
+In call-by-name evaluation, the arguments to lambda expressions are substituted
 as is, evaluation simply proceeds from left to right substituting the outermost
 lambda or reducing a value. If a substituted expression is not used it is never
 evaluated.
@@ -181,7 +179,7 @@ normal form but arrives at it by a different sequence of reductions:
 => 5
 ```
 
-Call-by-name is non-strict, although very few languages use this model.
+Call-by-name is non-strict, although very few languages use this model,
 [Frege](https://github.com/Frege/frege) being the most notable example.
 
 Call-by-need
@@ -193,18 +191,18 @@ function unevaluated and only evaluated when needed or *forced*. When the thunk
 is forced the representation of the thunk is *updated* with the computed value
 and is not recomputed upon further reference.
 
-The thunks for the unevaluated lambda expressions are allocated when evaluated
-the resulting computed value is also placed in the same reference so that
+The thunks for unevaluated lambda expressions are allocated when evaluated, and
+the resulting computed value is placed in the same reference so that
 subsequent computations share the result. If the argument is never needed it is
-never computed, this results in a trade-off between space and time. 
+never computed, which results in a trade-off between space and time. 
 
 <!--
 Evaluation for call-by-need never has worse asymptotic time complexity than
 call-by-value, but can result in worse space complexity.
 -->
 
-Since the evaluation of subexpression is not in any pre-ordained order, any
-impure functions with side-effects will be evaluated in an unspecified order, as
+Since the evaluation of subexpression does not follow any pre-defined order, any
+impure functions with side-effects will be evaluated in an unspecified order. As
 a result call-by-need can only effectively be implemented in a purely functional
 setting.
 
@@ -280,13 +278,13 @@ test1 = eval [] $ EApp (ELam "y" (EInt 42)) omega
 Higher Order Interpreters
 =========================
 
-HOAS
-----
+Higher Order Abstract Syntax (HOAS)
+-----------------------------------
 
 Haskell being a rich language has a variety of extensions that, among other
 things, allow us to map lambda expressions in our defined language directly onto
 lambda expressions in Haskell. In this case we will use a GADT to embed a
-Haskell expression inside of our expression type.
+Haskell expression inside our expression type.
 
 ```haskell
 {-# LANGUAGE GADTs #-}
@@ -300,7 +298,7 @@ data Expr a where
 ```
 
 The most notable feature of this encoding is that there is no distinct
-constructor for variables. Instead they are simply as values in the host
+constructor for variables. Instead they are simply values in the host
 language. Some example expressions:
 
 ```haskell
@@ -345,7 +343,7 @@ main :: IO ()
 main = print test
 ```
 
-Several caveats must be taken when working with HOAS, first that is a bit more
+Several caveats must be taken when working with HOAS. First of all, it takes more
 work to transform expressions in this form since in order to work with the
 expression we would need to reach under the lambda binder of a Haskell function
 itself. Since all the machinery is wrapped up inside of Haskell's implementation
@@ -353,12 +351,11 @@ even simple operations like pretty printing and writing transformation passes
 can be more difficult. This form is a good form for evaluation, but not for
 transformation.
 
-PHOAS
------
+Parametric Higher Order Abstract Syntax (PHOAS)
+-----------------------------------------------
 
-A slightly different form of HOAS called PHOAS ( Parametric Higher Order
-Abstract Syntax ) uses lambda representation parameterized over the binder type
-under an existential type. 
+A slightly different form of HOAS called PHOAS uses a lambda representation
+parameterized over the binder type under an existential type. 
 
 ```haskell
 {-# LANGUAGE RankNTypes #-}
@@ -372,7 +369,7 @@ data ExprP a
 newtype Expr = Expr { unExpr :: forall a . ExprP a }
 ```
 
-The lambda in our language is simply a lambda within Haskell. So for example,
+The lambda in our language is simply a lambda within Haskell. As an example,
 the usual SK combinators would be written as follows:
 
 ```haskell
@@ -423,7 +420,7 @@ eval e = ev (unExpr e) where
   ev (LitP n)      = VLit n
 ```
 
-So for a complete consider the ``S K K = I`` example again and check the result: 
+Consider the ``S K K = I`` example again and check the result: 
 
 ```haskell
 skk :: ExprP a
@@ -442,20 +439,20 @@ Embedding IO
 
 As mentioned before, effects are first class values in Haskell.
 
-In Haskell we don't read from a file directly, but create a value that stands in
-for reading from a file. This allows us to very cleanly model an interpreter for
+In Haskell we don't read from a file directly, but create a value that represents
+reading from a file. This allows us to very cleanly model an interpreter for
 our language inside of Haskell by establishing a mapping between the base
 operations of our language and existing function implementations of the
 standard operations in Haskell, and using monadic operations to build up a
-pure effectful computation as a result of interpretation. Then after
-evaluation, we finally lift the resulting IO value up Haskell and execute the
+pure effectful computation as a result of interpretation. After
+evaluation, we finally lift the resulting IO value into Haskell and execute the
 results.  This fits in nicely with the PHOAS model and allows us to
-efficiently implement fully-fledged interpreter for our language with
+efficiently implement a fully-fledged interpreter for our language with
 remarkably little code, simply by exploiting Haskell's implementation.
 
 To embed IO actions inside of our interpreter we create a distinct ``VEffect``
-value that will build up a sequenced IO computation during evaluation and then
-this value will be passed off to Haskell and reified into real world effects.
+value that will build up a sequenced IO computation during evaluation. This
+value will be passed off to Haskell and reified into real world effects.
 
 ```haskell
 data ExprP a
@@ -493,7 +490,7 @@ run :: Expr -> IO ()
 run f = void (fromVEff (eval f))
 ```
 
-The ``prim`` function will simply perform the lookup on the set of builtin
+The ``prim`` function will simply perform a lookup on the set of builtin
 operations, which we'll define with a bit of syntactic sugar for wrapping up
 Haskell functions.
 
