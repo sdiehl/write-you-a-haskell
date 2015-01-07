@@ -4,6 +4,9 @@
 As always, I rely on the perpetual kindness and goodwill of Haskellers (like
 you!) to help correct grammar, clarify, and fix errors.
 
+I am also very keen to the idea of having multiple language translations, if you
+would like to translate the text into your native language please get in touch.
+
 Git Repo
 --------
 
