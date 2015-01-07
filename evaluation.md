@@ -430,7 +430,7 @@ example :: Integer
 example = fromVLit $ eval $ Expr (AppP skk (LitP 3))
 ```
 
-We will use the evaluation technique Ly extensively for writing interpreters for
+We will use this evaluation technique extensively in writing interpreters for
 our larger languages. It is an extremely convenient and useful method for
 writing interpreters in Haskell.
 
