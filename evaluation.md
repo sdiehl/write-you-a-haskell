@@ -28,6 +28,13 @@ lambda expression are necessarily evaluated before a lambda is reduced.  A
 language in which the arguments are not necessarily evaluated before a lambda is
 reduced is non-strict.
 
+Alternatively expressed, diverging terms are represented by the *bottom* value,
+written as $\bot$. A function $f$ is non-strict if:
+
+$$
+f \bot \neq \bot
+$$
+
 Evaluation Models
 -----------------
 
