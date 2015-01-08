@@ -51,7 +51,7 @@ g :: Int -> Int -> Int -> Int
 g x y z = x + y + z
 
 h :: Int -> Int
-h = g 2 3 
+h = g 2 3
 ```
 
 Haskell supports higher-order functions, functions which take functions and yield other functions.
@@ -89,7 +89,7 @@ constructors also generates special set of functions known as *selectors* which
 extract the values of a specific field from the record.
 
 ```haskell
-data Prod = Prod 
+data Prod = Prod
   { a :: Int
   , b :: Bool
   }
@@ -101,7 +101,7 @@ data Prod = Prod
 Sums and products can be combined to produce combinations thereof.
 
 ```haskell
-data T1 
+data T1
   = A Int Int
   | B Bool Bool
 ```
@@ -254,7 +254,7 @@ node can be:
 
 The runtime has the task of determining which thunks are to be evaluated by the
 order in which they are connected to the main function node, this is the essence
-of all evaluation in Haskell and is called *graph reduction*. 
+of all evaluation in Haskell and is called *graph reduction*.
 
 For example, the following self-referential functions are allowed
 in Haskell and generate infinite lists of values which are only evaluated up
@@ -496,7 +496,7 @@ Instances for typeclasses like ``Read``, ``Show``, ``Eq`` and ``Ord`` can be der
 Haskell compiler.
 
 ```haskell
-data PlatonicSolid 
+data PlatonicSolid
   = Tetrahedron
   | Cube
   | Octahedron
@@ -569,7 +569,7 @@ The type of ``main`` is always ``IO ()``.
 main :: IO ()
 main = do
   putStrLn "Enter a number greater than 3: "
-  x <- readLn 
+  x <- readLn
   print (x > 3)
 ```
 
@@ -693,7 +693,7 @@ main = print $ execState test 0
 **ReaderT**
 
 The Reader monad allows a fixed value to be passed around inside the monadic
-context. 
+context.
 
 ```haskell
 ask   :: Reader r r                            -- get the value
@@ -760,7 +760,7 @@ output = runWriter example
 
 The Exception monad allows logic to fail at any point during computation with a
 user-defined exception. The exception type is the first parameter of the monad
-type. 
+type.
 
 ```haskell
 throwError :: e -> Except e a
@@ -820,7 +820,7 @@ To install the dependencies from Hackage invoke:
 $ cabal install --only-dependencies
 ```
 
-Finally configure the library for building: 
+Finally configure the library for building:
 
 ```bash
 $ cabal configure

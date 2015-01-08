@@ -205,11 +205,11 @@ solved problem and the details are not terribly important for our purposes.
 The *Parsec* library defines a set of common combinators much like the operators
 we defined in our toy library.
 
-              Combinators   
+              Combinators
 -----------   ------------
 ``<|>``       The choice operator tries to parse the first argument before proceeding to the second. Can be chained sequentially to a generate a sequence of options.
 ``many``      Consumes an arbitrary number of patterns matching the given pattern and returns them as a list.
-``many1``     Like many but requires at least one match. 
+``many1``     Like many but requires at least one match.
 ``optional``  Optionally parses a given pattern returning its value as a Maybe.
 ``try``       Backtracking operator will let us parse ambiguous matching expressions and restart with a different pattern.
 ``parens``    Parsers the given pattern surrounded by parentheses.
@@ -275,7 +275,7 @@ Evaluation
 
 Our small language gives rise has two syntactic classes, values and expressions.
 Values are in *normal form* and cannot be reduced further. These consist of
-``True`` and ``False`` values and literal numbers. 
+``True`` and ``False`` values and literal numbers.
 
 ~~~~ {.haskell slice="chapter3/calc/Eval.hs" lower=8 upper=17}
 ~~~~

@@ -229,7 +229,7 @@ Token      Value
 reserved   let
 var        f
 var        x
-reservedOp = 
+reservedOp =
 var        x
 reservedOp +
 integer    1
@@ -252,7 +252,7 @@ data Expr
   | Op PrimOp [Expr]
   | Let Name [Name] Expr
 
-data Lit 
+data Lit
   = LitInt Int
 
 data PrimOp
@@ -301,7 +301,7 @@ Inference will generate a system of constraints which are solved via a process
 known as *unification* to yield the type of the expression.
 
 ```haskell
-Int -> Int -> Int  ~  a -> b 
+Int -> Int -> Int  ~  a -> b
 b  ~  Int -> c
 ```
 
@@ -314,11 +314,11 @@ inference will transform the frontend language into an explicitly typed *core
 langauge*.
 
 ```haskell
-Let "f" [] 
-  (Lam "x" 
+Let "f" []
+  (Lam "x"
     (TArr TInt TInt)
-    (App 
-      (App 
+    (App
+      (App
         (Prim "primAdd") (Var "x"))
       (Lit (LitInt 1))))
 ```
@@ -378,5 +378,5 @@ instructions defined by the processor specification.
    4:	8b 7c 24 fc          	mov    -0x4(%rsp),%edi
    8:	81 c7 01 00 00 00    	add    $0x1,%edi
    e:	89 f8                	mov    %edi,%eax
-  10:	c3                   	retq   
+  10:	c3                   	retq
 ```

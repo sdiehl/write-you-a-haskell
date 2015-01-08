@@ -78,7 +78,7 @@ $$
       \quad
       \dfrac{}
       {
-        0 : \t{Nat} 
+        0 : \t{Nat}
       }
       \trule{A1}
     }
@@ -315,16 +315,16 @@ type system to handle the two syntactic categories of terms that exist. The
 abstract type of natural numbers and the type of booleans:
 
 $$
-\begin{align*}
+\begin{aligned}
 \tau ::=\ & \t{Bool} \\
           & \t{Nat} \\
-\end{align*}
+\end{aligned}
 $$
 
 Which is implemented in Haskell as the following datatype:
 
 ```haskell
-data Type 
+data Type
   = TBool
   | TNat
 ```
@@ -339,7 +339,7 @@ $$
  \displaystyle 0 : \t{Nat} & \trule{T-Zero} \\ \\
  \displaystyle \t{True} : \t{Bool} & \trule{T-True} \\ \\
  \displaystyle \t{False} : \t{Bool} & \trule{T-False} \\ \\
- \displaystyle 
+ \displaystyle
    \frac{\Gamma \vdash e_1 : \t{Bool} \quad \Gamma \vdash e_2 : \tau
      \quad \Gamma \vdash e_3 : \tau}{\Gamma \vdash \ite{e_1}{e_2}{e_3} :
      \tau} & \trule{T-If} \\ \\
@@ -497,7 +497,7 @@ $$
  \displaystyle \frac{x:\sigma \in \Gamma}{\Gamma \vdash x:\sigma} & \trule{T-Var} \\ \\
  \displaystyle \infrule{\Gamma, x : \tau_1 \vdash e : \tau_2}{\Gamma \vdash \lambda x . \tau_2 : e_1 \rightarrow e_2 } & \trule{T-Lam} \\ \\
  \displaystyle \infrule{\Gamma \vdash e_1 : \tau_1 \rightarrow \tau_2 \andalso \Gamma \vdash e_2 : \tau_1}{\Gamma \vdash e_1 e_2 : \tau_2} & \trule{T-App} \\ \\
- \displaystyle 
+ \displaystyle
    \frac{\Gamma \vdash c : \t{Bool} \quad \Gamma \vdash e_1 : \tau
      \quad \Gamma \vdash e_2 : \tau}{\Gamma \vdash \ite{c}{e_1}{e_2} :
      \tau} & \trule{T-If} \\ \\
@@ -522,7 +522,7 @@ $$
 $$
 
 Since we now have the notion of scoped variables for lambda, we will implement a
-typing environment ``Env`` as manifest as $\Gamma$ in our typing rules. 
+typing environment ``Env`` as manifest as $\Gamma$ in our typing rules.
 
 ```haskell
 type Env = [(Name, Type)]

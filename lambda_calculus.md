@@ -51,7 +51,7 @@ A lambda expression is said to bind its enclosing variable. So the lambda here
 binds the name $x$.
 
 $$
-\lambda x. e 
+\lambda x. e
 $$
 
 There are several lexical conventions that we will adopt when writing lambda
@@ -71,7 +71,7 @@ convention and does not change the underlying meaning.
 
 $$
 \lambda xy.z = \lambda x. \lambda y.z
-$$ 
+$$
 
 The actual implementation of the lambda calculus admits several degrees of
 freedom in how they are represented. The most notable is the choice of
@@ -223,7 +223,7 @@ variable $x$ to the new replacement $a$ over the expression $e$.
 
 $$
 (\lambda x. e) a \to [x / a] e
-$$ 
+$$
 
 A substitution metavariable will be written as $[s]$.
 
@@ -243,7 +243,7 @@ created in its place.
 
 $$
 (\lambda x. e) a \to [x / a] e \quad \text{if}\ x \notin \FV{e}
-$$ 
+$$
 
 There are several binding libraries and alternative implementations of the
 lambda calculus syntax that avoid these problems. It is a very common problem
@@ -341,7 +341,7 @@ Let
 
 In addition to application, a construct known as a **let binding** is often
 added to the lambda calculus syntax. In the untyped lambda calculus, let
-bindings are semantically equivalent to applied lambda expressions. 
+bindings are semantically equivalent to applied lambda expressions.
 
 $$
 \mathtt{let}\ a = e\ \mathtt{in}\ b \quad := \quad (λa.b) e
@@ -433,17 +433,17 @@ functions the ``factorial`` and ``fibonacci`` functions. One is written with
 ``let rec`` and the other with explicit ``fix``.
 
 ```ocaml
-let fact = fix (\fact -> \n -> 
+let fact = fix (\fact -> \n ->
   if (n == 0)
-    then 1 
+    then 1
     else (n * (fact (n-1))));
 ```
 
 ```haskell
-let rec fib n = 
-  if (n == 0) 
+let rec fib n =
+  if (n == 0)
   then 0
-  else if (n==1) 
+  else if (n==1)
   then 1
   else ((fib (n-1)) + (fib (n-2)));
 ```
@@ -459,7 +459,7 @@ We will use the ``Text.PrettyPrint`` module from the
 Most of our pretty printing will be unavoidable boilerplate but will make
 debugging internal state much easier.
 
-              Combinators   
+              Combinators
 -----------   ------------
 ``<>``        Concatenation
 ``<+>``       Spaced concatenation
@@ -518,7 +518,7 @@ instance Pretty Expr where
     Lit (LBool b) -> text (show b)
     Var x   -> text x
     App a b -> parensIf (p>0) $ (ppr (p+1) a) <+> (ppr p b)
-    Lam x a -> parensIf (p>0) $ 
+    Lam x a -> parensIf (p>0) $
          char '\\'
       <> hsep (fmap pp (viewVars e))
       <+> "->"
