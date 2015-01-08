@@ -64,18 +64,18 @@ somewhat involved and much longer.
 December
 --------
 
-* [Chapter 1: Introduction](introduction.html)
-* [Chapter 2: Haskell Basics](basics.html)
-* [Chapter 3: Parsing](parsers.html)
-* [Chapter 4: Lambda Calculus](lambda_calculus.html)
+* [Chapter 1: Introduction](000_introduction.html)
+* [Chapter 2: Haskell Basics](001_basics.html)
+* [Chapter 3: Parsing](002_parsers.html)
+* [Chapter 4: Lambda Calculus](003_lambda_calculus.html)
 
 January
 -------
 
-* [Chapter 5: Type Systems](type_systems.html)
-* [Chapter 6: Evaluation](evaluation.html)
-* [Chapter 7: Hindley-Milner Inference](hindley_milner.html)
-* [Chapter 8: Design of ProtoHaskell](path.html)
+* [Chapter 5: Type Systems](004_type_systems.html)
+* [Chapter 6: Evaluation](005_evaluation.html)
+* [Chapter 7: Hindley-Milner Inference](006_hindley_milner.html)
+* [Chapter 8: Design of ProtoHaskell](007_path.html)
 
 February 
 --------
