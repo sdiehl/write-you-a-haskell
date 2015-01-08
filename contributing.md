@@ -9,7 +9,8 @@ Git Repo
 
 ```bash
 $ git clone https://github.com/sdiehl/write-you-a-haskell.git
-$ make
+$ make        # Makes all html files
+$ make pdf    # Makes a pdf containing all the chapters
 ```
 
 Pandoc
