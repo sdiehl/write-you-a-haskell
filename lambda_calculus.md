@@ -366,7 +366,7 @@ let skk = S K K;
 For now the evaluation rule for let is identical to that of an applied lambda.
 
 $$
-\begin{array}{cl}
+\begin{array}{clll}
 (\lambda x. e) v     & \rightarrow & [x/v] e                   & \trule{E-Lam} \\
 \mathtt{let} \ x = v \ \mathtt{in} \ e & \rightarrow & [x/v] e & \trule{E-Let} \\
 \end{array}
@@ -410,7 +410,7 @@ $$
 Where $\t{fix}$ has the evaluation rule:
 
 $$
-\begin{array}{cl}
+\begin{array}{cll}
 \mathtt{fix} \ v     & \rightarrow & v\ (\lambda x. (\mathtt{fix}\ v) x) \\
 \end{array}
 $$
