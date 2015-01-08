@@ -345,7 +345,7 @@ function $s$ for two expressions $e_1$ and $e_2$ is a relation such that:
 
 $$
 s := [n_0 / m_0, n_1 / m_1, ..., n_k / m_k] \\
-[s] e_1 = [s] e_2
+{[s]} e_1 = [s] e_2
 $$
 
 Two terms are said to be *unifiable* if there exists a unifying substitution set
