@@ -1,6 +1,3 @@
-~~~~ {literal="latex_macros"}
-~~~~
-
 ![](img/titles/lambda_calculus.png)
 
 ******
@@ -33,11 +30,11 @@ thereof:
 </p>
 
 $$
-\begin{align*}
-e :=\ & x            & \trule{Var} \\ 
-     & \lambda x. e  & \trule{Lam} \\ 
+\begin{aligned}
+e :=\ & x            & \trule{Var} \\
+     & \lambda x. e  & \trule{Lam} \\
      & e\ e          & \trule{App} \\
-\end{align*}
+\end{aligned}
 $$
 
 The lambda calculus is often called the "assembly language" of functional
@@ -51,7 +48,7 @@ A lambda expression is said to bind its enclosing variable. So the lambda here
 binds the name $x$.
 
 $$
-\lambda x. e 
+\lambda x. e
 $$
 
 There are several lexical conventions that we will adopt when writing lambda
@@ -71,7 +68,7 @@ convention and does not change the underlying meaning.
 
 $$
 \lambda xy.z = \lambda x. \lambda y.z
-$$ 
+$$
 
 The actual implementation of the lambda calculus admits several degrees of
 freedom in how they are represented. The most notable is the choice of
@@ -83,10 +80,10 @@ A term with free variables is said to a *open term* while one without open
 variables is said to be *closed* or a *combinator*.
 
 $$
-\begin{align*}
+\begin{aligned}
 e_0 &= \lambda x . x \\
 e_1 &= \lambda x. (x (\lambda y. y a) x) y \\
-\end{align*}
+\end{aligned}
 $$
 
 $e_0$ is a combinator while $e_1$ is not. In $e_1$ both occurances of $x$ are bound. The first $y$ is bound,
@@ -107,11 +104,11 @@ SKI Combinators
 There are several important closed expressions called the SKI combinators.
 
 $$
-\begin{align*}
+\begin{aligned}
 \textbf{S} &= \lambda f .( \lambda g .( \lambda x. f x ( g x ) ) ) \\
 \textbf{K} &= \lambda x . \lambda y. x \\
 \textbf{I} &= \lambda x.x \\
-\end{align*}
+\end{aligned}
 $$
 
 In Haskell these are written simply:
@@ -127,7 +124,7 @@ Rather remarkably Moses Schönfinkel showed that all closed lambda expression ca
 reduces to **I**.
 
 $$
-\begin{align*}
+\begin{aligned}
 &\textbf{S} \textbf{K} \textbf{K}\\
 &= ((\lambda xyz.x z (y z)) (\lambda xy.x) (\lambda xy.x)) \\
 &= ((\lambda yz.(\lambda xy.x) z (y z)) ( \lambda xy.x)) \\
@@ -135,7 +132,7 @@ $$
 &= \lambda  z.(\lambda y.z) ((\lambda xy.x) z) \\
 &= \lambda  z.z \\
 &= \textbf{I}\\
-\end{align*}
+\end{aligned}
 $$
 
 This fact is a useful sanity check when testing an implementation of the lambda calculus.
@@ -223,7 +220,7 @@ variable $x$ to the new replacement $a$ over the expression $e$.
 
 $$
 (\lambda x. e) a \to [x / a] e
-$$ 
+$$
 
 A substitution metavariable will be written as $[s]$.
 
@@ -243,7 +240,7 @@ created in its place.
 
 $$
 (\lambda x. e) a \to [x / a] e \quad \text{if}\ x \notin \FV{e}
-$$ 
+$$
 
 There are several binding libraries and alternative implementations of the
 lambda calculus syntax that avoid these problems. It is a very common problem
@@ -341,7 +338,7 @@ Let
 
 In addition to application, a construct known as a **let binding** is often
 added to the lambda calculus syntax. In the untyped lambda calculus, let
-bindings are semantically equivalent to applied lambda expressions. 
+bindings are semantically equivalent to applied lambda expressions.
 
 $$
 \mathtt{let}\ a = e\ \mathtt{in}\ b \quad := \quad (λa.b) e
@@ -369,7 +366,7 @@ let skk = S K K;
 For now the evaluation rule for let is identical to that of an applied lambda.
 
 $$
-\begin{array}{cl}
+\begin{array}{clll}
 (\lambda x. e) v     & \rightarrow & [x/v] e                   & \trule{E-Lam} \\
 \mathtt{let} \ x = v \ \mathtt{in} \ e & \rightarrow & [x/v] e & \trule{E-Let} \\
 \end{array}
@@ -402,18 +399,18 @@ either an basic fix point operator or a recursive let as a fundamental construct
 in the term syntax. 
 
 $$
-\begin{align*}
+\begin{aligned}
 e :=\ & x \\
      & e_1\ e_2 \\
      & \lambda x . e \\
      & \t{fix}\  e \\
-\end{align*}
+\end{aligned}
 $$
 
 Where $\t{fix}$ has the evaluation rule:
 
 $$
-\begin{array}{cl}
+\begin{array}{cll}
 \mathtt{fix} \ v     & \rightarrow & v\ (\lambda x. (\mathtt{fix}\ v) x) \\
 \end{array}
 $$
@@ -433,17 +430,17 @@ functions the ``factorial`` and ``fibonacci`` functions. One is written with
 ``let rec`` and the other with explicit ``fix``.
 
 ```ocaml
-let fact = fix (\fact -> \n -> 
+let fact = fix (\fact -> \n ->
   if (n == 0)
-    then 1 
+    then 1
     else (n * (fact (n-1))));
 ```
 
 ```haskell
-let rec fib n = 
-  if (n == 0) 
+let rec fib n =
+  if (n == 0)
   then 0
-  else if (n==1) 
+  else if (n==1)
   then 1
   else ((fib (n-1)) + (fib (n-2)));
 ```
@@ -459,7 +456,7 @@ We will use the ``Text.PrettyPrint`` module from the
 Most of our pretty printing will be unavoidable boilerplate but will make
 debugging internal state much easier.
 
-              Combinators   
+              Combinators
 -----------   ------------
 ``<>``        Concatenation
 ``<+>``       Spaced concatenation
@@ -518,7 +515,7 @@ instance Pretty Expr where
     Lit (LBool b) -> text (show b)
     Var x   -> text x
     App a b -> parensIf (p>0) $ (ppr (p+1) a) <+> (ppr p b)
-    Lam x a -> parensIf (p>0) $ 
+    Lam x a -> parensIf (p>0) $
          char '\\'
       <> hsep (fmap pp (viewVars e))
       <+> "->"

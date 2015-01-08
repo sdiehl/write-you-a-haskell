@@ -1,6 +1,3 @@
-~~~~ {literal="latex_macros"}
-~~~~
-
 As always, I rely on the perpetual kindness and goodwill of Haskellers (like
 you!) to help correct grammar, clarify, and fix errors.
 
@@ -12,7 +9,8 @@ Git Repo
 
 ```bash
 $ git clone https://github.com/sdiehl/write-you-a-haskell.git
-$ make
+$ make        # Makes all html files
+$ make pdf    # Makes a pdf containing all the chapters
 ```
 
 Pandoc
@@ -53,22 +51,22 @@ syntax highlighting.
 
 ```latex
 $$
-\begin{align*}
-e :=\ & x            & \text{Var} \\ 
-     & \lambda x. e  & \text{Lam} \\ 
+\begin{aligned}
+e :=\ & x            & \text{Var} \\
+     & \lambda x. e  & \text{Lam} \\
      & e\ e          & \text{App} \\
-\end{align*}
+\end{aligned}
 $$
 ```
 
 Will generate:
 
 $$
-\begin{align*}
-e :=\ & x            & \text{Var} \\ 
-     & \lambda x. e  & \text{Lam} \\ 
+\begin{aligned}
+e :=\ & x            & \text{Var} \\
+     & \lambda x. e  & \text{Lam} \\
      & e\ e          & \text{App} \\
-\end{align*}
+\end{aligned}
 $$
 
 Several type theory macros are also included on many pages:

@@ -1,6 +1,3 @@
-~~~~ {literal="latex_macros"}
-~~~~
-
 ![](img/titles/evaluation.png)
 
 ******
@@ -87,7 +84,7 @@ how the subexpression ``(2 + 2)`` is evaluated to normal form before being
 bound.
 
 ```haskell
-(λx. λy. y x) (2 + 2) λx. x + 1 
+(λx. λy. y x) (2 + 2) λx. x + 1
 => (λy. y 4) λx. x + 1
 => (λy. x + 1) 4
 => 4 + 1
@@ -178,7 +175,7 @@ For example, the same expression we looked at for call-by-value has the same
 normal form but arrives at it by a different sequence of reductions:
 
 ```haskell
-(λx. λy. y x) (2 + 2) λx. x + 1 
+(λx. λy. y x) (2 + 2) λx. x + 1
 => (λy.y (2 + 2)) λx. x + 1
 => (λx.x + 1) (2 + 2)
 => (2 + 2) + 1
@@ -201,7 +198,7 @@ and is not recomputed upon further reference.
 The thunks for unevaluated lambda expressions are allocated when evaluated, and
 the resulting computed value is placed in the same reference so that
 subsequent computations share the result. If the argument is never needed it is
-never computed, which results in a trade-off between space and time. 
+never computed, which results in a trade-off between space and time.
 
 <!--
 Evaluation for call-by-need never has worse asymptotic time complexity than
@@ -313,10 +310,10 @@ id :: Expr (a -> a)
 id = Lam (\x -> x)
 
 tr :: Expr (a -> b -> a)
-tr = Lam (\x -> (Lam (\y -> x))) 
+tr = Lam (\x -> (Lam (\y -> x)))
 
 fl :: Expr (a -> b -> b)
-fl = Lam (\x -> (Lam (\y -> y))) 
+fl = Lam (\x -> (Lam (\y -> y)))
 ```
 
 Our evaluator then simply uses Haskell for evaluation.
@@ -362,7 +359,7 @@ Parametric Higher Order Abstract Syntax (PHOAS)
 -----------------------------------------------
 
 A slightly different form of HOAS called PHOAS uses a lambda representation
-parameterized over the binder type under an existential type. 
+parameterized over the binder type under an existential type.
 
 ```haskell
 {-# LANGUAGE RankNTypes #-}
@@ -427,7 +424,7 @@ eval e = ev (unExpr e) where
   ev (LitP n)      = VLit n
 ```
 
-Consider the ``S K K = I`` example again and check the result: 
+Consider the ``S K K = I`` example again and check the result:
 
 ```haskell
 skk :: ExprP a

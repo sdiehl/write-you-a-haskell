@@ -1,5 +1,3 @@
-<div style="display:none">
-$$
 \newcommand{\andalso}{\quad\quad}
 \newcommand{\infabbrev}[2]{\infax{#1 \quad\eqdef\quad #2}}
 \newcommand{\infrule}[2]{\dfrac{#1}{#2}}
@@ -13,7 +11,5 @@ $$
 \newcommand{\BV}[1]{\mathtt{bv}(#1)}
 \newcommand{\compiles}[1]{\text{C}\llbracket{#1}\rrbracket}
 \newcommand{\exec}[1]{\text{E}\llbracket{#1}\rrbracket}
-\newcommand{\t}[1]{\mathtt{#1}}
+\renewcommand{\t}[1]{\mathtt{#1}}
 \newcommand{\ite}[3]{\text{if }#1\text{ then }#2\text{ else }#3}
-$$
-</div>

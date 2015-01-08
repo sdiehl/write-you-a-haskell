@@ -247,7 +247,7 @@ modl fname
 ```
 
 Engineering Overview
-==================== 
+====================
 
 REPL
 ----
@@ -264,7 +264,7 @@ executable, you will see a similar interactive shell.
  _   _           _       | ProtoHaskell Compiler 0.1.0
 | | | | __ _ ___| | __   | Copyright (c) 2013-2014 Stephen Diehl
 | |_| |/ _` / __| |/ /   | Released under the MIT License
-|  _  | (_| \__ \   <    | 
+|  _  | (_| \__ \   <    |
 |_| |_|\__,_|___/_|\_\   | Type :help for help
 
 Compiling module: prelude.fun
@@ -280,7 +280,7 @@ architecture so that when subtle bugs creep up you will have the tools to
 diagnose the internal state of the type system and detect flaws in the
 implementation.
 
-Command           Action   
+Command           Action
 -----------       ------------
 ``:browse``       Browse the type signatures for a program
 ``:load <file>``  Load a program from file
@@ -397,7 +397,7 @@ the support of higher-kinded types.
 
 ```haskell
 data Bool = False | True
-data Maybe a = Nothing | Just a 
+data Maybe a = Nothing | Just a
 data T1 f a = T1 (f a)
 ```
 
@@ -493,7 +493,7 @@ sugar translations:
 
 We will however punt on an important part of the Haskell specification, namely
 *overloaded literals*. In GHC Haskell numeric literals are replaced by specific
-functions from the ``Num`` or ``Fractional`` typeclasses. 
+functions from the ``Num`` or ``Fractional`` typeclasses.
 
 ```haskell
 -- Frontend
@@ -530,14 +530,14 @@ The Core language is the result of translation of the frontend language into an
 explicitly typed form. Just like Haskell we will use a System-F variant,
 although unlike GHC we will effectively just be using vanilla System-F without
 all of the extensions ( equality witness, casts, roles, etc ) that GHC uses to
-implement more complicated features like GADTs and type families. 
+implement more complicated features like GADTs and type families.
 
 This is one of the most defining feature of GHC Haskell, is its compilation
 into a statically typed intermediate Core language. It is a well-engineers
 detail of GHC's design that has informed much of how Haskell the language has
 evolved as a language with a exceedingly large frontend language that all melts
 away into a very tiny concise set of abstractions. Just like GHC we will extract
-all our language into a small core, with just a few constructors. 
+all our language into a small core, with just a few constructors.
 
 ```haskell
 data Expr
@@ -658,7 +658,7 @@ The implementation of the typechecker will be split across four modules:
 * ``Infer`` - Main inference driver
 * ``Unify`` - Unification logic
 * ``ClassEnv`` - Typeclass instance resolution
-* ``Elaboration`` - Typeclass elaboration 
+* ``Elaboration`` - Typeclass elaboration
 
 The monad itself is a ``RWST`` + ``Except`` stack, with State holding the
 internal state of the inference engine and Writer gathering the generated
@@ -1038,7 +1038,7 @@ Typeclass instances follow the same pattern, they are simply the collection of
 instance constraints, the name of name of the typeclass, and the *head* of the
 type class instance type. The declarations are a sequence of ``FunDecl`` objects
 with the bodies of the functions for each of the overloaded function
-implementations. 
+implementations.
 
 ```haskell
 instance [context] => head where
@@ -1080,7 +1080,7 @@ necessarily baked into the syntax of the language and is inseparable from the
 implementation.
 
 ```haskell
-sign x 
+sign x
   |  x >  0  =  1
   |  x == 0  =  0
   |  x <  0  = -1
@@ -1181,7 +1181,7 @@ f . g = \x -> g (f x)
 
 -- Monad composition
 (<=<) :: Monad m => (b -> m c) -> (a -> m b) -> a -> m c
-f <=< g ≡ \x -> g x >>= f 
+f <=< g ≡ \x -> g x >>= f
 ```
 
 We can now write composition ``descendM`` functions in terms of of Kleisli

@@ -1,6 +1,3 @@
-~~~~ {literal="latex_macros"}
-~~~~
-
 ![](img/titles/type_systems.png)
 
 ******
@@ -78,7 +75,7 @@ $$
       \quad
       \dfrac{}
       {
-        0 : \t{Nat} 
+        0 : \t{Nat}
       }
       \trule{A1}
     }
@@ -101,10 +98,10 @@ set. The empty context is denoted $\varnothing$ and is the terminal element in
 this chain of properties that carries no information. For example:
 
 $$
-\begin{align*}
+\begin{aligned}
 \Gamma ::=\ & \varnothing \\
             & \Gamma,\  x : \tau  \\
-\end{align*}
+\end{aligned}
 $$
 
 $$
@@ -182,11 +179,11 @@ value level language. For now let's only consider three simple types, two
 *ground types* ($\t{Nat}$ and $\t{Bool}$) and an *arrow type*.
 
 $$
-\begin{align*}
+\begin{aligned}
 \tau ::=\ & \t{Bool} \\
           & \t{Nat} \\
           & \tau \rightarrow \tau \\
-\end{align*}
+\end{aligned}
 $$
 
 The arrow type will be the type of function expressions, the left argument being
@@ -233,7 +230,7 @@ data Expr
 The expression syntax is as follows:
 
 $$
-\begin{align*}
+\begin{aligned}
 e ::=\ & \t{True} \\
        & \t{False}  \\
        & \t{iszero}\ e \\
@@ -241,7 +238,7 @@ e ::=\ & \t{True} \\
        & \t{pred}\ e \\
        & \ite{e}{e}{e} \\
        & 0  \\
-\end{align*}
+\end{aligned}
 $$
 
 The small step evaluation semantics for this little language are uniquely
@@ -315,16 +312,16 @@ type system to handle the two syntactic categories of terms that exist. The
 abstract type of natural numbers and the type of booleans:
 
 $$
-\begin{align*}
+\begin{aligned}
 \tau ::=\ & \t{Bool} \\
           & \t{Nat} \\
-\end{align*}
+\end{aligned}
 $$
 
 Which is implemented in Haskell as the following datatype:
 
 ```haskell
-data Type 
+data Type
   = TBool
   | TNat
 ```
@@ -339,7 +336,7 @@ $$
  \displaystyle 0 : \t{Nat} & \trule{T-Zero} \\ \\
  \displaystyle \t{True} : \t{Bool} & \trule{T-True} \\ \\
  \displaystyle \t{False} : \t{Bool} & \trule{T-False} \\ \\
- \displaystyle 
+ \displaystyle
    \frac{\Gamma \vdash e_1 : \t{Bool} \quad \Gamma \vdash e_2 : \tau
      \quad \Gamma \vdash e_3 : \tau}{\Gamma \vdash \ite{e_1}{e_2}{e_3} :
      \tau} & \trule{T-If} \\ \\
@@ -446,11 +443,11 @@ determine the type of any variable in scope we only need to traverse to its
 enclosing scope.
 
 $$
-\begin{align*}
+\begin{aligned}
 e :=\ & x \\
      & e_1\ e_2 \\
      & \lambda x : \tau . e \\
-\end{align*}
+\end{aligned}
 $$
 
 The simplest STLC language is these three terms, however we will add
@@ -458,7 +455,7 @@ numeric and boolean literal terms so that we can write meaningful
 examples.
 
 $$
-\begin{align*}
+\begin{aligned}
 e :=\ & x \\
      & e_1\ e_2 \\
      & \lambda x : \tau . e \\
@@ -466,18 +463,18 @@ e :=\ & x \\
      & \t{true} \\
      & \t{false} \\
      & \ite{e}{e}{e} \\
-\end{align*}
+\end{aligned}
 $$
 
 We can consider a very simple type system for our language that will consist of ``int``
 and ``Bool`` types and function types.
 
 $$
-\begin{align*}
+\begin{aligned}
 \tau :=\ & \t{int} \\
          & \t{Bool} \\ 
          & \tau \rightarrow \tau \\
-\end{align*}
+\end{aligned}
 $$
 
 Type Checker
@@ -497,7 +494,7 @@ $$
  \displaystyle \frac{x:\sigma \in \Gamma}{\Gamma \vdash x:\sigma} & \trule{T-Var} \\ \\
  \displaystyle \infrule{\Gamma, x : \tau_1 \vdash e : \tau_2}{\Gamma \vdash \lambda x . \tau_2 : e_1 \rightarrow e_2 } & \trule{T-Lam} \\ \\
  \displaystyle \infrule{\Gamma \vdash e_1 : \tau_1 \rightarrow \tau_2 \andalso \Gamma \vdash e_2 : \tau_1}{\Gamma \vdash e_1 e_2 : \tau_2} & \trule{T-App} \\ \\
- \displaystyle 
+ \displaystyle
    \frac{\Gamma \vdash c : \t{Bool} \quad \Gamma \vdash e_1 : \tau
      \quad \Gamma \vdash e_2 : \tau}{\Gamma \vdash \ite{c}{e_1}{e_2} :
      \tau} & \trule{T-If} \\ \\
@@ -522,7 +519,7 @@ $$
 $$
 
 Since we now have the notion of scoped variables for lambda, we will implement a
-typing environment ``Env`` as manifest as $\Gamma$ in our typing rules. 
+typing environment ``Env`` as manifest as $\Gamma$ in our typing rules.
 
 ```haskell
 type Env = [(Name, Type)]

@@ -140,20 +140,20 @@ data Scheme = Forall [TVar] Type
 Type schemes will be written as $\sigma$ in our typing rules.
 
 $$
-\begin{align*}
+\begin{aligned}
 \sigma ::=\ & \tau \\
             & \forall \overline \alpha . \tau  \\
-\end{align*}
+\end{aligned}
 $$
 
 For example the ``id`` and the ``const`` functions would have the following
 types:
 
 $$
-\begin{align*}
+\begin{aligned}
 \text{id}    & : \forall a. a \rightarrow a \\
 \text{const} & : \forall a b. a \rightarrow b \rightarrow a
-\end{align*}
+\end{aligned}
 $$
 
 We've now divided our types into two syntactic categories, the *monotypes* and
@@ -222,23 +222,23 @@ Two operations that will perform quite a bit are querying the free variables of
 an expression and applying substitutions over expressions.
 
 $$
-\begin{align*}
+\begin{aligned}
 \FV{x}            &= x \\
 \FV{\lambda x. e} &= \FV{e} - \{ x \} \\
 \FV{e_1 e_2}      &= \FV{e_1} \cup \FV{e_2} \\
-\end{align*}
+\end{aligned}
 $$
 
 Likewise the same pattern applies for type variables at the type level.
 
 $$
-\begin{align*}
+\begin{aligned}
 \FTV{\alpha}                    &= \{ \alpha \} \\
 \FTV{\tau_1 \rightarrow \tau_2} &= \FTV{\tau_1} \cup \FTV{\tau_2} \\
 \FTV{\t{Int}}                   &= \emptyset \\
 \FTV{\t{Bool}}                  &= \emptyset \\
 \FTV{\forall x. t}              &= \FTV{t} - \{ x \} \\
-\end{align*}
+\end{aligned}
 $$
 
 Substitutions over expressions apply the substitution to local variables,
@@ -247,12 +247,12 @@ fresh variable is introduced.
 
 
 $$
-\begin{align*}
+\begin{aligned}
 [x / e'] x &= e' \\
 [x / e'] y &= y \quad (y \ne x) \\
 [x / e'] (e_1 e_2) &= [x / e'] \ e_1 [x / e']  e_2 \\
 [x / e'] (\lambda y. e_1) &= \lambda y. [x / e']e \quad y \ne x, y \notin \FV{e'} \\
-\end{align*}
+\end{aligned}
 $$
 
 And likewise, substitutions can be applied element wise over the typing
@@ -345,7 +345,7 @@ function $s$ for two expressions $e_1$ and $e_2$ is a relation such that:
 
 $$
 s := [n_0 / m_0, n_1 / m_1, ..., n_k / m_k] \\
-[s] e_1 = [s] e_2
+{[s]} e_1 = [s] e_2
 $$
 
 Two terms are said to be *unifiable* if there exists a unifying substitution set
@@ -468,11 +468,11 @@ all $\beta \in \mathtt{ftv}(\sigma)$ so that $\tau_1 = [s] \tau_2$. Some
 examples:
 
 $$
-\begin{align*}
+\begin{aligned}
   \forall a. a \rightarrow a & \sqsubseteq \t{Int} \rightarrow \t{Int} \\
   \forall a. a \rightarrow a & \sqsubseteq b \rightarrow b \\
   \forall a b. a \rightarrow b \rightarrow a & \sqsubseteq \t{Int} \rightarrow \t{Bool} \rightarrow \t{Int}
-\end{align*}
+\end{aligned}
 $$
 
 These map very intuitively into code that simply manipulates the Haskell ``Set``
