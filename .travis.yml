@@ -1,14 +1,8 @@
-#before_script:
-#  - uname -a 
-#  - cat /etc/lsb-release
-#  - sudo apt-get install cabal-install
-#  - cabal update
-#  - cabal install pandoc
-#  - export PATH=~/.cabal/bin:$PATH
-
-language: haskell
-
 ghc:
   - 7.8
 
-script: "./run-tests.sh"
+install:
+  - cabal install pandoc
+
+script: 
+  - "./run-tests.sh"
