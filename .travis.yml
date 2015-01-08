@@ -6,4 +6,7 @@ before_script:
   - cabal install pandoc
   - export PATH=~/.cabal/bin:$PATH
 
+ghc:
+  - 7.8
+
 script: "./run-tests.sh"
