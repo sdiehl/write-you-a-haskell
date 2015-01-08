@@ -4,6 +4,7 @@ ghc:
   - 7.8
 
 install:
+  - sudo apt-get install texlive-xetex
   - cabal install pandoc
 
 script: 
