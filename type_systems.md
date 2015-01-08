@@ -1,6 +1,3 @@
-~~~~ {literal="latex_macros"}
-~~~~
-
 ![](img/titles/type_systems.png)
 
 ******

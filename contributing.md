@@ -1,6 +1,3 @@
-~~~~ {literal="latex_macros"}
-~~~~
-
 As always, I rely on the perpetual kindness and goodwill of Haskellers (like
 you!) to help correct grammar, clarify, and fix errors.
 
