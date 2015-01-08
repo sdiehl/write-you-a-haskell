@@ -50,22 +50,22 @@ syntax highlighting.
 
 ```latex
 $$
-\begin{align*}
-e :=\ & x            & \text{Var} \\ 
-     & \lambda x. e  & \text{Lam} \\ 
+\begin{aligned}
+e :=\ & x            & \text{Var} \\
+     & \lambda x. e  & \text{Lam} \\
      & e\ e          & \text{App} \\
-\end{align*}
+\end{aligned}
 $$
 ```
 
 Will generate:
 
 $$
-\begin{align*}
-e :=\ & x            & \text{Var} \\ 
-     & \lambda x. e  & \text{Lam} \\ 
+\begin{aligned}
+e :=\ & x            & \text{Var} \\
+     & \lambda x. e  & \text{Lam} \\
      & e\ e          & \text{App} \\
-\end{align*}
+\end{aligned}
 $$
 
 Several type theory macros are also included on many pages:

@@ -30,11 +30,11 @@ thereof:
 </p>
 
 $$
-\begin{align*}
-e :=\ & x            & \trule{Var} \\ 
-     & \lambda x. e  & \trule{Lam} \\ 
+\begin{aligned}
+e :=\ & x            & \trule{Var} \\
+     & \lambda x. e  & \trule{Lam} \\
      & e\ e          & \trule{App} \\
-\end{align*}
+\end{aligned}
 $$
 
 The lambda calculus is often called the "assembly language" of functional
@@ -80,10 +80,10 @@ A term with free variables is said to a *open term* while one without open
 variables is said to be *closed* or a *combinator*.
 
 $$
-\begin{align*}
+\begin{aligned}
 e_0 &= \lambda x . x \\
 e_1 &= \lambda x. (x (\lambda y. y a) x) y \\
-\end{align*}
+\end{aligned}
 $$
 
 $e_0$ is a combinator while $e_1$ is not. In $e_1$ both occurances of $x$ are bound. The first $y$ is bound,
@@ -104,11 +104,11 @@ SKI Combinators
 There are several important closed expressions called the SKI combinators.
 
 $$
-\begin{align*}
+\begin{aligned}
 \textbf{S} &= \lambda f .( \lambda g .( \lambda x. f x ( g x ) ) ) \\
 \textbf{K} &= \lambda x . \lambda y. x \\
 \textbf{I} &= \lambda x.x \\
-\end{align*}
+\end{aligned}
 $$
 
 In Haskell these are written simply:
@@ -124,7 +124,7 @@ Rather remarkably Moses Schönfinkel showed that all closed lambda expression ca
 reduces to **I**.
 
 $$
-\begin{align*}
+\begin{aligned}
 &\textbf{S} \textbf{K} \textbf{K}\\
 &= ((\lambda xyz.x z (y z)) (\lambda xy.x) (\lambda xy.x)) \\
 &= ((\lambda yz.(\lambda xy.x) z (y z)) ( \lambda xy.x)) \\
@@ -132,7 +132,7 @@ $$
 &= \lambda  z.(\lambda y.z) ((\lambda xy.x) z) \\
 &= \lambda  z.z \\
 &= \textbf{I}\\
-\end{align*}
+\end{aligned}
 $$
 
 This fact is a useful sanity check when testing an implementation of the lambda calculus.
@@ -399,12 +399,12 @@ either an basic fix point operator or a recursive let as a fundamental construct
 in the term syntax. 
 
 $$
-\begin{align*}
+\begin{aligned}
 e :=\ & x \\
      & e_1\ e_2 \\
      & \lambda x . e \\
      & \t{fix}\  e \\
-\end{align*}
+\end{aligned}
 $$
 
 Where $\t{fix}$ has the evaluation rule:

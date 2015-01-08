@@ -155,11 +155,11 @@ the language.  Types are the world's most popular formal method for analyzing
 programs.
 
 $$
-\begin{align*}
+\begin{aligned}
 1 &: \t{Nat} \\
 (\lambda x . x) &: \forall a. a \to a \\
 (\lambda x y . x) &: \forall a b. a \to b \to a \\
-\end{align*}
+\end{aligned}
 $$
 
 In more sophisticated languages types and terms will commingle either with

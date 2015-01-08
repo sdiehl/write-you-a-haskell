@@ -98,10 +98,10 @@ set. The empty context is denoted $\varnothing$ and is the terminal element in
 this chain of properties that carries no information. For example:
 
 $$
-\begin{align*}
+\begin{aligned}
 \Gamma ::=\ & \varnothing \\
             & \Gamma,\  x : \tau  \\
-\end{align*}
+\end{aligned}
 $$
 
 $$
@@ -179,11 +179,11 @@ value level language. For now let's only consider three simple types, two
 *ground types* ($\t{Nat}$ and $\t{Bool}$) and an *arrow type*.
 
 $$
-\begin{align*}
+\begin{aligned}
 \tau ::=\ & \t{Bool} \\
           & \t{Nat} \\
           & \tau \rightarrow \tau \\
-\end{align*}
+\end{aligned}
 $$
 
 The arrow type will be the type of function expressions, the left argument being
@@ -230,7 +230,7 @@ data Expr
 The expression syntax is as follows:
 
 $$
-\begin{align*}
+\begin{aligned}
 e ::=\ & \t{True} \\
        & \t{False}  \\
        & \t{iszero}\ e \\
@@ -238,7 +238,7 @@ e ::=\ & \t{True} \\
        & \t{pred}\ e \\
        & \ite{e}{e}{e} \\
        & 0  \\
-\end{align*}
+\end{aligned}
 $$
 
 The small step evaluation semantics for this little language are uniquely
@@ -443,11 +443,11 @@ determine the type of any variable in scope we only need to traverse to its
 enclosing scope.
 
 $$
-\begin{align*}
+\begin{aligned}
 e :=\ & x \\
      & e_1\ e_2 \\
      & \lambda x : \tau . e \\
-\end{align*}
+\end{aligned}
 $$
 
 The simplest STLC language is these three terms, however we will add
@@ -455,7 +455,7 @@ numeric and boolean literal terms so that we can write meaningful
 examples.
 
 $$
-\begin{align*}
+\begin{aligned}
 e :=\ & x \\
      & e_1\ e_2 \\
      & \lambda x : \tau . e \\
@@ -463,18 +463,18 @@ e :=\ & x \\
      & \t{true} \\
      & \t{false} \\
      & \ite{e}{e}{e} \\
-\end{align*}
+\end{aligned}
 $$
 
 We can consider a very simple type system for our language that will consist of ``int``
 and ``Bool`` types and function types.
 
 $$
-\begin{align*}
+\begin{aligned}
 \tau :=\ & \t{int} \\
          & \t{Bool} \\ 
          & \tau \rightarrow \tau \\
-\end{align*}
+\end{aligned}
 $$
 
 Type Checker
