@@ -1,3 +1,5 @@
+language: haskell
+
 ghc:
   - 7.8
 
