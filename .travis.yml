@@ -1,0 +1,9 @@
+before_script:
+  - uname -a 
+  - cat /etc/lsb-release
+  - sudo apt-get install cabal-install
+  - cabal update
+  - cabal install pandoc
+  - export PATH=~/.cabal/bin:$PATH
+
+script: "./run-tests.sh"

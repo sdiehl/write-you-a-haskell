@@ -16,6 +16,8 @@
   <a href="https://twitter.com/smdiehl">Stephen Diehl</a>
 </p>
 
+[![Build Status](https://travis-ci.org/sdiehl/write-you-a-haskell.svg)](https://travis-ci.org/sdiehl/write-you-a-haskell)
+
 Releases
 --------
 
