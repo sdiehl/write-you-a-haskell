@@ -20,8 +20,8 @@
 
 Read Online:
 
-* [*HTML*](http://dev.stephendiehl.com/fun/)
-* [*PDF*](http://dev.stephendiehl.com/fun/WYAH.pdf)
+* [**HTML**](http://dev.stephendiehl.com/fun/)
+* [**PDF**](http://dev.stephendiehl.com/fun/WYAH.pdf)
 
 Releases
 --------
