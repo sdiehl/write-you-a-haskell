@@ -385,3 +385,5 @@ Full Source
 
 * [NanoParsec](https://github.com/sdiehl/write-you-a-haskell/blob/master/chapter3/parsec.hs)
 * [Calculator](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter3/calc)
+
+\pagebreak

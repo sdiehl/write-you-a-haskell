@@ -838,11 +838,13 @@ will try to explain them. Probably the most thorough is the Standard course
 lecture notes.
 
 * [Stanford CS240h](http://www.scs.stanford.edu/14sp-cs240h/)
+* [Real World Haskell](http://www.amazon.com/Real-World-Haskell-Bryan-OSullivan/dp/05965149800) by Bryan O'Sullivan, Don Stewart, and John Goerzen
 
 There are some books as well, your mileage may vary with these. Much of the
 material they cover is dated or sometimes typically only covers basic functional
 programming and not "programming in the large".
 
-* [Real World Haskell](http://www.amazon.com/Real-World-Haskell-Bryan-OSullivan/dp/05965149800) by Bryan O'Sullivan, Don Stewart, and John Goerzen
 * [Programming in Haskell](http://www.amazon.com/gp/product/0521692695) by Graham Hutton
 * [Thinking Functionally](http://www.cambridge.org/us/academic/subjects/computer-science/programming-languages-and-applied-logic/thinking-functionally-haskell) by Richard Bird
+
+\pagebreak

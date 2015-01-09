@@ -1244,3 +1244,5 @@ See:
 
 * [The Architecture of Open Source Applications: GHC](http://aosabook.org/en/ghc.html)
 * [GHC Commentary](https://ghc.haskell.org/trac/ghc/wiki/Commentary)
+
+\pagebreak

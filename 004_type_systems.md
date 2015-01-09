@@ -695,3 +695,5 @@ Full Source
 
 * [Typed Arithmetic](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter5/calc_typed)
 * [Simply Typed Lambda Calculus](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter5/stlc)
+
+\pagebreak

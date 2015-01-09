@@ -182,6 +182,7 @@ $if(toc)$
 \setcounter{tocdepth}{$toc-depth$}
 \tableofcontents
 }
+\pagebreak
 $endif$
 $if(lot)$
 \listoftables
