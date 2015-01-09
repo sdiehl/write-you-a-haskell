@@ -831,7 +831,7 @@ $ cabal repl
 ```
 
 Resources
-=========
+---------
 
 If any of these concepts are unfamiliar, there are some external resources that
 will try to explain them. Probably the most thorough is the Standard course

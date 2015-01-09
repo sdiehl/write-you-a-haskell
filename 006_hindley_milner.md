@@ -726,7 +726,7 @@ $$
 $$
 
 Constraint Generation
-=====================
+---------------------
 
 The previous implementation of Hindley Milner is simple, but has this odd
 property of intermingling two separate processes: constraint solving and
@@ -976,9 +976,6 @@ If desired, you can rearrange the variables in alphabetical order to get:
 ```haskell
 compose :: forall a b c. (a -> b) -> (c -> a) -> c -> b
 ```
-
-Evaluation
-==========
 
 Interpreter
 -----------
@@ -1235,7 +1232,7 @@ comp n = do
 ```
 
 Observations
-============
+------------
 
 There we have it, our first little type inferred language! Load the ``poly``
 interpreter by running ``ghci Main.hs`` and the call the ``main`` function.
@@ -1322,7 +1319,7 @@ Poly> fib 16
 ```
 
 Full Source
-===========
+-----------
 
 * [Poly](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter7/poly)
 * [Poly - Constraint Generation](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter7/poly_constraints)

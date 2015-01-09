@@ -434,7 +434,7 @@ This is good, we've made a whole class of illegal programs unrepresentable. Lets
 do more of this!
 
 Simply Typed Lambda Calculus
-============================
+----------------------------
 
 The *simply typed lambda calculus* ( STLC ) of Church and Curry is an extension
 of the lambda calculus that annotates each lambda binder with a type term. The
@@ -649,7 +649,7 @@ Stlc> (\x : Int . (\y : Int . x))
 ```
 
 Notation Reference
-==================
+------------------
 
 The notation introduced here will be used throughout the construction of the
 Haskell compiler. For reference here is a list of each of the notational
@@ -691,7 +691,7 @@ $\mathtt{Nat}, \mathtt{Bool}$   Ground type
 </p>
 
 Full Source
-===========
+-----------
 
 * [Typed Arithmetic](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter5/calc_typed)
 * [Simply Typed Lambda Calculus](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter5/stlc)

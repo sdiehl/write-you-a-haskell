@@ -91,7 +91,7 @@ bound.
 => 5
 ```
 
-Naturally there now are two evaluation rules for applications.
+Naturally there are two evaluation rules for applications.
 
 $$
 \begin{array}{cl}
@@ -100,9 +100,6 @@ $$
  \displaystyle {(\lambda x . e) v \to [x / v] e } & \trule{E-AppLam} \\ \\
 \end{array}
 $$
-
-Call-by-value interpreter
-------------------------
 
 For a simple little lambda calculus the call-by-value interpreter is quite
 simple. Part of the runtime evaluation of lambda calculus involves the creation
@@ -278,9 +275,6 @@ omega = EApp (ELam "x" (EApp (EVar "x") (EVar "x")))
 test1 :: IO Value
 test1 = eval [] $ EApp (ELam "y" (EInt 42)) omega
 ```
-
-Higher Order Interpreters
-=========================
 
 Higher Order Abstract Syntax (HOAS)
 -----------------------------------
@@ -542,7 +536,7 @@ IO has with its runtime, but instead our host language uses Haskell as the
 runtime!
 
 Full Source
-===========
+-----------
 
 **Evaluation**
 

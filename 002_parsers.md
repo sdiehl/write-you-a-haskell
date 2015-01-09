@@ -13,8 +13,11 @@ Edsger Dijkstra</cite>
 <p class="halfbreak">
 </p>
 
+Parsing
+=======
+
 Parser Combinators
-==================
+------------------
 
 For parsing in Haskell it is quite common to use a family of libraries known as
 *parser combinators* which let us compose higher order functions to generate

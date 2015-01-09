@@ -14,7 +14,7 @@ medium for the expression of thought, is a truth generally admitted.
 </p>
 
 Lambda Calculus
----------------
+===============
 
 Fundamental to all functional languages is the most atomic notion of
 composition, function abstraction of a single variable.  The **lambda calculus**
@@ -526,10 +526,6 @@ ppexpr = render . ppr 0
 ```
 
 Full Source
-===========
+-----------
 
 * [Untyped Lambda Calculus](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter4/untyped)
-
-See:
-
-* [History of Lambda-calculus and Combinatory Logic](http://www.pps.univ-paris-diderot.fr/~saurin/Enseignement/LMFI/articles/HindleyCardone06.pdf)
