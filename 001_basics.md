@@ -258,24 +258,34 @@ in Haskell and generate infinite lists of values which are only evaluated up
 to the depth that it is needed.
 
 ```haskell
+-- Infinite stream of 1's
 ones = 1 : ones
-```
 
-```haskell
+-- Infinite count from n
 numsFrom n = n : numsFrom (n+1)
+
+-- Infinite stream of integer squares
+squares = map (^2) (numsfrom 0)
 ```
 
+The function take consumes the infinite stream, consuming only the values that
+are needed for the computation.
+
 ```haskell
-squares = map (^2) (numsfrom 0)
+take :: Int -> [a] -> [a]
+take n _  | n <= 0 =  []
+take n []          =  []
+take n (x:xs)      =  x : take (n-1) xs
 ```
 
 ```haskell
 take 5 squares
+-- [0,1,4,9,16]
 ```
 
 This also admits diverging terms, called *bottoms* which have no normal form.
-What is unique about Haskell is that these values can be threaded around and
-don't diverge unless actually used.
+Under lazy evaluation these values can be threaded around and will never diverge
+unless actually forced.
 
 ```haskell
 bot = bot
@@ -286,6 +296,14 @@ argument is not used in the body of ``const``.
 
 ```haskell
 const 42 bot
+```
+
+The two bottom terms we will use frequently are used to write the scaffolding
+for incomplete program.
+
+```haskell
+error :: String -> a
+undefined :: a
 ```
 
 Higher Kinded Types

@@ -4,7 +4,7 @@ MATHJAX = "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_H
 FLAGS = --standalone --toc --toc-depth=2 --mathjax=$(MATHJAX) --highlight-style pygments
 STYLE = css/style.css
 FILTER = includes.hs
-TEMPLATE_HTML = page.tmpl
+TEMPLATE_HTML = template.html
 TEMPLATE_TEX = template.latex
 
 SRC = $(wildcard *.md)
