@@ -1134,7 +1134,7 @@ cmd source = exec True (L.pack source)
 The heart of our language is then the ``exec`` function which imports all the
 compiler passes, runs them sequentially threading the inputs and outputs and
 eventually yielding a resulting typing environment and the evaluated result of
-the program. These are monoidal joined into the state of the interpreter and
+the program. These are monoidally joined into the state of the interpreter and
 then the loop yields to the next set of inputs.
 
 ```haskell

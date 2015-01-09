@@ -40,7 +40,7 @@ and yields an parse tree by applying the parser logic over sections of the
 character stream (called *lexemes*) to build up a composite data structure for
 the AST.
 
-~~~~ {.haskell slice="chapter3/parsec.hs" lower=9 upper=9}
+~~~~ {.haskell slice="chapter3/parsec.hs" lower=8 upper=9}
 ~~~~
 
 Running the function will result in traversing the stream of characters yielding
@@ -49,7 +49,7 @@ error for malformed input, or failing by not consuming the entire stream of
 input. A more robust implementation would track the position information of
 failures for error reporting.
 
-~~~~ {.haskell slice="chapter3/parsec.hs" lower=11 upper=16}
+~~~~ {.haskell slice="chapter3/parsec.hs" lower=10 upper=16}
 ~~~~
 
 Recall that in Haskell in the String type is itself defined to be a list of
@@ -65,7 +65,7 @@ and returning in a tuple containing itself and the rest of the stream. The
 parser logic will then scrutinize the character and either transform it in some
 portion of the output or advance the stream and proceed.
 
-~~~~ {.haskell slice="chapter3/parsec.hs" lower=18 upper=22}
+~~~~ {.haskell slice="chapter3/parsec.hs" lower=17 upper=22}
 ~~~~
 
 A bind operation for our parser type will take one parse operation and compose
@@ -75,13 +75,13 @@ resulting list and concat's the resulting nested list of lists into a single
 flat list in the usual list monad fashion. The unit operation injects a single
 pure value into the parse stream.
 
-~~~~ {.haskell slice="chapter3/parsec.hs" lower=24 upper=28}
+~~~~ {.haskell slice="chapter3/parsec.hs" lower=23 upper=28}
 ~~~~
 
 As the terminology might have indicated this is indeed a Monad (also Functor and
 Applicative).
 
-~~~~ {.haskell slice="chapter3/parsec.hs" lower=30 upper=39}
+~~~~ {.haskell slice="chapter3/parsec.hs" lower=29 upper=39}
 ~~~~
 
 Of particular importance is that this particular monad has a zero value
@@ -96,7 +96,7 @@ The core operator introduced here is (``(<|>)``) operator for combining two
 optional paths of parser logic, switching to second path if the first fails with
 the zero value.
 
-~~~~ {.haskell slice="chapter3/parsec.hs" lower=41 upper=59}
+~~~~ {.haskell slice="chapter3/parsec.hs" lower=40 upper=59}
 ~~~~
 
 Derived automatically from the Alternative typeclass definition is the ``many``
@@ -125,7 +125,7 @@ On top of this we can add functionality for checking whether the current
 character in the stream matches a given predicate ( i.e is it a digit, is it a
 letter, a specific word, etc).
 
-~~~~ {.haskell slice="chapter3/parsec.hs" lower=61 upper=65}
+~~~~ {.haskell slice="chapter3/parsec.hs" lower=60 upper=65}
 ~~~~
 
 Essentially this 50 lines code encodes the entire core of the parser combinator
@@ -137,14 +137,14 @@ of the stream.
 returns a value obtained by a recursing until failure on the left hand side of
 the stream. This can be used to parse left-recursive grammar.
 
-~~~~ {.haskell slice="chapter3/parsec.hs" lower=71 upper=82}
+~~~~ {.haskell slice="chapter3/parsec.hs" lower=70 upper=82}
 ~~~~
 
 Using ``satisfy`` we can write down several combinators for detecting the
 presence of specific common patterns of characters ( numbers, parenthesized
 expressions, whitespace, etc ).
 
-~~~~ {.haskell slice="chapter3/parsec.hs" lower=84 upper=117}
+~~~~ {.haskell slice="chapter3/parsec.hs" lower=83 upper=117}
 ~~~~
 
 **And that's about it!** In a few hundred lines we have enough of a parser
@@ -164,7 +164,7 @@ mulop  = "*".
 The direct translation to Haskell in terms of our newly constructed parser
 combinator has the following form:
 
-~~~~ {.haskell slice="chapter3/parsec.hs" lower=131 upper=183}
+~~~~ {.haskell slice="chapter3/parsec.hs" lower=130 upper=183}
 ~~~~
 
 Now we can try out our little parser.
