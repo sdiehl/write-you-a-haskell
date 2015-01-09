@@ -17,8 +17,14 @@ all: $(OBJ) top
 %.pdf: %.md $(FILTER)
 	$(PANDOC) --filter ${FILTER} -f $(IFORMAT) --latex-engine=xelatex $(FLAGS) -o $@ $<
 
+%.epub: %.md $(FILTER)
+	$(PANDOC) --filter ${FILTER} -f $(IFORMAT) $(FLAGS) -o $@ $<
+
 pdf: $(FILTER)
 	$(PANDOC) --filter ${FILTER} -f $(IFORMAT) --latex-engine=xelatex $(FLAGS) -o WYAH.pdf 0*.md
+
+epub: $(FILTER)
+	$(PANDOC) --filter ${FILTER} -f $(IFORMAT) $(FLAGS) -o WYAH.epub 0*.md
 
 top: $(FILTER)
 	$(PANDOC) -c $(STYLE) --filter ${FILTER} --template $(TEMPLATE) -s -f $(IFORMAT) -t html $(FLAGS) -o tutorial.html index.md

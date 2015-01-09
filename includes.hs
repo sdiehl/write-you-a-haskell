@@ -52,6 +52,7 @@ injectLatexMacros (Just fmt) p = do
             Div ("",[],[("style","display:none")]) . (:[])
               . Para . (:[]) . Math DisplayMath $ macros
           Format "latex" -> RawBlock "latex" macros
+          Format "epub" -> RawBlock "latex" macros
   return (Pandoc nullMeta [block] <> p)
 injectLatexMacros _ _ = return mempty
 

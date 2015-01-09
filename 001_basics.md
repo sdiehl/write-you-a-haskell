@@ -794,9 +794,9 @@ operator ``(.)``.
 The monad laws can be expressed equivalently in terms of Kleisli composition.
 
 ```haskell
-(f >=> g) >=> h ≡ f >=> (g >=> h)
-return >=> f ≡ f
-f >=> return ≡  f
+(f >=> g) >=> h   =   f >=> (g >=> h)
+return >=> f      =   f
+f >=> return      =   f
 ```
 
 Cabal
