@@ -23,17 +23,17 @@ Releases
 
 **December**
 
-* [Chapter 1: Introduction](http://dev.stephendiehl.com/fun/introduction.html)
-* [Chapter 2: Haskell Basics](http://dev.stephendiehl.com/fun/basics.html)
-* [Chapter 3: Parsing](http://dev.stephendiehl.com/fun/parsers.html)
-* [Chapter 4: Lambda Calculus](http://dev.stephendiehl.com/fun/lambda_calculus.html)
+* [Chapter 1: Introduction](http://dev.stephendiehl.com/fun/000_introduction.html)
+* [Chapter 2: Haskell Basics](http://dev.stephendiehl.com/fun/001_basics.html)
+* [Chapter 3: Parsing](http://dev.stephendiehl.com/fun/002_parsers.html)
+* [Chapter 4: Lambda Calculus](http://dev.stephendiehl.com/fun/003_lambda_calculus.html)
 
 **January**
 
-* [Chapter 5: Type Systems](http://dev.stephendiehl.com/fun/type_systems.html)
-* [Chapter 6: Evaluation](http://dev.stephendiehl.com/fun/evaluation.html)
-* [Chapter 7: Hindley-Milner Inference](http://dev.stephendiehl.com/fun/hindley_milner.html)
-* [Chapter 8: Design of ProtoHaskell](http://dev.stephendiehl.com/fun/path.html)
+* [Chapter 5: Type Systems](http://dev.stephendiehl.com/fun/004_type_systems.html)
+* [Chapter 6: Evaluation](http://dev.stephendiehl.com/fun/005_evaluation.html)
+* [Chapter 7: Hindley-Milner Inference](http://dev.stephendiehl.com/fun/006_hindley_milner.html)
+* [Chapter 8: Design of ProtoHaskell](http://dev.stephendiehl.com/fun/007_path.html)
 
 **February**
 
