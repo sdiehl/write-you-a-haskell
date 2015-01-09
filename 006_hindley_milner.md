@@ -1,6 +1,3 @@
-~~~~ {literal="latex_macros"}
-~~~~
-
 ![](img/titles/hindley_milner.png)
 
 ******

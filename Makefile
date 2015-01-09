@@ -1,6 +1,7 @@
 PANDOC = pandoc
 IFORMAT = markdown
-FLAGS = --standalone --toc --toc-depth=2 --mathjax --highlight-style pygments
+MATHJAX = "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+FLAGS = --standalone --toc --toc-depth=2 --mathjax=$(MATHJAX) --highlight-style pygments
 TEMPLATE = page.tmpl
 STYLE = css/style.css
 FILTER = includes.hs
