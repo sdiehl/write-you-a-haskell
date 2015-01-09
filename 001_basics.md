@@ -798,6 +798,39 @@ return >=> f      =   f
 f >=> return      =   f
 ```
 
+Text
+----
+
+The usual ``String`` type is a singly-linked list of characters, which although
+simple is not efficient in storage or locality since the letters of the string
+are not stored contagiously in memory, instead they're allocated across the
+heap.
+
+The ``text`` and ``bytestring`` libraries provide alternative efficient
+structures for working with contagious blocks of text data. ByteString is a
+contagious ``char*`` buffer data, while text provides UTF-8 data buffer.
+
+The ``OverloadedStrings`` extension allows us to overload the string type in
+frontend language to use any one of available string representations.
+
+```haskell
+class IsString a where
+  fromString :: String -> a
+
+pack :: String -> Text
+unpack :: Text -> String
+```
+
+So for example:
+
+```haskell
+{-# LANGUAGE OverloadedStrings #-}
+import qualified Data.Text as T
+
+str :: T.Text
+str = "bar"
+```
+
 Cabal
 -----
 

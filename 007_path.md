@@ -753,7 +753,7 @@ data Decl
   | DataDecl Constr [Name] [ConDecl]     -- ^ data T where { ... }
   | ClassDecl [Pred] Name [Name] [Decl]  -- ^ class (P) => T where { ... }
   | InstDecl [Pred] Name Type [Decl]     -- ^ instance (P) => T where { ... }
-  | FixityDecl FixitySpec                -- infixl 1  {..}
+  | FixityDecl FixitySpec                -- ^ infixl 1  {..}
   deriving (Eq, Show)
 ```
 
@@ -761,8 +761,11 @@ A binding group is a single line of definition for a function declaration. For
 instance the following function has two binding groups.
 
 ```haskell
+-- Group #1
 factorial :: Int -> Int
 factorial 0 = 1
+
+-- Group #2
 factorial n = n * factorial (n - 1)
 ```
 
@@ -836,7 +839,7 @@ will desugar into the appropriate builtin datatypes.
 data Literal
   = LitInt Int           -- ^ 1
   | LitChar Char         -- ^ 'a'
-  | LitString [Word8]    -- A primitive C-style string, type Addr#
+  | LitString [Word8]    -- ^ "foo"#
   deriving (Eq, Ord, Show)
 ```
 
@@ -845,9 +848,14 @@ can appear in the body, Regular constructors and record declarations. We will
 adopt the Haskell ``-GADTSyntax`` for all data declarations.
 
 ```haskell
+-- Regular Syntax
+data Person = Person String Int
+
+-- GADTSyntax
 data Person where
   Person :: String -> Int -> Person
 
+-- Record Syntax
 data Person where
   Person :: Person { name :: String, age :: Int }
 ```
