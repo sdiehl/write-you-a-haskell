@@ -18,6 +18,11 @@
 
 [![Build Status](https://travis-ci.org/sdiehl/write-you-a-haskell.svg)](https://travis-ci.org/sdiehl/write-you-a-haskell)
 
+Read Online:
+
+* [*HTML*](http://dev.stephendiehl.com/fun/)
+* [*PDF*](http://dev.stephendiehl.com/fun/WYAH.pdf)
+
 Releases
 --------
 
