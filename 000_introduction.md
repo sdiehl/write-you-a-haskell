@@ -2,13 +2,11 @@
 
 ******
 
-<!--
 <blockquote>
 When the limestone of imperative programming is worn away, the granite
 of functional programming will be observed.
 <cite>Simon Peyton Jones</cite>
 </blockquote>
--->
 
 <p class="halfbreak">
 </p>

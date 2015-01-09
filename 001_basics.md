@@ -589,17 +589,10 @@ class MonadTrans t where
   lift :: Monad m => m a -> t m a
 ```
 
-Using the transformers library:
-
-<p class="center">
-![](img/stack.png)
-</p>
-
 The implementation of monad transformers is comprised of two different
-complementary libraries, ``transformers`` and ``mtl``. Transformers provides the
-base monad transformer layers and ``mtl`` uses a language extension called
-functional dependencies to allow implicitly lifting between several layers of a
-monad transformer stack without explicit lifts.
+complementary libraries, ``transformers`` and ``mtl``. The ``transformers``
+library provides the monad transformer layers and ``mtl`` extends this
+functionality to allow implicitly lifting between several layers.
 
 Using transformers we simply import the *Trans* variants of each of the layers
 we want to compose and then wrap them in a newtype.
@@ -624,6 +617,12 @@ foo = Stack $ do
 evalStack :: Stack a -> IO [Int]
 evalStack m = execWriterT (evalStateT (unStack m) 0)
 ```
+
+As illustrated by the following stack diagram:
+
+<p class="center">
+![](img/stack.png)
+</p>
 
 Using mtl and ``GeneralizedNewtypeDeriving`` we can produce the same stack but with
 a simpler forward facing interface to the transformer stack. Under the hood mtl

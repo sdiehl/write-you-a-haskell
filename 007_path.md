@@ -23,11 +23,11 @@ Now that we've completed our simple little ML language, let's discuss the road
 ahead toward building a more complex language we'll call *ProtoHaskell* that
 will eventually become the full *Fun* language.
 
-Language        Description
--------------   -----------------------------------
-*PolyML*        Minimal type inferred ML-like language. ( Chapter 1 - Chapter 8 )
-*ProtoHaskell*  Interpreted minimal Haskell subset. ( Chapter 8 - Chapter 18)
-*Fun*           ProtoHaskell with a native code generator, runtime, and optimizations. ( Chapter 18 - Chapter 27 )
+Language        Chapters Description
+-------------   -------- --------------------------
+*Poly*          1 - 8    Minimal type inferred ML-like language.
+*ProtoHaskell*  8 - 18   Interpreted minimal Haskell subset.
+*Fun*           18 - 27  ProtoHaskell with native code generator.
 
 The defining feature of ProtoHaskell is that is independent of an evaluation
 model, so hypothetically one could write either a lazy or strict backend and use
@@ -262,7 +262,7 @@ executable, you will see a similar interactive shell.
 
 ```haskell
  _   _           _       | ProtoHaskell Compiler 0.1.0
-| | | | __ _ ___| | __   | Copyright (c) 2013-2014 Stephen Diehl
+| | | | __ _ ___| | __   | Copyright (c) 2013-2015 Stephen Diehl
 | |_| |/ _` / __| |/ /   | Released under the MIT License
 |  _  | (_| \__ \   <    |
 |_| |_|\__,_|___/_|\_\   | Type :help for help

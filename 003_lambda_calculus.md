@@ -92,7 +92,7 @@ while the second is free. $a$ is also free.
 Variables that appear multiple times in an expression are only bound by the
 inner most binder. For example  the $x$ variable in the following expression is
 bound on the inner lambda, while $y$ is bound on the outer lambda. This kind of
-occurrence is referred as *name shadowing*.
+occurrence is referred to as *name shadowing*.
 
 $$
 \lambda x y. (\lambda x z. x + y)
