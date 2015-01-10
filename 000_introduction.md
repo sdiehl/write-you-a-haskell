@@ -115,7 +115,7 @@ effects* are prohibited, a function may only return a result without altering
 the world in any *observable* way.
 
 The implementation may perform effects, but central to this definition is the
-unobservability of such effects.  A function is said to *referentially
+unobservability of such effects.  A function is said to be *referentially
 transparent* if replacing a function with its computed value output yields the
 same observable behavior.
 
@@ -204,7 +204,7 @@ our final compiler will go through is the following sequence:
 </p>
 
 Internal forms used during compilation are *intermediate representations* and
-typical any non-trivial language will involve several.
+typically any non-trivial language will involve several.
 
 Lexing
 ------
@@ -234,7 +234,7 @@ Whitespace is either ignored or represented as a unique token in the stream.
 Parsing
 -------
 
-An datatype for the *abstract syntax* tree is constructed by traversal of the
+A datatype for the *abstract syntax* tree is constructed by traversal of the
 input stream and generation of the appropriate syntactic construct using a
 parser.
 
@@ -275,7 +275,7 @@ Haskell's frontend is very large and many constructs are simplified down. For
 example ``where`` clauses and operation sections are the most common examples.
 Where clauses are effectively syntactic sugar for let bindings and operator
 sections are desugared into lambdas with the left or right
-hand side argument applied being a fresh variable.
+hand side argument assigned to a fresh variable.
 
 Type Inference
 --------------
@@ -306,7 +306,7 @@ f :: Int -> Int
 
 In some cases this type will be incorporated directly into the AST and the
 inference will transform the frontend language into an explicitly typed *core
-langauge*.
+language*.
 
 ```haskell
 Let "f" []
