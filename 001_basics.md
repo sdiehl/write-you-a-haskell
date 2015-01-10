@@ -894,6 +894,7 @@ There are some books as well, your mileage may vary with these. Much of the
 material they cover is dated or sometimes typically only covers basic functional
 programming and not "programming in the large".
 
+* [Learn you a Haskell](http://learnyouahaskell.com/) by Miran Lipovača
 * [Programming in Haskell](http://www.amazon.com/gp/product/0521692695) by Graham Hutton
 * [Thinking Functionally](http://www.cambridge.org/us/academic/subjects/computer-science/programming-languages-and-applied-logic/thinking-functionally-haskell) by Richard Bird
 

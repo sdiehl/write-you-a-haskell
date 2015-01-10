@@ -529,7 +529,7 @@ Core
 The Core language is the result of translation of the frontend language into an
 explicitly typed form. Just like Haskell we will use a System-F variant,
 although unlike GHC we will effectively just be using vanilla System-F without
-all of the extensions ( equality witness, casts, roles, etc ) that GHC uses to
+all of the extensions ( coercions, equalities, roles, etc ) that GHC uses to
 implement more complicated features like GADTs and type families.
 
 This is one of the most defining feature of GHC Haskell, is its compilation
