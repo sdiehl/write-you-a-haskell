@@ -242,13 +242,12 @@ Substitutions over expressions apply the substitution to local variables,
 replacing the named subexpression if matched. In the case of name capture a
 fresh variable is introduced.
 
-
 $$
 \begin{aligned}
-[x / e'] x &= e' \\
+{[x / e'] x} &= e' \\
 [x / e'] y &= y \quad (y \ne x) \\
-[x / e'] (e_1 e_2) &= [x / e'] \ e_1 [x / e']  e_2 \\
-[x / e'] (\lambda y. e_1) &= \lambda y. [x / e']e \quad y \ne x, y \notin \FV{e'} \\
+[x / e'] (e_1 e_2) &= ([x / e'] \ e_1) ([x / e']  e_2) \\
+[x / e'] (\lambda y. e_1) &= \lambda y. [x / e']e \quad y \ne x, x \notin \FV{e'} \\
 \end{aligned}
 $$
 
