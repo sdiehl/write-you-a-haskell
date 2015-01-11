@@ -255,7 +255,7 @@ langDef = Tok.LanguageDef
 
 Given the token definition we can create the lexer functions.
 
-~~~~ {.haskell slice="chapter3/calc/Parser.hs" lower=31 upper=47}
+~~~~ {.haskell slice="chapter3/calc/Parser.hs" lower=30 upper=47}
 ~~~~
 
 **Abstract Syntax Tree**

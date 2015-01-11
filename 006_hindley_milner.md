@@ -176,7 +176,7 @@ The two primary operations are *extension*  and *restriction* which introduce or
 remove named quantities from the context.
 
 $$
-\Gamma \backslash x = \{ y : \sigma | y : \sigma ∈ \Gamma, x \ne y \}
+\Gamma \backslash x = \{ y : \sigma | y : \sigma \in \Gamma, x \ne y \}
 $$
 
 $$

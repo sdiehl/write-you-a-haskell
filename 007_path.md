@@ -526,9 +526,11 @@ C# : Char# -> Char
 
 ```haskell
 ProtoHaskell> :core 1
-I# 1
+I# 1#
 ProtoHaskell> :core 1 + 2
-plusInt# (I# 1) (I# 2)
+plus (I# 1#) (I# 2#)
+ProtoHaskell> :core "snazzleberry"
+unpackCString# "snazzleberry"#
 ```
 
 Core
@@ -853,7 +855,7 @@ data Literal
 
 For data declarations we have two categories of constructor declarations that
 can appear in the body, Regular constructors and record declarations. We will
-adopt the Haskell ``-GADTSyntax`` for all data declarations.
+adopt the Haskell ``-XGADTSyntax`` for all data declarations.
 
 ```haskell
 -- Regular Syntax
@@ -1265,12 +1267,26 @@ Optparse Applicative
 -->
 
 Full Source
-===========
+-----------
+
+The partial source for the Frontend of ProtoHaskell is given. This is a stub of
+the all the data structure and scaffolding we will use to construct the compiler
+pipeline.
 
 * [ProtoHaskell Frontend](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter8/protohaskell)
 
+The modules given are:
+
+* ``Monad.hs``    - Compiler monad
+* ``Flags.hs``    - Compiler flags
+* ``Frontend.hs`` - Frontend syntax
+* ``Name.hs``     - Syntax names
+* ``Compiler.hs`` - Initial compiler stub
+* ``Pretty.hs``   - Pretty printer
+* ``Type.hs``     - Type syntax
+
 Resources
-=========
+---------
 
 See:
 
