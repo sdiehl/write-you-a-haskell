@@ -5,6 +5,7 @@
 > [A type system is a] tractable syntactic method for proving the
 > absence of certain program behaviors by classifying phrases
 > according to the kinds of values they compute.
+>
 > <cite>-Benjamin Pierce</cite>
 
 <p class="halfbreak">
@@ -602,14 +603,13 @@ the space of all programs and draw a large line around the universe of discourse
 programs that we are willing to consider, since these are the only programs that
 we can prove properties for.
 
-<blockquote>
-Well-typed programs don't go wrong, but not every program that never goes wrong
-is well-typed. It's easy to exhibit programs that don't go wrong but are
-ill-typed in ... any ... decidable type system. Many such programs are useful,
-which is why dynamically-typed languages like Erlang and Lisp are justly
-popular.
-<cite>Simon Peyton Jones</cite>
-</blockquote>
+> Well-typed programs don't go wrong, but not every program that never goes wrong
+> is well-typed. It's easy to exhibit programs that don't go wrong but are
+> ill-typed in ... any ... decidable type system. Many such programs are useful,
+> which is why dynamically-typed languages like Erlang and Lisp are justly
+> popular.
+>
+> <cite>-Simon Peyton Jones</cite>
 
 <!--
 <p class="center">

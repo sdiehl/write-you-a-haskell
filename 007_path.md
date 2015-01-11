@@ -665,10 +665,10 @@ previously, it simply has to do more bookkeeping and handle more cases.
 
 The implementation of the typechecker will be split across four modules:
 
-* ``Infer`` - Main inference driver
-* ``Unify`` - Unification logic
-* ``ClassEnv`` - Typeclass instance resolution
-* ``Elaboration`` - Typeclass elaboration
+* ``Infer.hs`` - Main inference driver
+* ``Unify.hs`` - Unification logic
+* ``ClassEnv.hs`` - Typeclass instance resolution
+* ``Elaboration.hs`` - Typeclass elaboration
 
 The monad itself is a ``RWST`` + ``Except`` stack, with State holding the
 internal state of the inference engine and Writer gathering the generated
@@ -743,9 +743,9 @@ Frontend
 The Frontend language for ProtoHaskell a fairly large language, consisting of
 many different types. Let's walk through the different constructions.
 
-At the top is the named module and all toplevel declarations therein. The first
-revision of the compiler has a very simple module structure, which we will
-extend later in fun with imports and public interfaces.
+At the top is the named *Module* and all toplevel declarations contained
+therein. The first revision of the compiler has a very simple module structure,
+which we will extend later in fun with imports and public interfaces.
 
 ```haskell
 data Module = Module Name [Decl]         -- ^ module T where { .. }

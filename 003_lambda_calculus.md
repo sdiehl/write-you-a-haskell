@@ -352,7 +352,7 @@ let a = e in b
 
 Toplevel expression will be written as ``let`` statements without a body to
 indicate that they are added to the global scope. Haskell does not use this
-convention but OCaml and StandardML do. In Haskell the preceeding let is simply
+convention but OCaml and StandardML do. In Haskell the proceeding let is simply
 omitted.
 
 ```haskell
@@ -422,12 +422,12 @@ dialects.  For now we will implement recursive lets as simply syntactic sugar
 for wrapping a fixpoint around a lambda binding by the following equivalence.
 
 ```haskell
-let rec x = e1 in e2    ≡    let x = fix (λ x. e1) in e2
+let rec x = e1 in e2    =    let x = fix (\x. e1) in e2
 ```
 
 So for example we can now write down every functional programmer's favorite two
-functions the ``factorial`` and ``fibonacci`` functions. One is written with
-``let rec`` and the other with explicit ``fix``.
+functions: ``factorial`` and ``fibonacci``. One is written with ``let rec`` and
+the other with explicit ``fix``.
 
 ```ocaml
 let fact = fix (\fact -> \n ->

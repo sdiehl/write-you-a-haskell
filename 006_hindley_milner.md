@@ -2,12 +2,9 @@
 
 ******
 
-<!--
-<blockquote>
-There is nothing more practical than a good theory.
-<cite>James C. Maxwell</cite>
-</blockquote>
--->
+> There is nothing more practical than a good theory.
+>
+> <cite>-James C. Maxwell</cite>
 
 <p class="halfbreak">
 </p>
@@ -191,8 +188,8 @@ extend :: TypeEnv -> (Var, Scheme) -> TypeEnv
 extend (TypeEnv env) (x, s) = TypeEnv $ Map.insert x s env
 ```
 
-Infer Monad
------------
+Inference Monad
+---------------
 
 All our logic for type inference will live inside of the ``Infer`` monad. Which
 is a monad transformer stack of ``ExcpetT`` + ``State``, allowing various error

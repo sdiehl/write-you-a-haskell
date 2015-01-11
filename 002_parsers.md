@@ -220,8 +220,8 @@ Combinator    Description
 ``many1``     Like many but requires at least one match.
 ``sepBy``     Match a arbitrary length sequence of patterns, delimited by 
               a given pattern. 
-``optional``  Optionally parses a given pattern returning 
-              its value as a Maybe.
+``optional``  Optionally parses a given pattern returning its value as a 
+              Maybe.
 ``try``       Backtracking operator will let us parse ambiguous matching 
               expressions and restart with a different pattern.
 ``parens``    Parsers the given pattern surrounded by parentheses.

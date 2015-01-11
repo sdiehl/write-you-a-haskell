@@ -2,12 +2,9 @@
 
 ******
 
-<!--
-<blockquote>
-Well-typed programs cannot "go wrong".
-<cite>Robin Milner</cite>
-</blockquote>
--->
+> Well-typed programs cannot "go wrong".
+> 
+> <cite>-Robin Milner</cite>
 
 <p class="halfbreak">
 </p>
