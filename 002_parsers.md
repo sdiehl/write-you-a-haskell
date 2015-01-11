@@ -208,13 +208,22 @@ solved problem and the details are not terribly important for our purposes.
 The *Parsec* library defines a set of common combinators much like the operators
 we defined in our toy library.
 
-              Combinators
+Combinator    Description
 -----------   ------------
-``<|>``       The choice operator tries to parse the first argument before proceeding to the second. Can be chained sequentially to a generate a sequence of options.
-``many``      Consumes an arbitrary number of patterns matching the given pattern and returns them as a list.
+``char``      Match the given character.
+``string``    Match the given string.
+``<|>``       The choice operator tries to parse the first argument before 
+              proceeding to the second. Can be chained sequentially to a 
+              generate a sequence of options.
+``many``      Consumes an arbitrary number of patterns matching the given 
+              pattern and returns them as a list.
 ``many1``     Like many but requires at least one match.
-``optional``  Optionally parses a given pattern returning its value as a Maybe.
-``try``       Backtracking operator will let us parse ambiguous matching expressions and restart with a different pattern.
+``sepBy``     Match a arbitrary length sequence of patterns, delimited by 
+              a given pattern. 
+``optional``  Optionally parses a given pattern returning 
+              its value as a Maybe.
+``try``       Backtracking operator will let us parse ambiguous matching 
+              expressions and restart with a different pattern.
 ``parens``    Parsers the given pattern surrounded by parentheses.
 
 **Tokens**

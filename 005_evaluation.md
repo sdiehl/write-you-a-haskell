@@ -371,14 +371,24 @@ The lambda in our language is simply a lambda within Haskell. As an example,
 the usual SK combinators would be written as follows:
 
 ```haskell
+-- i x = x
 i :: ExprP a
 i = LamP (\a -> VarP a)
 
+-- k x y = x
 k :: ExprP a
 k = LamP (\x -> LamP (\y -> VarP x))
 
+-- s f g x = f x (g x)
 s :: ExprP a
-s = LamP (\x -> LamP (\y -> LamP (\z -> AppP (AppP (VarP x) (VarP z)) (AppP (VarP y) (VarP z)))))
+s = 
+  LamP (\f -> 
+    LamP (\g -> 
+      LamP (\x -> 
+        AppP 
+          (AppP (VarP f) (VarP x))
+          (AppP (VarP g) (VarP x))
+        )))
 ```
 
 Evaluation will result in a runtime ``Value`` type, just as before with our

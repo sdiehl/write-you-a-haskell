@@ -373,24 +373,24 @@ The unification rules for our little HM language are as follows:
 
 $$
 \begin{array}{cl}
-c \sim c : []           & \quad \trule{Uni-Const} \\
-\alpha \sim \alpha : [] & \quad \trule{Uni-Var} \\
+ c \sim c : []           & \quad \trule{Uni-Const} \\ \\
+\alpha \sim \alpha : [] & \quad \trule{Uni-Var} \\ \\
 \infrule{\alpha \notin \FTV{\tau}}{\alpha \sim \tau : [\alpha / \tau]}
-& \quad \trule{Uni-VarLeft} \\ 
+& \quad \trule{Uni-VarLeft} \\ \\
 \infrule{\alpha \notin \FTV{\tau}}{\tau \sim \alpha : [\alpha / \tau]}
-& \quad \trule{Uni-VarRight} \\ 
+& \quad \trule{Uni-VarRight} \\ \\
 \infrule{
   \tau_1 \sim \tau_1' : \theta_1 \andalso [\theta_1] \tau_2  \sim [\theta_1] \tau_2' : \theta_2
 }{
   \tau_1 \tau_2 \sim \tau_1' \tau_2' : \theta_2 \circ \theta_1
 } 
-& \quad \trule{Uni-Con} \\ 
+& \quad \trule{Uni-Con} \\ \\
 \infrule{
   \tau_1 \sim \tau_1' : \theta_1 \andalso [\theta_1] \tau_2  \sim [\theta_1] \tau_2' : \theta_2
 }{
   \tau_1 \rightarrow \tau_2 \sim \tau_1' \rightarrow \tau_2' : \theta_2 \circ \theta_1
 } 
-& \quad \trule{Uni-Arrow} \\ 
+& \quad \trule{Uni-Arrow} \\ \\
 \end{array}
 $$
 
@@ -719,9 +719,9 @@ types.
 
 $$
 \begin{array}{cl}
-\frac{}{\Gamma \vdash n : \mathtt{Int}}           & \trule{T-Int}  \\
-\frac{}{\Gamma \vdash \t{True} : \mathtt{Bool}}   & \trule{T-True} \\
-\frac{}{\Gamma \vdash \t{False} : \mathtt{Bool}}  & \trule{T-False}
+\displaystyle \frac{}{\Gamma \vdash n : \mathtt{Int}}           & \trule{T-Int}  \\ \\
+\displaystyle \frac{}{\Gamma \vdash \t{True} : \mathtt{Bool}}   & \trule{T-True} \\ \\
+\displaystyle \frac{}{\Gamma \vdash \t{False} : \mathtt{Bool}}  & \trule{T-False}
 \end{array}
 $$
 

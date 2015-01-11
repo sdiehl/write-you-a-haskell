@@ -148,7 +148,7 @@ $$
 
 When we apply the $\omega$ combinator to itself we find that this results in an
 equal and infinitely long chain of reductions. A sequence of reductions that has
-no normal form ( i.e., it reduces indefinitely ) is said to *diverge*.
+no normal form ( i.e. it reduces indefinitely ) is said to *diverge*.
 
 $$
 (\lambda x. x x) (\lambda x. x x) \to \\
@@ -185,7 +185,7 @@ choose the Haskell convention which denotes lambda by the backslash (``\``) to
 the body with (``->``), and application by spaces. Named variables are simply
 alphanumeric sequences of characters.
 
-Math notation:
+Logical notation:
 
 $\mathtt{const} = \lambda x y . x$
 
@@ -392,11 +392,11 @@ and K combinators.
 
 $$ \textbf{Y} = \textbf{SSK(S(K(SS(S(SSK))))K)}$$
 
-In a untyped lambda calculus language without explicit fix point or recursive
-let bindings, the Y combinator can be used to create both of these constructs
-out of nothing but lambda expressions. However it is more common to just add
-either an basic fix point operator or a recursive let as a fundamental construct
-in the term syntax. 
+In a untyped lambda calculus language without explicit fixpoint or recursive let
+bindings, the Y combinator can be used to create both of these constructs out of
+nothing but lambda expressions. However it is more common to just add either an
+atomic fixpoint operator or a recursive let as a fundamental construct in the
+term syntax. 
 
 $$
 \begin{aligned}

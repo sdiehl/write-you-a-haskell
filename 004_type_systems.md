@@ -2,12 +2,10 @@
 
 ******
 
-<blockquote>
-[A type system is a] tractable syntactic method for proving the
-absence of certain program behaviors by classifying phrases
-according to the kinds of values they compute.
-<cite>Benjamin Pierce</cite>
-</blockquote>
+> [A type system is a] tractable syntactic method for proving the
+> absence of certain program behaviors by classifying phrases
+> according to the kinds of values they compute.
+> <cite>-Benjamin Pierce</cite>
 
 <p class="halfbreak">
 </p>
@@ -29,8 +27,8 @@ Rules
 -----
 
 In the study of programming language semantics, logical statements are written
-in a specific logical notation. A property, for our purposes this will be a fact
-about the type of a term, will be written as follows:
+in a specific logical notation. A property, for our purposes will be a fact
+about the type of a term and written with the following notation:
 
 $$
 1 : \t{Nat}
@@ -163,15 +161,16 @@ java.lang.Long
 ```
 
 While this is a perfectly acceptable alternative definition, we are not going to
-go that route and restrict ourselves purely to the discussion of *static types*.
-Under this set of definitions many of so-called dynamically typed language often
-only have a single static type. For instance in Python all static types are
-subsumed by the ``PyObject``, and it is only at runtime that the tag
-``PyTypeObject *ob_type`` is discriminated on to give rise to Python notion of
-"types". Again, this is not the kind of type we will discuss. The tradeoffs that
-these languages make is that they often have trivial static semantics while the
-dynamics for the language are often exceedingly complicated. Languages like
-Haskell and OCaml are the opposite point in this design space.
+go that route and instead restrict ourselves purely to the discussion of *static
+types*, in other words types which are known before runtime. Under this set of
+definitions many of so-called dynamically typed language often only have a
+single static type. For instance in Python all static types are subsumed by the
+``PyObject`` and it is only at runtime that the tag ``PyTypeObject *ob_type`` is
+discriminated on to give rise to Python notion of "types". Again, this is not
+the kind of type we will discuss. The trade-offs that these languages make is
+that they often have trivial static semantics while the dynamics for the
+language are often exceedingly complicated. Languages like Haskell and OCaml are
+the opposite point in this design space.
 
 Types will usually be written as $\tau$ and can consist of many different
 constructions to the point where the type language may become as rich as the
@@ -194,24 +193,23 @@ $$
 \tau_1 \to \tau_2 \to \tau_3 \to \tau_4 \quad = \quad \tau_1 \to (\tau_2 \to (\tau_3 \to \tau_4))
 $$
 
-Small-Step Notation
--------------------
+Small-Step Semantics
+--------------------
 
 The real quantity we're interested in formally describing is expressions in
-programming languages.
-
-A programming language semantics are described by the *operational semantics* of
-the language. The operational semantics can be thought of as a description of an
-abstract machine which operates over the abstract terms of the programming
-language in the same way that a virtual machine might operate over instructions.
-It is a framework for modeling the aspects of the runtime behavior of the
-program before running it by describing the transitions terms may take.
+programming languages. A programming language semantics are described by the
+*operational semantics* of the language. The operational semantics can be
+thought of as a description of an abstract machine which operates over the
+abstract terms of the programming language in the same way that a virtual
+machine might operate over instructions.
 
 We use a framework called *small-step semantics* where a deviation shows how
 individual rewrites compose to produce a term, which can evaluate to a value
-through a sequence of state changes of an abstract machine. Ultimately we'd like
-the term to transition and terminate to a *value* in our language instead of
-becoming "stuck" as we encountered before.
+through a sequence of state changes. This is a framework for modeling aspects of
+the runtime behavior of the program before running it by describing the space of
+possible transitions type and terms may take. Ultimately we'd like the term to
+transition and terminate to a *value* in our language instead of becoming
+"stuck" as we encountered before.
 
 Recall our little calculator language from before when we constructed our first
 parser:

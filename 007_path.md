@@ -49,9 +49,8 @@ forethought was given to making the frontend language as expressive as it is.
 Many of these details require a great detail of engineering work to make them
 work as seamlessly as they do.
 
-Shamelessly stolen from a Simon Peyton Jones here is the "Haskell is one slide"
-overview of the language, this example is exceedingly simple but consider how
-much of an extension this is from our simple little ML interpreter.
+Consider this simple Haskell example but note how much of an extension this is
+from our simple little ML interpreter.
 
 ```haskell
 filter :: (a -> Bool) -> [a] -> [a]
@@ -410,15 +409,15 @@ Desugaring
 
 Pattern matching is an extremely important part of a modern functional
 programming, but the implementation of the pattern desugaring is remarkably
-subtle. The frontend syntax allows the expression of nested pattern matches
-and incomplete patterns, both can generate very complex splitting trees of case
+subtle. The frontend syntax allows the expression of nested pattern matches and
+incomplete patterns, both can generate very complex *splitting trees* of case
 expressions that need to be expanded out recursively. We will use the algorithm
 devised Phil Wadler to perform this transformation.
 
+**Multiple Equations**
+
 For instance the following toplevel pattern for the ``xor`` function is
 transformed into the following nested set of case statements:
-
-**Multiple Equations**
 
 ```haskell
 -- Frontend
@@ -445,6 +444,10 @@ xor = \_a _b -> case _a of {
 
 **Constructor Patterns**
 
+Toplevel declarations in the frontend language can consist of patterns for on
+the right-hand-side of the declaration, while in the Core language these are
+transformed into case statements in the body of the function.
+
 ```haskell
 -- Frontend
 f (Left  l) = a
@@ -458,12 +461,17 @@ f x = case x of
 
 **Nested Patterns**
 
+The frontend language also allows nested constructors in a single pattern, while
+in the Core language these are expanded out into two case statements which
+scrutinize only one level of pattern.
+
 ```haskell
 -- Frontend
-f (Just (Just x)) = x
+f x = case x of
+  Just (Just y) -> y
 
 -- Desugared
-f = case x of
+f x = case x of
   Just _a -> case _a of
     Just _b -> _b
 ```
@@ -479,8 +487,8 @@ The confluence of all them gives rise to a rather complex set of AST rewrites:
 * Conditional equations
 * Non-linear patterns
 
-On top of pattern matching we will implement the following more trivial syntatic
-sugar translations:
+On top of pattern matching we will implement the following more trivial
+syntactic sugar translations:
 
 * Expand ``if/then`` statements into case expressions.
 * Expand pattern guards into case expressions.
@@ -1154,13 +1162,29 @@ use pattern matching to match specific syntactic structure and rewrite it or
 simply yield the input and traverse to the next element in the bottom-up
 traversal.
 
-```haskell
-a :: Expr -> RewriteM Expr
-a (Syn.EVar "a") = return (Syn.EVar "b")
-a e = e
+A pure trnasformation that rewrites all variables named "a" to "b" might be
+written concisely as the following higher order function. 
 
-t :: Expr -> RewriteM Expr
-t = descendM a
+```haskell
+transform :: Expr -> Expr
+transform = descend f
+  where
+    f (Syn.EVar "a") = (Syn.EVar "b")
+    f x = x
+```
+
+This is good for pure logic, but most often our transformations will have to
+have access to some sort of state or context during traversal and thus the
+``descedM`` will let us write the same rewrite but in a custom monadic context. 
+
+```haskell
+transform :: Expr -> RewriteM Expr
+transform = descendM f
+  where
+    f (Syn.EVar x) = do
+      env <- gets _env
+      return $ Syn.EVar (lookupVar env x)
+    f x = x
 ```
 
 These traversals admit very nice composition semantics, and AST transformations

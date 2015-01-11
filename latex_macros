@@ -1,6 +1,6 @@
 \newcommand{\andalso}{\quad\quad}
 \newcommand{\infabbrev}[2]{\infax{#1 \quad\eqdef\quad #2}}
-\newcommand{\infrule}[2]{\dfrac{#1}{#2}}
+\newcommand{\infrule}[2]{\displaystyle \dfrac{#1}{#2}}
 \newcommand{\ar}{\rightarrow}
 \newcommand{\Int}{\mathtt{Int}}
 \newcommand{\Bool}{\mathtt{Bool}}
