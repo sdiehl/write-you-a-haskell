@@ -1,11 +1,21 @@
 As always, I rely on the perpetual kindness and goodwill of Haskellers (like
 you!) to help correct grammar, clarify, and fix errors.
 
-I am also very keen to the idea of having multiple language translations, if you
-would like to translate the text into your native language please get in touch.
-
 Git Repo
 --------
+
+*Simple Fixes*
+
+For most fixes you can simply edit the Markdown files at the toplevel of the Git
+repo and then submit a pull request on Github. There should be no need to
+compile the text locally. I will try to merge the changes quickly and rebuild
+the text daily.
+
+*Complex Fixes*
+
+If you'd like to submit a change to the publishing software around the text,
+then clone the repo. You will need a local copy of Pandoc library to use the
+build system.
 
 ```bash
 $ git clone https://github.com/sdiehl/write-you-a-haskell.git
@@ -20,8 +30,8 @@ The text is written in the Markdown language and handled with the Pandoc
 processing library, which is itself written in Haskell!
 
 The tutorial uses a custom pandoc preprocessor contained in *includes.hs*.  This
-allows us to include and slice fragments of code from files in the src directory
-.
+allows us to include and slice fragments of code from files in the src
+directory.
 
 *LaTeX Macros*
 
@@ -92,6 +102,12 @@ Typography
 * Titles are in *Helvetica Neue Light*.
 * Code is typeset in *Inconsolata* or *Monaco*.
 
+LaTeX
+-----
+
+The $\latex$ styling is sourced from the ``template.latex`` file, which is an
+extension of Pandoc's default template with some custom modifications.
+
 Images
 ------
 
@@ -113,3 +129,9 @@ Reference Code
 
 The subject of this text is largely build around the mini Haskell compiler.
 Several other files are included for earlier chapters.
+
+Translations
+------------
+
+I am also very keen to the idea of having multiple language translations, if you
+would like to translate the text into your native language please get in touch.
