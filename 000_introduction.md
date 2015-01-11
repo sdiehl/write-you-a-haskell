@@ -190,7 +190,7 @@ transformations composed to transform the input program.
 * **Source**         - The frontend textual language.
 * **Parsing**        - Frontend is parsed into an abstract syntax tree.
 * **Desugar**        - Redundant structure from the frontend language is removed and canonicalized.
-* **Type Checking**  - The program is type-checked and/or type-inferred yielding an exactly typed form.
+* **Type Checking**  - The program is type-checked and/or type-inferred yielding an explicitly typed form.
 * **Transformation** - The core language is transformed to prepare for compilation.
 * **Compilation**    - The core language is lowered into a form to be compiled or interpreted.
 

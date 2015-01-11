@@ -276,7 +276,7 @@ test1 = eval [] $ EApp (ELam "y" (EInt 42)) omega
 Higher Order Abstract Syntax (HOAS)
 -----------------------------------
 
-Haskell being a rich language has a variety of extensions that, among other
+GHC Haskell being a rich language has a variety of extensions that, among other
 things, allow us to map lambda expressions in our defined language directly onto
 lambda expressions in Haskell. In this case we will use a GADT to embed a
 Haskell expression inside our expression type.
