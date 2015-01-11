@@ -499,7 +499,7 @@ example1 = (+) <$> m1 <*> m2
 ```
 
 Applicative also has functions ``*>`` and ``<*`` that sequence applicative
-actions while discarding the value of one of the arguments. The operator *>
+actions while discarding the value of one of the arguments. The operator ``*>``
 discards the left while ``<*`` discards the right. For example in a monadic
 parser combinator library the ``*>`` would parse with first parser argument but
 return the second.
