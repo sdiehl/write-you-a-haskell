@@ -177,7 +177,8 @@ Functional Compilers
 A compiler is typically divided into parts, a *frontend* and a *backend*. These
 are loose terms but the frontend typically deals with converting the human
 representation of the code into some canonicalized form while the backend
-converts the canonicalized form into a form that is suitable for evaluation.
+converts the canonicalized form into another form that is suitable for
+evaluation.
 
 The high level structure of our functional compiler is described by the
 following *block diagram*. Each describes a *phase* which is a sequence of
@@ -187,12 +188,13 @@ transformations composed to transform the input program.
 ![](img/pipeline1.png)
 </p>
 
-* **Source**         - The frontend textual language.
-* **Parsing**        - Frontend is parsed into an abstract syntax tree.
-* **Desugar**        - Redundant structure from the frontend language is removed and canonicalized.
-* **Type Checking**  - The program is type-checked and/or type-inferred yielding an explicitly typed form.
-* **Transformation** - The core language is transformed to prepare for compilation.
-* **Compilation**    - The core language is lowered into a form to be compiled or interpreted.
+* **Source**            - The frontend textual source language.
+* **Parsing**           - Source is parsed into an abstract syntax tree.
+* **Desugar**           - Redundant structure from the frontend language is removed and canonicalized.
+* **Type Checking**     - The program is type-checked and/or type-inferred yielding an explicitly typed form.
+* **Transformation**    - The core language is transformed to prepare for compilation.
+* **Compilation**       - The core language is lowered into a form to be compiled or interpreted.
+* **(Code Generation)** - Platform specific code is generated, linked into a binary.
 
 A *pass* may transform the input program from one form into another or alter the
 internal state of the compiler context. The high level description of the forms
@@ -211,12 +213,14 @@ Lexing
 The source code is simply the raw sequence of text that specifies the program.
 Lexing splits the text stream into a sequence of *tokens*. Only the presence of
 invalid symbols is enforced, otherwise meaningless programs are accepted.
+Whitespace is either ignored or represented as a unique token in the stream.
 
 ```haskell
 let f x = x + 1
 ```
 
-For instance:
+For instance the previous program might generate a token stream like the
+following:
 
 Token      Value
 -----      -----
@@ -228,13 +232,11 @@ var        x
 reservedOp +
 integer    1
 
-Whitespace is either ignored or represented as a unique token in the stream.
-
 Parsing
 -------
 
-A datatype for the *abstract syntax* tree is constructed by traversal of the
-input stream and generation of the appropriate syntactic construct using a
+A datatype for the *abstract syntax tree* (AST) is constructed by traversal of
+the input stream and generation of the appropriate syntactic construct using a
 parser.
 
 ```haskell

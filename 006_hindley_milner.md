@@ -955,13 +955,14 @@ a -> b -> c -> e
 
 Induced two cases of the **T-App** we get the following constraints.
 
-1. ``b  ~  c -> d``
-2. ``a  ~  d -> e``
+1. ``b ~ c -> d``
+2. ``a ~ d -> e``
 
-By applying **Uni-VarLeft** twice we get the following set of substitutions.
+These are already in a canonical form, but applying **Uni-VarLeft** twice we get
+the following trivial set of substitutions.
 
-1. ``a ~ d -> e``
-2. ``b ~ c -> d``
+1. ``b ~ c -> d``
+2. ``a ~ d -> e``
 
 ```haskell
 compose :: forall c d e. (d -> e) -> (c -> d) -> c -> e
