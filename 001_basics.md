@@ -599,7 +599,7 @@ Monads can be combined together to form composite monads. Each of the composite
 monads consists of *layers* of different monad functionality. For example we can
 combine a an error reporting monad with a state monad to encapsulate a certain
 set of computations that need both functionality. The use of monad transformers,
-while not always neccessary, is nevertheless often one of the primary ways to
+while not always necessary, is nevertheless often one of the primary ways to
 structure modern Haskell programs.
 
 ```haskell
@@ -821,12 +821,12 @@ Text
 
 The usual ``String`` type is a singly-linked list of characters, which although
 simple is not efficient in storage or locality since the letters of the string
-are not stored contagiously in memory, instead they're allocated across the
+are not stored contiguously in memory, instead they're allocated across the
 heap.
 
 The ``text`` and ``bytestring`` libraries provide alternative efficient
-structures for working with contagious blocks of text data. ByteString is a
-contagious ``char*`` buffer data, while text provides UTF-8 data buffer.
+structures for working with contiguous blocks of text data. ByteString is a
+contiguous ``char*`` buffer data, while text provides UTF-8 data buffer.
 
 The ``OverloadedStrings`` extension allows us to overload the string type in
 frontend language to use any one of available string representations.
