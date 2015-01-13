@@ -236,10 +236,6 @@ blockquote cite {
   display: block;
   margin-top: 5px;
 }
- 
-blockquote cite:before {
-  content: "\2014 \2009";
-}
 
 ul.sections {
     list-style: none;

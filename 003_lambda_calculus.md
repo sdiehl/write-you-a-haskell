@@ -3,11 +3,9 @@
 ******
 
 <!--
-<blockquote>
-That language is an instrument of human reason, and not merely a
-medium for the expression of thought, is a truth generally admitted.
-<cite>George Boole</cite>
-</blockquote>
+> That language is an instrument of human reason, and not merely a
+> medium for the expression of thought, is a truth generally admitted.
+> <cite>— George Boole</cite>
 -->
 
 <p class="halfbreak">

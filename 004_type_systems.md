@@ -6,7 +6,7 @@
 > absence of certain program behaviors by classifying phrases
 > according to the kinds of values they compute.
 >
-> <cite>-Benjamin Pierce</cite>
+> <cite>- Benjamin Pierce</cite>
 
 <p class="halfbreak">
 </p>

@@ -4,7 +4,7 @@
 
 > There is nothing more practical than a good theory.
 >
-> <cite>-James C. Maxwell</cite>
+> <cite>— James C. Maxwell</cite>
 
 <p class="halfbreak">
 </p>

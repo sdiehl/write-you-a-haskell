@@ -3,11 +3,8 @@
 ******
 
 <!--
-<blockquote>
-The tools we use have a profound (and devious!) influence on our thinking habits, and, therefore, on our thinking abilities.
-<cite>
-Edsger Dijkstra</cite>
-</blockquote>
+> The tools we use have a profound (and devious!) influence on our thinking habits, and, therefore, on our thinking abilities.
+> <cite>— Edsger Dijkstra</cite>
 -->
 
 <p class="halfbreak">

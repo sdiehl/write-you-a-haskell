@@ -3,14 +3,12 @@
 ******
 
 <!--
-<blockquote>
-Functional languages are unnatural to use. [...] The important question is
-whether functional programming in unnatural the way Haiku is unnatural or the
-way Karate is unnatural. Haiku is a rigid form poetry in which each poem must
-have precisely three lines and seventeen syllables. As with poetry, writing a
-purely functional program often gives one a feeling of great aesthetic pleasure.
-<cite>James H. Morris, et al</cite>
-</blockquote>
+> Functional languages are unnatural to use. [...] The important question is
+> whether functional programming in unnatural the way Haiku is unnatural or the
+> way Karate is unnatural. Haiku is a rigid form poetry in which each poem must
+> have precisely three lines and seventeen syllables. As with poetry, writing a
+> purely functional program often gives one a feeling of great aesthetic pleasure.
+> <cite>— James H. Morris, et al</cite>
 -->
 
 <p class="halfbreak">
