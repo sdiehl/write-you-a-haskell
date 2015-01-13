@@ -27,6 +27,8 @@ Read Online:
 Releases
 --------
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sdiehl/write-you-a-haskell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 **December**
 
 * [Chapter 1: Introduction](http://dev.stephendiehl.com/fun/000_introduction.html)
