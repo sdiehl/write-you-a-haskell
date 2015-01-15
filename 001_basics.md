@@ -162,7 +162,7 @@ Pattern matching allows us to discriminate on the constructor(s) of a datatype,
 mapping separate cases to separate code paths.
 
 ```haskell
-data Either a b = Left a | Right b
+data Maybe a = Nothing | Just a
 
 maybe :: b -> (a -> b) -> Maybe a -> b
 maybe n f Nothing  = n
