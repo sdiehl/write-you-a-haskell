@@ -888,7 +888,7 @@ Resources
 ---------
 
 If any of these concepts are unfamiliar, there are some external resources that
-will try to explain them. The most thorough is probably the Standard course
+will try to explain them. The most thorough is probably the Stanford course
 lecture notes.
 
 * [Stanford CS240h](http://www.scs.stanford.edu/14sp-cs240h/) by Bryan O'Sullivan, David Terei
