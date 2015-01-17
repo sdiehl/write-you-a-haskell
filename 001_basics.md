@@ -37,11 +37,12 @@ add x y =  x + y
 add (x,y) = x + y
 ```
 
-In Haskell all functions are pure, the only thing a function may do is return a value.
+In Haskell all functions are pure. The only thing a function may do is return a value.
 
-All functions in Haskell are curried, for example a function of three arguments takes up to three arguments and for
-anything less than three it yields a partially applied function which when given additional arguments yields a
-another function or the resulting value if saturated.
+All functions in Haskell are curried. For example, when a function of three
+arguments receives less than three arguments, it yields a partially applied
+function, which, when given additional arguments, yields yet another function
+or the resulting value if all the arguments were supplied.
 
 ```haskell
 g :: Int -> Int -> Int -> Int
@@ -51,7 +52,8 @@ h :: Int -> Int
 h = g 2 3
 ```
 
-Haskell supports higher-order functions, functions which take functions and yield other functions.
+Haskell supports higher-order functions, i.e., functions which take functions
+and yield other functions.
 
 ```haskell
 compose f g = \x -> f (g x)
@@ -65,7 +67,7 @@ iterate f x = x : (iterate f (f x))
 Datatypes
 ---------
 
-Constructors for datatypes come in two flavors, *sum types* and *product types*.
+Constructors for datatypes come in two flavors: *sum types* and *product types*.
 
 A sum type consists of multiple options of *type constructors* under the same
 type. The two cases can be used at all locations the type is specified, and are
@@ -81,8 +83,8 @@ A product type combines multiple typed fields into the same type.
 data Prod = Prod Int Bool
 ```
 
-Records are a special product type that in addition to generating code for the
-constructors also generates special set of functions known as *selectors* which
+Records are a special product type that, in addition to generating code for the
+constructors, generates a special set of functions known as *selectors* which
 extract the values of a specific field from the record.
 
 ```haskell
@@ -95,7 +97,7 @@ data Prod = Prod
 -- b :: Prod -> Bool
 ```
 
-Sums and products can be combined to produce combinations thereof.
+Sums and products can be combined.
 
 ```haskell
 data T1
@@ -103,7 +105,7 @@ data T1
   | B Bool Bool
 ```
 
-The fields of a datatype may be a *parameterized* in which case the type depends
+The fields of a datatype may be *parameterized*, in which case the type depends
 on the specific types the fields are instantiated with.
 
 ```haskell
@@ -113,7 +115,7 @@ data Maybe a = Nothing | Just a
 Values
 ------
 
-A list is an homogeneously inductively defined sum type of linked cells parameterized over the type of its
+A list is a homogeneous, inductively defined sum type of linked cells parameterized over the type of its
 values.
 
 ```haskell
@@ -153,7 +155,7 @@ a = Pair 1 2
 (,) = Pair
 ```
 
-Tuples are allowed (with compiler support) up to 15 fields in GHC.
+Tuples are allowed (with compiler support) to have up to 15 fields in GHC.
 
 Pattern matching
 ----------------
@@ -169,7 +171,7 @@ maybe n f Nothing  = n
 maybe n f (Just a) = f a
 ```
 
-Toplevel pattern matches can always be written identically as case statements.
+Top-level pattern matches can always be written identically as case statements.
 
 ```haskell
 maybe :: b -> (a -> b) -> Maybe a -> b
@@ -198,8 +200,8 @@ fst :: (a, b) -> a
 fst (a,b) = a
 ```
 
-Patterns may be guarded by predicates ( functions which yield a boolean ) which guard against entering the
-branch of pattern matching unless the predicate holds.
+Patterns may be guarded by predicates (functions which yield a boolean). Guards
+only allow the execution of a branch if the corresponding predicate yields True.
 
 ```haskell
 filter :: (a -> Bool) -> [a] -> [a]
@@ -214,8 +216,8 @@ Recursion
 ---------
 
 In Haskell all iteration over data structures is performed by recursion.
-Entering a function in Haskell does not create a new stack frame, the logic of
-the function is simply entered with the arguments on the stack and yields result
+Entering a function in Haskell does not create a new stack frame; the logic of
+the function is simply entered with the arguments on the stack and yields a result
 to the register. The resulting logic is compiled identically to ``while`` loops
 in other languages, via a ``jmp`` instruction instead of a ``call``.
 
@@ -237,25 +239,24 @@ odd n = even (n-1)
 Laziness
 --------
 
-A Haskell program can be thought as being equivalent to a large directed graph.
-Each edge represents a use of a value, and each node is a source of a value. A
-node can be:
+A Haskell program can be thought of as being equivalent to a large directed
+graph. Each edge represents the use of a value, and each node is the source of
+a value. A node can be:
 
-* A *thunk*, the application of a function to values that has not be evaluated
-  yet.
+* A *thunk*, i.e., the application of a function to values that have not been
+  evaluated yet
 * A thunk that is currently being evaluated, which may induce the evaluation of
-  other thunks in the process.
-* A value in *weak head normal form*, a builtin type or constructor that has
-  been evaluated. For constructors it is evaluated at least to the outermost
-  constructor.
+  other thunks in the process
+* An expression in *weak head normal form*, which is only evaluated to the
+  outermost constructor or lambda abstraction
 
 The runtime has the task of determining which thunks are to be evaluated by the
-order in which they are connected to the main function node, this is the essence
+order in which they are connected to the main function node. This is the essence
 of all evaluation in Haskell and is called *graph reduction*.
 
-For example, the following self-referential functions are allowed
-in Haskell and generate infinite lists of values which are only evaluated up
-to the depth that it is needed.
+Self-referential functions are allowed in Haskell. For example, the following
+functions generate infinite lists of values. However, they are only evaluated
+up to the depth that is necessary.
 
 ```haskell
 -- Infinite stream of 1's
@@ -268,8 +269,8 @@ numsFrom n = n : numsFrom (n+1)
 squares = map (^2) (numsfrom 0)
 ```
 
-The function take consumes the infinite stream, consuming only the values that
-are needed for the computation.
+The function ``take`` consumes an infinite stream and only evaluates the values
+that are needed for the computation.
 
 ```haskell
 take :: Int -> [a] -> [a]
@@ -283,15 +284,15 @@ take 5 squares
 -- [0,1,4,9,16]
 ```
 
-This also admits diverging terms, called *bottoms* which have no normal form.
-Under lazy evaluation these values can be threaded around and will never diverge
+This also admits diverging terms (called *bottoms*), which have no normal form.
+Under lazy evaluation, these values can be threaded around and will never diverge
 unless actually forced.
 
 ```haskell
 bot = bot
 ```
 
-So for instance the following expression does not diverge since the second
+So, for instance, the following expression does not diverge since the second
 argument is not used in the body of ``const``.
 
 ```haskell
@@ -299,24 +300,24 @@ const 42 bot
 ```
 
 The two bottom terms we will use frequently are used to write the scaffolding
-for incomplete program.
+for incomplete programs.
 
 ```haskell
 error :: String -> a
 undefined :: a
 ```
 
-Higher Kinded Types
+Higher-Kinded Types
 -------------------
 
-The "type of types" in Haskell is the language of kinds. Kinds are either a
+The "type of types" in Haskell is the language of kinds. Kinds are either an
 arrow (``* -> *``) or a star (``*``).
 
 
-The kind of an Int is ``*`` while the kind of ``Maybe``  is ``* -> *``. Haskell
-supports higher kinded types which are types which themselves take types to
-other types. A type constructor in Haskell always has a kind which terminates in
-a ``*``.
+The kind of an Int is ``*``, while the kind of ``Maybe`` is ``* -> *``. Haskell
+supports higher-kinded types, which are types that take other types and
+construct a new type. A type constructor in Haskell always has a kind which
+terminates in a ``*``.
 
 ```haskell
 -- T1 :: (* -> *) -> * -> *
@@ -335,20 +336,19 @@ syntactic sugar:
 Typeclasses
 -----------
 
-A typeclass is a collection of functions which conform to a given interface.  An implementation of the
+A typeclass is a collection of functions which conform to a given interface.  An implementation of an
 interface is called an instance. Typeclasses are effectively syntactic sugar for records of functions and
-nested records ( called *dictionaries* ) of functions parameterized over the instance type.  These
+nested records (called *dictionaries*) of functions parameterized over the instance type.  These
 dictionaries are implicitly threaded throughout the program whenever an overloaded identifier is used. When a
-typeclass is used over a concrete type the implementation is simply spliced in at the call site. When a
-typeclass is used over an polymorphic type an implicit dictionary parameter is added to the function so that
+typeclass is used over a concrete type, the implementation is simply spliced in at the call site. When a
+typeclass is used over a polymorphic type, an implicit dictionary parameter is added to the function so that
 the implementation of the necessary functionality is passed with the polymorphic value.
 
-Typeclass are "open" and additional instances can always be added, but the defining feature of a typeclass is
-that the instance search always converges to a single type to make the process of resolving overloaded identifiers
-globally unambiguous.
+Typeclasses are "open" and additional instances can always be added, but the defining feature of a typeclass is
+that the instance search always converges to a single type to make the process of resolving overloaded identifiers globally unambiguous.
 
-For instance the Functor typeclass allows us to "map" a function generically over any type of kind (``* ->
-*``) applying it on its internal structure.
+For instance, the Functor typeclass allows us to "map" a function generically
+over any type of kind (``* -> *``) and apply it to its internal structure.
 
 ```haskell
 class Functor f where
@@ -365,7 +365,7 @@ instance Functor ((,) a) where
 Operators
 ---------
 
-In Haskell infix operators are simply functions, and quite often they are used in
+In Haskell, infix operators are simply functions, and quite often they are used in
 place of alphanumerical names when the functions involved combine in common ways
 and are subject to algebraic laws.
 
@@ -397,7 +397,7 @@ backticks.
 Monads
 ------
 
-A monad is a typeclass with two functions ``bind`` and ``return``.
+A monad is a typeclass with two functions: ``bind`` and ``return``.
 
 ```haskell
 class Monad m where
@@ -437,7 +437,7 @@ m >>= return ≡ m
 ```
 
 Haskell has a level of syntactic sugar for monads known as do-notation. In this
-form binds are written sequentially in block form which extract the variable
+form, binds are written sequentially in block form which extract the variable
 from the binder.
 
 ```haskell
@@ -446,7 +446,7 @@ do { f ; m } ≡ f >> do { m }
 do { m } ≡ m
 ```
 
-So for example the following are equivalent.
+So, for example, the following are equivalent:
 
 ```haskell
 do
@@ -466,9 +466,9 @@ f >>= \a ->
 Applicatives
 -------------
 
-Applicatives allow sequencing parts of some contextual computation, but not
-binding variables therein. Applicatives are strictly less expressive than
-monads.
+Applicatives allow sequencing parts of some contextual computation, but do not
+bind variables therein. Strictly speaking, applicatives are less expressive
+than monads.
 
 ```haskell
 class Functor f => Applicative f where
@@ -479,13 +479,13 @@ class Functor f => Applicative f where
 (<$>) = fmap
 ```
 
-Together with several laws this defines applicatives.
+Applicatives satisfy the following laws:
 
 ```haskell
-pure id <*> v = v
-pure f <*> pure x = pure (f x)
-u <*> pure y = pure ($ y) <*> u
-u <*> (v <*> w) = pure (.) <*> u <*> v <*> w
+pure id <*> v = v                             -- Identity
+pure f <*> pure x = pure (f x)                -- Homomorphism
+u <*> pure y = pure ($ y) <*> u               -- Interchange
+u <*> (v <*> w) = pure (.) <*> u <*> v <*> w  -- Composition
 ```
 
 For example:
@@ -498,11 +498,12 @@ example1 = (+) <$> m1 <*> m2
     m2 = Nothing
 ```
 
-Applicative also has functions ``*>`` and ``<*`` that sequence applicative
-actions while discarding the value of one of the arguments. The operator ``*>``
-discards the left while ``<*`` discards the right. For example in a monadic
-parser combinator library the ``*>`` would parse with first parser argument but
-return the second.
+Instances of the ``Applicative`` typeclass also have available the functions
+``*>`` and ``<*``. These functions sequence applicative actions while
+discarding the value of one of the arguments. The operator ``*>`` discards the
+left argument, while ``<*`` discards the right. For example, in a monadic
+parser combinator library, the ``*>`` would discard the value of the first
+argument but return the value of the second.
 
 Deriving
 --------
@@ -530,29 +531,29 @@ example = sort [Cube, Dodecahedron]
 IO
 --
 
-A value of type IO a is a computation which, when performed, does some I/O
+A value of type ``IO a`` is a computation which, when performed, does some I/O
 before returning a value of type ``a``. The notable feature of Haskell is that
-IO is still pure, a value of type ``IO a`` is simply a value which stands for a computation
-which when performed would perform IO and there is no way to peek into its
-contents without running it.
+IO is still functionally pure; a value of type ``IO a`` is simply a value which
+stands for a computation which, when invoked, will perform IO. There is no way
+to peek into its contents without running it.
 
-For instance the following function does not print the numbers 1 to 5 to the screen, it instead builds a list
-of IO computations.
+For instance, the following function does not print the numbers 1 to 5 to the
+screen. Instead, it builds a list of IO computations:
 
 ```haskell
 fmap print [1..5] :: [IO ()]
 ```
 
-Which we can manipulate just as an ordinary list of values, for instance.
+We can then manipulate them as an ordinary list of values:
 
 ```haskell
 reverse (fmap print [1..5]) :: [IO ()]
 ```
 
-Using ``sequence_`` we can then build a composite computation of each of the IO
-actions in the list sequenced in time the same order as the list, the resulting
-``IO`` computation can be evaluated in ``main`` or the GHCi repl which
-effectively is embedded inside of ``IO``.
+We can then build a composite computation of each of the IO actions in the list
+using ``sequence_``, which will evaluate the actions from left to right. The
+resulting ``IO`` computation can be evaluated in ``main`` (or the GHCi repl,
+which effectively is embedded inside of ``IO``).
 
 ```haskell
 >> sequence_ (fmap print [1..5]) :: IO ()
@@ -570,7 +571,7 @@ effectively is embedded inside of ``IO``.
 1
 ```
 
-The IO monad is a special monad wired into the runtime, it is a degenerate case
+The IO monad is a special monad wired into the runtime. It is a degenerate case
 and most monads in Haskell have nothing to do with effects in this sense.
 
 ```haskell
@@ -590,16 +591,16 @@ main = do
 
 The essence of monadic IO in Haskell is that *effects are reified as first class
 values in the language and reflected in the type system*. This is one of
-foundational ideas of Haskell, although not unique to Haskell.
+foundational ideas of Haskell, although it is not unique to Haskell.
 
 Monad Transformers
 ------------------
 
 Monads can be combined together to form composite monads. Each of the composite
-monads consists of *layers* of different monad functionality. For example we can
-combine a an error reporting monad with a state monad to encapsulate a certain
-set of computations that need both functionality. The use of monad transformers,
-while not always necessary, is nevertheless often one of the primary ways to
+monads consists of *layers* of different monad functionality. For example, we
+can combine an error-reporting monad with a state monad to encapsulate
+a certain set of computations that need both functionalities. The use of monad
+transformers, while not always necessary, is often one of the primary ways to
 structure modern Haskell programs.
 
 ```haskell
@@ -610,10 +611,10 @@ class MonadTrans t where
 The implementation of monad transformers is comprised of two different
 complementary libraries, ``transformers`` and ``mtl``. The ``transformers``
 library provides the monad transformer layers and ``mtl`` extends this
-functionality to allow implicitly lifting between several layers.
+functionality to allow implicit lifting between several layers.
 
-Using transformers we simply import the *Trans* variants of each of the layers
-we want to compose and then wrap them in a newtype.
+To use transformers, we simply import the *Trans* variants of each of the
+layers we want to compose and then wrap them in a newtype.
 
 ```haskell
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
@@ -642,11 +643,11 @@ As illustrated by the following stack diagram:
 ![](img/stack.png)
 </p>
 
-Using mtl and ``GeneralizedNewtypeDeriving`` we can produce the same stack but with
-a simpler forward facing interface to the transformer stack. Under the hood mtl
-is using an extension called ``FunctionalDependencies`` to automatically infer
-which layer of a transformer stack a function belongs to and can automatically
-lift into it.
+Using ``mtl`` and ``GeneralizedNewtypeDeriving``, we can produce the same stack
+but with a simpler forward-facing interface to the transformer stack. Under the
+hood, ``mtl`` is using an extension called ``FunctionalDependencies`` to
+automatically infer which layer of a transformer stack a function belongs to
+and can then lift into it.
 
 ```haskell
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
@@ -681,7 +682,8 @@ gets   :: (s -> a) -> State s a    -- apply a function over the state, and retur
 modify :: (s -> s) -> State s ()   -- set the state, using a modifier function
 ```
 
-Evaluation functions often follow a naming convention with ( run, eval, exec ):
+Evaluation functions often follow the naming convention of using the prefixes
+``run``, ``eval``, and ``exec``:
 
 ```haskell
 execState :: State s a -> s -> s         -- yield the state
@@ -748,7 +750,7 @@ context. The primary function ``tell`` adds a value to the writer context.
 tell :: (Monoid w) => w -> Writer w ()
 ```
 
-The monad is either devalued with the collected values or without.
+The monad can be devalued with or without the collected values.
 
 ```haskell
 execWriter :: (Monoid w) => Writer w a -> w
@@ -780,6 +782,7 @@ type.
 throwError :: e -> Except e a
 runExcept  :: Except e a -> Either e a
 ```
+
 For example:
 
 ```haskell
@@ -819,17 +822,18 @@ f >=> return      =   f
 Text
 ----
 
-The usual ``String`` type is a singly-linked list of characters, which although
-simple is not efficient in storage or locality since the letters of the string
-are not stored contiguously in memory, instead they're allocated across the
-heap.
+The usual ``String`` type is a singly-linked list of characters, which,
+although simple, is not efficient in storage or locality. The letters of the
+string are not stored contiguously in memory and are instead allocated across
+the heap.
 
-The ``text`` and ``bytestring`` libraries provide alternative efficient
-structures for working with contiguous blocks of text data. ByteString is a
-contiguous ``char*`` buffer data, while text provides UTF-8 data buffer.
+The ``Text`` and ``ByteString`` libraries provide alternative efficient
+structures for working with contiguous blocks of text data. ``ByteString`` is
+useful when working with the ASCII character set, while ``Text`` provides a
+text type for use with Unicode.
 
 The ``OverloadedStrings`` extension allows us to overload the string type in
-frontend language to use any one of available string representations.
+the frontend language to use any one of the available string representations.
 
 ```haskell
 class IsString a where
@@ -839,7 +843,7 @@ pack :: String -> Text
 unpack :: Text -> String
 ```
 
-So for example:
+So, for example:
 
 ```haskell
 {-# LANGUAGE OverloadedStrings #-}
@@ -852,22 +856,22 @@ str = "bar"
 Cabal
 -----
 
-To set up an existing project with a sandbox invoke:
+To set up an existing project with a sandbox, run:
 
 ```bash
 $ cabal sandbox init
 ```
 
-This will create the ``.cabal-sandbox`` directory which is the local path GHC
-will use when building the project to look for dependencies.
+This will create the ``.cabal-sandbox`` directory, which is the local path GHC
+will use to look for dependencies when building the project.
 
-To install the dependencies from Hackage invoke:
+To install dependencies from Hackage, run:
 
 ```bash
 $ cabal install --only-dependencies
 ```
 
-Finally configure the library for building:
+Finally, configure the library for building:
 
 ```bash
 $ cabal configure
@@ -884,15 +888,15 @@ Resources
 ---------
 
 If any of these concepts are unfamiliar, there are some external resources that
-will try to explain them. Probably the most thorough is the Standard course
+will try to explain them. The most thorough is probably the Stanford course
 lecture notes.
 
 * [Stanford CS240h](http://www.scs.stanford.edu/14sp-cs240h/) by Bryan O'Sullivan, David Terei
 * [Real World Haskell](http://www.amazon.com/Real-World-Haskell-Bryan-OSullivan/dp/05965149800) by Bryan O'Sullivan, Don Stewart, and John Goerzen
 
-There are some books as well, your mileage may vary with these. Much of the
-material they cover is dated or sometimes typically only covers basic functional
-programming and not "programming in the large".
+There are some books as well, but your mileage may vary with these. Much of the
+material is dated and only covers basic functional programming and not
+"programming in the large".
 
 * [Learn you a Haskell](http://learnyouahaskell.com/) by Miran Lipovača
 * [Programming in Haskell](http://www.amazon.com/gp/product/0521692695) by Graham Hutton
