@@ -9,6 +9,8 @@ data Type
   | TArr Type Type
   deriving (Show, Eq, Ord)
 
+infixr `TArr`
+
 data Scheme = Forall [TVar] Type
   deriving (Show, Eq, Ord)
 

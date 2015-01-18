@@ -34,7 +34,7 @@ data IState = IState
   }
 
 initState :: IState
-initState = IState emptyTyenv emptyTmenv
+initState = IState initTyenv emptyTmenv
 
 type Repl a = HaskelineT (StateT IState IO) a
 
@@ -96,7 +96,7 @@ cmd source = exec True (L.pack source)
 browse :: [String] -> Repl ()
 browse _ = do
   st <- get
-  liftIO $ mapM_ putStrLn $ ppenv (tyctx st)
+  liftIO $ mapM_ putStrLn $ filter (not . ('#' `elem`)) $ ppenv (tyctx st)
 
 -- :load command
 load :: [String] -> Repl ()
