@@ -3,7 +3,6 @@ module Pretty (
 ) where
 
 import Syntax
-import Type
 
 import Text.PrettyPrint (Doc, (<>), (<+>))
 import qualified Text.PrettyPrint as PP
