@@ -84,6 +84,8 @@ let rec fib n =
   then 1
   else ((fib (n-1)) + (fib (n-2)));
 
+let fixf = (\x -> fix (x 0));
+
 -- Functions
 let const x y = x;
 let compose f g = \x -> f (g x);

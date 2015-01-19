@@ -34,7 +34,7 @@ data IState = IState
   }
 
 initState :: IState
-initState = IState initTyenv emptyTmenv
+initState = IState emptyTyenv emptyTmenv
 
 type Repl a = HaskelineT (StateT IState IO) a
 
