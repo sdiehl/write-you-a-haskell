@@ -44,7 +44,7 @@ Releases
 
 **February**
 
-* Chapter 9: Extended Parser
+* [Chapter 9: Extended Parser](http://dev.stephendiehl.com/fun/008_extended_parser.html)
 * Chapter 10: Custom Datatypes
 * Chapter 11: Renamer
 * Chapter 12: Pattern Matching & Desugaring
