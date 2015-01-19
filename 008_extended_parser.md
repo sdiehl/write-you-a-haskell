@@ -458,7 +458,7 @@ bind a t
 
 So now we can explicitly trace the provenance of the specific constraints that
 gave rise to a given type error all the way back to the source that generated
-them. Before we'd have a little riddle in order to guess which 
+them.
 
 ```haskell
 Cannot unify types: 
@@ -473,6 +473,11 @@ with
 
           let f x y = x y
 ```
+
+This is of course the simplest implementation of the this tracking method and
+could be further extended by giving an weighted ordering to the constraints
+based on their likelihood of importance and proximity and then choosing which
+location to report based on this information. This remains an open area of work.
 
 Indentation
 -----------
@@ -604,14 +609,17 @@ are several ways to do this and both depend on two properties of the operators.
 * Precedence
 * Associativity
 
-The first is the way that GHC does is to parse all operators as left associative
+1. The first is the way that GHC does is to parse all operators as left associative
 and of the same precedence, and then before desugaring go back and "fix" the
 parse tree given all the information we collected after finishing parsing.
 
-The second method is a bit of a hack, and involves simply storing the collected
+2. The second method is a bit of a hack, and involves simply storing the collected
 operators inside of the Parsec state monad and then simply calling
 ``buildExpressionParser`` on the current state each time we want to parse and
 infix operator expression.
+
+To do later method we set up the AST objects for our fixity definitions, which
+associate precedence and associativity annotations with a custom symbol.
 
 ```haskell
 data FixitySpec = FixitySpec
@@ -632,23 +640,8 @@ data Fixity
   deriving (Eq,Ord,Show)
 ```
 
-In our parser:
-
-```haskell
-fixityPrec :: FixitySpec -> Int
-fixityPrec (FixitySpec (Infix _ n) _) = n
-fixityPrec (FixitySpec _ _) = 0
-
-mkTable ops =
-  map (map toParser) $
-    groupBy ((==) `on` fixityPrec) $
-      reverse $ sortBy (compare `on` fixityPrec) $ ops
-
-toParser (FixitySpec ass tok) = case ass of
-    Infix L _ -> infixOp tok (op (Name tok)) Ex.AssocLeft
-    Infix R _ -> infixOp tok (op (Name tok)) Ex.AssocRight
-    Infix N _ -> infixOp tok (op (Name tok)) Ex.AssocNone
-```
+Our parser state monad will hold a list of the at Ivie fixity specifications and
+whenever a definition is uncounted we will append to this list.
 
 ```haskell
 data ParseState = ParseState
@@ -659,6 +652,15 @@ data ParseState = ParseState
 initParseState :: ParseState
 initParseState = ParseState 0 defaultOps
 
+addOperator ::  FixitySpec -> Parsec s ParseState ()
+addOperator fixdecl = do
+  modifyState $ \st -> st { fixities = fixdecl : (fixities st) }
+```
+
+The initial state will consist of the default arithmetic and list operators
+defined with the same specification as the Haskell specification.
+
+```
 defaultOps :: [FixitySpec]
 defaultOps = [
     FixitySpec (Infix L 4) ">"
@@ -674,14 +676,32 @@ defaultOps = [
   , FixitySpec (Infix L 5) "*"
   , FixitySpec (Infix L 5) "/"
   ]
+```
 
-addOperator ::  FixitySpec -> Parsec s ParseState ()
-addOperator fixdecl = do
-  modifyState $ \st -> st { fixities = fixdecl : (fixities st) }
+Now In our parser we need to be able to transform the fixity specifications into
+Parsec operator definitions. This is a pretty straightforward sort and group
+operation on the list.
+
+```haskell
+fixityPrec :: FixitySpec -> Int
+fixityPrec (FixitySpec (Infix _ n) _) = n
+fixityPrec (FixitySpec _ _) = 0
+
+toParser (FixitySpec ass tok) = case ass of
+    Infix L _ -> infixOp tok (op (Name tok)) Ex.AssocLeft
+    Infix R _ -> infixOp tok (op (Name tok)) Ex.AssocRight
+    Infix N _ -> infixOp tok (op (Name tok)) Ex.AssocNone
+
+mkTable ops =
+  map (map toParser) $
+    groupBy ((==) `on` fixityPrec) $
+      reverse $ sortBy (compare `on` fixityPrec) $ ops
 ```
 
 Now when parsing a infix operator declarations we simply do a state operation
-and add add the operator.
+and add the operator to the parser state so that all subsequent definitions.
+This differs from Haskell slightly in that operators must be defined before
+their usage in a module.
 
 ```haskell
 fixityspec :: Parser FixitySpec
@@ -713,10 +733,25 @@ fixitydecl = do
  <?> "operator fixity definition"
 ```
 
+And now when we need to parser a infix expression term we simply pull our state
+out and build the custom operator table, and feed this the build Expression
+Parser just as before.
+
+```haskell
+term :: Parser Expr -> Parser Expr
+term a = do
+  st <- getState
+  let customOps = mkTable (fixities st)
+  Ex.buildExpressionParser customOps a
+```
+
 Full Source
 -----------
 
 * [Happy Parser](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter9/happy)
+* [Imperative Language (Happy)](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter9/assign)
+* [Layout Combinators](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter9/layout)
+* [Type Provenance Tracking](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter9/provenance)
 
 Resources
 ---------
