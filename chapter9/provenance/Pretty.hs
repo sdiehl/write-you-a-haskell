@@ -60,8 +60,15 @@ instance Show TypeError where
     , "\n\tIntroduced at: "
     , (pploc lb)
     ]
-  show (InfiniteType (TV a) b) =
-    concat ["Cannot construct the the infinite type: ", a, " = ", pptype b]
+  show (InfiniteType (TV a) la b) =
+    concat [
+      "Cannot construct the the infinite type: "
+      , a
+      , " = "
+      , pptype b
+      , "\n\tIntroduced at: "
+      , (pploc la)
+    ]
   show (Ambigious cs) =
     concat ["Cannot not match expected type: '" ++ pptype a ++ "' with actual type: '" ++ pptype b ++ "'\n" | (a,b) <- cs]
   show (UnboundVariable a) = "Not in scope: " ++ a

@@ -283,8 +283,8 @@ Atom : '(' Expr ')'                { $2 }
      | false                       { Lit (LBool True) }
 ```
 
-Error Reporting
----------------
+Syntax Errors
+-------------
 
 Parsec's default error reporting leaves a bit to be desired, but does in fact
 contain most of the information needed to deliver better messages packed inside
@@ -319,13 +319,37 @@ unexpected end of input
 expecting "(", character, literal string, "[", integer, "if" or identifier
 ```
 
+Type Error Provenance
+---------------------
 
-Type Provenance 
----------------
+Before our type inference engine would generate somewhat typical type inference
+error messages. If two terms couldn't be unified it simply told us this and some
+information about the toplevel declaration where it occurred. Leaving us with a
+bit of a riddle about this error came to be.
 
-We will use a technique of track the "flow" of type information through out
-typechecker and associate position information associated with the inferred
-types back to their position information in the source.
+```haskell
+Cannot unify types: 
+	Int
+with 
+        Bool
+in the definition of 'foo'
+```
+
+Effective error reporting in the presence of type inference is a difficult task,
+effectively our typechecker takes our frontend AST and transforms it into a
+large constraint problem but effectively destroys position information
+information in the process. Even if the position information were tracked, the
+nature of unification is that a cascade of several unifications can give rise to
+invalid solution and the immediate two syntactic constructs that gave rise to a
+unification fail are not necessarily the two that map back to human intuition
+about how the type error arose. Very little research has done on this topic and
+it remains a open topic with very immediate and applicable results to
+programming. 
+
+To do simple provenance tracking we will use a technique of track the "flow" of
+type information through out typechecker and associate position information
+associated with the inferred types back to their position information in the
+source.
 
 ```haskell
 type Name = String
@@ -341,7 +365,7 @@ data Loc = NoLoc | Located Int
 ```
 
 So now inside of our parser we simply attach Parsec information on to each AST
-node.
+node. For example for the variable term.
 
 ```haskell
 variable :: Parser Expr
@@ -351,7 +375,24 @@ variable = do
   return (Var (Located l) x)
 ```
 
+Our type system will also include information, although by default it will use
+the ``NoLoc`` type until explicit information is provided during inference. The
+two functions ``getLoc`` and ``setLoc`` will be used to update and query the
+position information from type terms.
+
 ```haskell
+data Type
+  = TVar Loc TVar
+  | TCon Loc Name
+  | TArr Loc Type Type
+  deriving (Show, Eq, Ord)
+
+newtype TVar = TV String
+  deriving (Show, Eq, Ord)
+
+typeInt :: Type
+typeInt = TCon NoLoc "Int"
+
 setLoc :: Loc -> Type -> Type
 setLoc l (TVar _ a)   = TVar l a
 setLoc l (TCon _ a)   = TCon l a
@@ -363,31 +404,61 @@ getLoc (TCon l _) = l
 getLoc (TArr l _ _) = l
 ```
 
+Our fresh variable supply now also takes a location field which is attached to
+resulting type variable.
+
 ```haskell
-check :: Expr -> Check Type
-check expr = case expr of
+fresh :: Loc -> Check Type
+fresh l = do
+  s <- get
+  put s{count = count s + 1}
+  return $ TVar l (TV (letters !! count s))
+```
+
+```haskell
+infer :: Expr -> Check Type
+infer expr = case expr of
   Var l n -> do
     t <- lookupVar n
     return $ setLoc l t
 
   App l a b -> do
-    ta <- check a
-    tb <- check b
+    ta <- infer a
+    tb <- infer b
     tr <- fresh l
     unify ta (TArr l tb tr)
     return tr
 
   Lam l n a -> do
     tv <- fresh l
-    ty <- inEnv (n, tv) (check a)
-    return (TArr l ty (setLoc l tv))
+    ty <- inEnv (n, tv) (infer a)
+    return (TArr l (setLoc l ty) tv)
 
-  Lit l _ -> return $ TCon l "Int"
+  Lit l _ -> return (setLoc l typeInt)
+```
+
+Now specifically at the call site of our unification solver, if we encounter a
+unification fail we simply pluck the location information off the two type terms
+and plug it into the type error fields.
+
+```haskell
+unifies t1 t2 | t1 == t2 = return emptyUnifer
+unifies (TVar _ v) t = v `bind` t
+unifies t (TVar _ v) = v `bind` t
+unifies (TArr _ t1 t2) (TArr _ t3 t4) = unifyMany [t1, t2] [t3, t4]
+unifies (TCon _ a) (TCon _ b) | a == b = return emptyUnifer
+unifies t1 t2 = throwError $ UnificationFail t1 (getLoc t1) t2 (getLoc t2)
+
+bind ::  TVar -> Type -> Solve Unifier
+bind a t
+  | eqLoc t a        = return (emptySubst, [])
+  | occursCheck a t  = throwError $ InfiniteType a (getLoc t) t
+  | otherwise        = return $ (Subst $ Map.singleton a t, [])
 ```
 
 So now we can explicitly trace the provenance of the specific constraints that
 gave rise to a given type error all the way back to the source that generated
-them whereas before we'd have a little riddle in order to guess which 
+them. Before we'd have a little riddle in order to guess which 
 
 ```haskell
 Cannot unify types: 
@@ -663,5 +734,10 @@ parser is rather sophisicated.
 
 * [Lexer.x](https://github.com/ghc/ghc/blob/master/compiler/parser/Lexer.x)
 * [Parser.y](https://github.com/ghc/ghc/blob/master/compiler/parser/Parser.y)
+
+One of the few papers ever written in Type Error reporting gives some techniques
+for presentation and tracing provenance:
+
+* [Top Quality Type Error Messages](www.staff.science.uu.nl/~swier101/Papers/Theses/TopQuality.pdf)
 
 \clearpage

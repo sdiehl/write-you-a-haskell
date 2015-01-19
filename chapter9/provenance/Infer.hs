@@ -1,5 +1,5 @@
-{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
@@ -19,16 +19,6 @@ import qualified Data.Set as Set
 
 import Syntax
 import Type
-
-setLoc :: Loc -> Type -> Type
-setLoc l (TVar _ a)   = TVar l a
-setLoc l (TCon _ a)   = TCon l a
-setLoc l (TArr _ a b) = TArr l a b
-
-getLoc :: Type -> Loc
-getLoc (TVar l _) = l
-getLoc (TCon l _) = l
-getLoc (TArr l _ _) = l
 
 -------------------------------------------------------------------------------
 -- Substitution
@@ -50,7 +40,7 @@ class Substitutable a where
 
 instance Substitutable Type where
   apply _ (TCon l a)       = TCon l a
-  apply (Subst s) t@(TVar l a) = Map.findWithDefault t a s
+  apply (Subst s) t@(TVar _ a) = Map.findWithDefault t a s
   apply s (TArr l t1 t2) = TArr l (apply s t1) (apply s t2)
 
   ftv TCon{}         = Set.empty
@@ -67,7 +57,7 @@ instance Substitutable a => Substitutable [a] where
 
 data TypeError
   = UnificationFail Type Loc Type Loc
-  | InfiniteType TVar Type
+  | InfiniteType TVar Loc Type
   | UnboundVariable String
   | Ambigious [Constraint]
   | UnificationMismatch [Type] [Type]
@@ -106,38 +96,25 @@ type Check =
     (StateT InferState
       (ExceptT TypeError (Reader Env)))
 
-check :: Expr -> Check Type
-check expr = case expr of
+infer :: Expr -> Check Type
+infer expr = case expr of
   Var l n -> do
     t <- lookupVar n
     return $ setLoc l t
 
   App l a b -> do
-    ta <- check a
-    tb <- check b
+    ta <- infer a
+    tb <- infer b
     tr <- fresh l
     unify ta (TArr l tb tr)
     return tr
 
   Lam l n a -> do
     tv <- fresh l
-    ty <- inEnv (n, tv) (check a)
-    return (TArr l ty (setLoc l tv))
+    ty <- inEnv (n, tv) (infer a)
+    return (TArr l (setLoc l ty) tv)
 
-  Lit l _ -> return $ TCon l "Int"
-
-runCheck :: Env -> Check a -> Either TypeError (a, [Constraint])
-runCheck env =
-    flip runReader env
-  . runExceptT
-  . flip evalStateT (InferState 0)
-  . runWriterT
-
-inferTop :: Env -> Expr -> Either TypeError Type
-inferTop env x = do
-  (ty, cs) <- runCheck env (check x)
-  s <- runSolve cs
-  return (apply s ty)
+  Lit l _ -> return (setLoc l typeInt)
 
 -------------------------------------------------------------------------------
 -- Constraint Solving
@@ -175,7 +152,7 @@ compose :: Subst -> Subst -> Subst
 bind ::  TVar -> Type -> Solve Unifier
 bind a t
   | eqLoc t a        = return (emptySubst, [])
-  | occursCheck a t  = throwError $ InfiniteType a t
+  | occursCheck a t  = throwError $ InfiniteType a (getLoc t) t
   | otherwise        = return $ (Subst $ Map.singleton a t, [])
 
 -- | Type variables equal up to location
@@ -205,3 +182,20 @@ unifyMany t1 t2 = throwError $ UnificationMismatch t1 t2
 -- | Unify two types
 unify :: Type -> Type -> Check ()
 unify t1 t2 = tell [(t1, t2)]
+
+-------------------------------------------------------------------------------
+-- Toplevel
+-------------------------------------------------------------------------------
+
+runCheck :: Env -> Check a -> Either TypeError (a, [Constraint])
+runCheck env =
+    flip runReader env
+  . runExceptT
+  . flip evalStateT (InferState 0)
+  . runWriterT
+
+inferTop :: Env -> Expr -> Either TypeError Type
+inferTop env x = do
+  (ty, cs) <- runCheck env (infer x)
+  s <- runSolve cs
+  return (apply s ty)
