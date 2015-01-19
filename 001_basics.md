@@ -812,9 +812,9 @@ example = runExcept $ do
 
 **Kleisli Arrows**
 
-An additional combinator for monads composes two different monadic actions in
-sequence. It is the monadic equivalent of the regular function composition
-operator ``(.)``.
+The additional combinators for monads (``(>=>)``, ``(<=<)``) compose two different monadic actions in
+sequence. ``(<=<)`` is the monadic equivalent of the regular function composition
+operator ``(.)`` and ``(>=>)`` is just ``flip (<=<)``.
 
 ```haskell
 (>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c
