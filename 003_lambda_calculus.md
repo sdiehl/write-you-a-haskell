@@ -2,6 +2,9 @@
 ![](img/titles/lambda_calculus.png)
 </div>
 
+<p class="halfbreak">
+</p>
+
 > *That language is an instrument of human reason, and not merely a medium for
 > the expression of thought, is a truth generally admitted.*
 > 
@@ -18,7 +21,9 @@ composition, function abstraction of a single variable.  The **lambda calculus**
 consists very simply of three terms and all valid recursive combinations
 thereof:
 
+<div class="small">
 ![](img/lambda.png)
+</div>
 
 The terms are named are typically referred to in code by the following
 contractions.
