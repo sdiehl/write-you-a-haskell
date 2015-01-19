@@ -283,6 +283,42 @@ Atom : '(' Expr ')'                { $2 }
      | false                       { Lit (LBool True) }
 ```
 
+Error Reporting
+---------------
+
+Parsec's default error reporting leaves a bit to be desired, but does in fact
+contain most of the information needed to deliver better messages packed inside
+the ParseError structure.
+
+```haskell
+showSyntaxError :: L.Text -> ParseError -> String
+showSyntaxError s err = L.unpack $ L.unlines [
+      "  ",
+      "  " <> lineContents,
+      "  " <> ((L.replicate col " ") <> "^"),
+      (L.pack $ show err)
+    ]
+  where
+    lineContents = (L.lines s) !! line
+    pos  = errorPos err
+    line = sourceLine pos - 1
+    col  = fromIntegral $ sourceColumn pos - 1
+```
+
+Now when we enter an invalid expression the error reporting will point us
+directly to the adjacent lexeme that caused the problem as is common in many
+languages.
+
+```bash
+λ> \x -> x + 
+  
+  \x -> x + 
+            ^
+"<interactive>" (line 1, column 11):
+unexpected end of input
+expecting "(", character, literal string, "[", integer, "if" or identifier
+```
+
 
 Type Provenance 
 ---------------
@@ -290,6 +326,82 @@ Type Provenance
 We will use a technique of track the "flow" of type information through out
 typechecker and associate position information associated with the inferred
 types back to their position information in the source.
+
+```haskell
+type Name = String
+
+data Expr
+  = Var Loc Name
+  | App Loc Expr Expr
+  | Lam Loc Name Expr
+  | Lit Loc Int
+
+data Loc = NoLoc | Located Int
+  deriving (Show, Eq, Ord)
+```
+
+So now inside of our parser we simply attach Parsec information on to each AST
+node.
+
+```haskell
+variable :: Parser Expr
+variable = do
+  x <- identifier
+  l <- sourceLine <$> getPosition
+  return (Var (Located l) x)
+```
+
+```haskell
+setLoc :: Loc -> Type -> Type
+setLoc l (TVar _ a)   = TVar l a
+setLoc l (TCon _ a)   = TCon l a
+setLoc l (TArr _ a b) = TArr l a b
+
+getLoc :: Type -> Loc
+getLoc (TVar l _) = l
+getLoc (TCon l _) = l
+getLoc (TArr l _ _) = l
+```
+
+```haskell
+check :: Expr -> Check Type
+check expr = case expr of
+  Var l n -> do
+    t <- lookupVar n
+    return $ setLoc l t
+
+  App l a b -> do
+    ta <- check a
+    tb <- check b
+    tr <- fresh l
+    unify ta (TArr l tb tr)
+    return tr
+
+  Lam l n a -> do
+    tv <- fresh l
+    ty <- inEnv (n, tv) (check a)
+    return (TArr l ty (setLoc l tv))
+
+  Lit l _ -> return $ TCon l "Int"
+```
+
+So now we can explicitly trace the provenance of the specific constraints that
+gave rise to a given type error all the way back to the source that generated
+them whereas before we'd have a little riddle in order to guess which 
+
+```haskell
+Cannot unify types: 
+	Int
+	Introduced at line 27 column 5
+
+          f 2 3
+
+with 
+	Int -> c
+	Introduced at line 5 column 9
+
+          let f x y = x y
+```
 
 Indentation
 -----------
@@ -409,42 +521,6 @@ maybeBraces p = braces (endBy p semi) <|> block p
 
 maybeBraces1 :: Parser a -> Parser [a]
 maybeBraces1 p = braces (endBy1 p semi) <|> block p
-```
-
-Error Reporting
----------------
-
-Parsec's default error reporting leaves a bit to be desired, but does in fact
-contain most of the information needed to deliver better messages packed inside
-the ParseError structure.
-
-```haskell
-showSyntaxError :: L.Text -> ParseError -> String
-showSyntaxError s err = L.unpack $ L.unlines [
-      "  ",
-      "  " <> lineContents,
-      "  " <> ((L.replicate col " ") <> "^"),
-      (L.pack $ show err)
-    ]
-  where
-    lineContents = (L.lines s) !! line
-    pos  = errorPos err
-    line = sourceLine pos - 1
-    col  = fromIntegral $ sourceColumn pos - 1
-```
-
-Now when we enter an invalid expression the error reporting will point us
-directly to the adjacent lexeme that caused the problem as is common in many
-languages.
-
-```bash
-λ> \x -> x + 
-  
-  \x -> x + 
-            ^
-"<interactive>" (line 1, column 11):
-unexpected end of input
-expecting "(", character, literal string, "[", integer, "if" or identifier
 ```
 
 Extensible Operators
