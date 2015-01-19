@@ -1,10 +1,10 @@
+<div class="pagetitle">
 ![](img/titles/evaluation.png)
+</div>
 
-******
-
-> Well-typed programs cannot "go wrong".
+> *Well-typed programs cannot "go wrong".*
 > 
-> <cite>-Robin Milner</cite>
+> <cite>— Robin Milner</cite>
 
 <p class="halfbreak">
 </p>
@@ -22,8 +22,8 @@ lambda expression are necessarily evaluated before a lambda is reduced.  A
 language in which the arguments are not necessarily evaluated before a lambda is
 reduced is non-strict.
 
-Alternatively expressed, diverging terms are represented by the *bottom* value,
-written as $\bot$. A function $f$ is non-strict if:
+Alternatively expressed, diverging terms are represented up to equivalence by
+the *bottom* value, written as $\bot$. A function $f$ is non-strict if:
 
 $$
 f \bot \neq \bot
@@ -81,9 +81,9 @@ how the subexpression ``(2 + 2)`` is evaluated to normal form before being
 bound.
 
 ```haskell
-(λx. λy. y x) (2 + 2) λx. x + 1
-=> (λy. y 4) λx. x + 1
-=> (λy. x + 1) 4
+(\x. \y. y x) (2 + 2) λx. x + 1
+=> (\y. y 4) \x. x + 1
+=> (\y. x + 1) 4
 => 4 + 1
 => 5
 ```
@@ -169,16 +169,15 @@ For example, the same expression we looked at for call-by-value has the same
 normal form but arrives at it by a different sequence of reductions:
 
 ```haskell
-(λx. λy. y x) (2 + 2) λx. x + 1
-=> (λy.y (2 + 2)) λx. x + 1
-=> (λx.x + 1) (2 + 2)
+(\x. \y. y x) (2 + 2) \x. x + 1
+=> (\y.y (2 + 2)) λx. x + 1
+=> (\x.x + 1) (2 + 2)
 => (2 + 2) + 1
 => 4 + 1
 => 5
 ```
 
-Call-by-name is non-strict, although very few languages use this model,
-[Frege](https://github.com/Frege/frege) being the most notable example.
+Call-by-name is non-strict, although very few languages use this model.
 
 Call-by-need
 ------------

@@ -1,4 +1,5 @@
 digraph G {
+  graph [ dpi = 300 ]; 
   rankdir=LR
   node [shape=box]
   Frontend -> "Core Language" -> "Compiler IR" -> "Machine Code" 

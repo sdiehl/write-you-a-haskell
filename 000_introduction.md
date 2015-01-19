@@ -1,14 +1,19 @@
+<div class="pagetitle">
 ![](img/titles/introduction.png)
+</div>
 
-******
+<p class="halfbreak">
+</p>
 
-> When the limestone of imperative programming is worn away, the granite of
-> functional programming will be observed.
+<!--
+> *When the limestone of imperative programming is worn away, the granite of
+> functional programming will be observed.*
 > 
 > <cite>— Simon Peyton Jones</cite>
 
 <p class="halfbreak">
 </p>
+-->
 
 Introduction
 ============
@@ -151,42 +156,71 @@ refines the space of allowable behavior and degree of expressible programs for
 the language.  Types are the world's most popular formal method for analyzing
 programs.
 
-$$
-\begin{aligned}
-1 &: \t{Nat} \\
-(\lambda x . x) &: \forall a. a \to a \\
-(\lambda x y . x) &: \forall a b. a \to b \to a \\
-\end{aligned}
-$$
+In a language like Python all expressions have the same type at compile time,
+and all syntactically valid programs can be evaluated. In the case where the
+program is nonsensical the runtime will bubble up exceptions at runtime. The
+Python interpreter makes no attempt to analyze the given program for soundness
+at all before running it.
 
-In more sophisticated languages types and terms will commingle either with
-explicit annotations on binders, or even as first class values themselves.
+```bash
+>>> True & "false"
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: unsupported operand type(s) for &: 'bool' and 'str'
+```
 
-$$
-\t{Pair} \ u \ v = \Lambda X . \lambda x^{U \rightarrow V \rightarrow X} . x u v
-$$
+By comparison Haskell will do quite a bit of work to try to ensure that the
+program is well-defined before running it. The language that we use to
+predescribe and analyze static semantics of the program is that of *static
+types*.
 
-In all the languages which we will implement the types present during compilation are
-*erased*. Although they are present in the evaluation semantics, the runtime
-cannot dispatch on types of values at runtime. Types by definition only exist at
-compile-time in the static semantics of the language.
+```bash
+Prelude> True && "false"
+
+<interactive>:2:9:
+    Couldn't match expected type `Bool' with actual type `[Char]'
+    In the second argument of `(&&)', namely `"false"'
+    In the expression: True && "false"
+    In an equation for `it': it = True && "false"
+```
+
+Catching minor type mismatch errors is the simplest example of usage, although
+they occur extremely frequently as we humans are quite fallible in our reasoning
+about even the simplest of program constructions! Although this just the tip of
+the iceberg, the gradual trend over the last 20 years toward more *expressive
+types* in modern type systems; which are capable of guaranteeing a large variety
+of program correctness properties.
+
+* Preventing resource allocation errors.
+* Enforcing security access for program logic.
+* Side effect management.
+* Preventing buffer overruns.
+* Ensuring cryptographic properties for network protocols.
+* Modeling and verify theorems in mathematics and logic.
+* Preventing data races and deadlocks in concurrent systems.
+
+Type systems can never capture all possible behavior of the program. Although
+more sophisticated type systems are increasingly able to model a large space of
+behavior and is one of the most exciting areas of modern computer science
+research. Put most bluntly, **static types let you be dumb** and offload the
+checking that you would otherwise have to do in your head to a system that can
+do the reasoning for you and work with you to interactively build your program.
 
 Functional Compilers
 --------------------
 
-A compiler is typically divided into parts, a *frontend* and a *backend*. These
-are loose terms but the frontend typically deals with converting the human
-representation of the code into some canonicalized form while the backend
-converts the canonicalized form into another form that is suitable for
-evaluation.
+A *compiler* is a program for turning high-level representation of ideas in a
+human readable language into another form. A compiler is typically divided into
+parts, a *frontend* and a *backend*. These are loose terms but the frontend
+typically deals with converting the human representation of the code into some
+canonicalized form while the backend converts the canonicalized form into
+another form that is suitable for evaluation.
 
 The high level structure of our functional compiler is described by the
 following *block diagram*. Each describes a *phase* which is a sequence of
 transformations composed to transform the input program.
 
-<p class="center">
 ![](img/pipeline1.png)
-</p>
 
 * **Source**            - The frontend textual source language.
 * **Parsing**           - Source is parsed into an abstract syntax tree.
@@ -200,15 +234,13 @@ A *pass* may transform the input program from one form into another or alter the
 internal state of the compiler context. The high level description of the forms
 our final compiler will go through is the following sequence:
 
-<p class="center">
 ![](img/pipeline2.png)
-</p>
 
 Internal forms used during compilation are *intermediate representations* and
 typically any non-trivial language will involve several.
 
-Lexing
-------
+Parsing
+-------
 
 The source code is simply the raw sequence of text that specifies the program.
 Lexing splits the text stream into a sequence of *tokens*. Only the presence of
@@ -222,22 +254,22 @@ let f x = x + 1
 For instance the previous program might generate a token stream like the
 following:
 
-Token      Value
------      -----
-reserved   let
-var        f
-var        x
-reservedOp =
-var        x
-reservedOp +
-integer    1
+```haskell
+[
+  TokenLet,
+  TokenSym "f",
+  TokenSym "x",
+  TokenEq,
+  TokenSym "x",
+  TokenAdd,
+  TokenNum 1
+]
+```
 
-Parsing
--------
-
-A datatype for the *abstract syntax tree* (AST) is constructed by traversal of
-the input stream and generation of the appropriate syntactic construct using a
-parser.
+We can then scan the token stream via and dispatch on predefined patterns of
+tokens called *productions* and recursively build up a datatype for the
+*abstract syntax tree* (AST) by traversal of the input stream and generation of
+the appropriate syntactic.
 
 ```haskell
 type Name = String
@@ -319,6 +351,19 @@ Let "f" []
       (Lit (LitInt 1))))
 ```
 
+Transformation
+--------------
+
+The type core representation is often suitable for evaluation, but quite often
+different intermediate representations are more amenable to certain
+optimizations and make explicit semantic properties of the language explicit.
+These kind of intermediate forms will often attach information about free
+variables, allocations, and usage information directly onto the AST to make it 
+
+The most important form we will use is called the *Spineless Tagless G-Machine*
+( STG ), an abstract machine that makes many of the properties of lazy
+evaluation explicit directly in the AST.
+
 Code Generation
 ---------------
 
@@ -356,11 +401,11 @@ resulting module.
 
 ```perl
 f:
-	movl	%edi, -4(%rsp)
-	movl	-4(%rsp), %edi
-	addl	$1, %edi
-	movl	%edi, %eax
-	ret
+        movl    %edi, -4(%rsp)
+        movl    -4(%rsp), %edi
+        addl    $1, %edi
+        movl    %edi, %eax
+        ret
 
 ```
 
@@ -370,11 +415,11 @@ instructions defined by the processor specification.
 
 ```perl
 0000000000000000 <f>:
-   0:	89 7c 24 fc          	mov    %edi,-0x4(%rsp)
-   4:	8b 7c 24 fc          	mov    -0x4(%rsp),%edi
-   8:	81 c7 01 00 00 00    	add    $0x1,%edi
-   e:	89 f8                	mov    %edi,%eax
-  10:	c3                   	retq
+   0:   89 7c 24 fc             mov    %edi,-0x4(%rsp)
+   4:   8b 7c 24 fc             mov    -0x4(%rsp),%edi
+   8:   81 c7 01 00 00 00       add    $0x1,%edi
+   e:   89 f8                   mov    %edi,%eax
+  10:   c3                      retq
 ```
 
 \pagebreak

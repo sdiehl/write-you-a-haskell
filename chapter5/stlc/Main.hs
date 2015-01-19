@@ -22,7 +22,7 @@ main :: IO ()
 main = runInputT defaultSettings loop
   where
   loop = do
-    minput <- getInputLine "Stlc> "
+    minput <- getInputLine "Happy> "
     case minput of
       Nothing -> outputStrLn "Goodbye."
       Just input -> (liftIO $ process input) >> loop

@@ -1,0 +1,14 @@
+digraph "CFG for 'foo' function" {
+        graph [ dpi = 72 ]; 
+	label="Switch";
+
+	Node0x1027390 [shape=record,label="{entry:\l  switch i32 %a, label %default [\l    i32 0, label %f\l    i32 1, label %g\l    i32 2, label %h\l  ]\l|{<s0>def|<s1>0|<s2>1|<s3>2}}"];
+	Node0x1027390:s0 -> Node0x1024700;
+	Node0x1027390:s1 -> Node0x1024300;
+	Node0x1027390:s2 -> Node0x1024440;
+	Node0x1027390:s3 -> Node0x1023920;
+	Node0x1024300 [shape=record,label="{f:                                                \l  ret i32 1\l}"];
+	Node0x1024440 [shape=record,label="{g:                                                \l  ret i32 2\l}"];
+	Node0x1023920 [shape=record,label="{h:                                                \l  ret i32 3\l}"];
+	Node0x1024700 [shape=record,label="{default:                                          \l  ret i32 0\l}"];
+}

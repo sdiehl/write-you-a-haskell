@@ -1,0 +1,9 @@
+digraph "CFG for 'foo' function" {
+        graph [ dpi = 72 ]; 
+        label="Unconditional Branch";
+	Node0x103c3c0 [shape=record,label="{start:\l  br label %next\l}"];
+	Node0x103c3c0 -> Node0x1038a90;
+	Node0x1038a90 [shape=record,label="{next:                                             \l  br label %return\l}"];
+	Node0x1038a90 -> Node0x1038b90;
+	Node0x1038b90 [shape=record,label="{return:                                           \l  ret i1 false\l}"];
+}

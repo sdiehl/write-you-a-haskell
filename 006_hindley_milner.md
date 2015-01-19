@@ -1,8 +1,11 @@
+<div class="pagetitle">
 ![](img/titles/hindley_milner.png)
+</div>
 
-******
+<p class="halfbreak">
+</p>
 
-> There is nothing more practical than a good theory.
+> *There is nothing more practical than a good theory.*
 >
 > <cite>— James C. Maxwell</cite>
 
@@ -20,7 +23,7 @@ program give rise to a set of constraints that when solved always have a unique
 *principal type*.
 
 The simplest Hindley Milner type system is defined by a very short set of rules.
-The first four rules describe the judgements by which we can each syntactic
+The first four rules describe the judgements by which we can map each syntactic
 construct (``Lam``, ``App``, ``Var``, ``Let``) to their expected types. We'll
 elaborate on these rules shortly.
 
@@ -100,6 +103,51 @@ let S f g x = f x (g x);
 As before ``let rec`` expressions will expand out in terms of the fixpoint
 operator and are just syntactic sugar.
 
+Polymorphism
+------------
+
+We will add an additional constructs to our language that will admit a new form
+of *polymorphism* for our language.  Polymorphism is property of a term to
+simultaneously admit several distinct types for the same function
+implementation. 
+
+For instance the polymorphic signature for the identity function maps a input of
+type $\alpha$
+
+$$
+\begin{aligned}
+\mathtt{id}\ & ::\ \forall \alpha. \alpha \to \alpha \\
+\mathtt{id}\ & =\ \lambda x : \alpha.\ x
+\end{aligned}
+$$
+
+Now instead of having to duplicate the functionality for every possible type
+(i.e. implementing idInt, idBool, ...) we our type system admits any
+instantiation that is subsumed by the polymorphic type signature. 
+
+$$
+\begin{aligned}
+& \t{id}_\t{Int} = \t{Int} \to \t{Int} \\
+& \t{id}_\t{Bool} = \t{Bool} \to \t{Bool} \\
+\end{aligned}
+$$
+
+A rather remarkably fact of universal quantification is that many properties
+about inhabitants of a type are guaranteed by construction, these are the
+so-called *free theorems*. For instance the only (nonpathological)
+implementation that can inhabit a function of type ``(a, b) -> a`` is an
+implementation precisely identical to that of ``fst``.
+
+A slightly less trivial example is that of the ``fmap`` function of type
+``Functor f => (a -> b) -> f a -> f b``. The second functor law states that.
+
+```haskell
+forall f g. fmap f . fmap g = fmap (f . g)
+```
+
+However it is impossible to write down a (nonpathological) function for ``fmap``
+that was well-typed and didn't have this property. We get the theorem for free!
+
 Types
 -----
 
@@ -121,11 +169,10 @@ typeInt  = TCon "Int"
 typeBool = TCon "Bool"
 ```
 
-However we will add an additional construct that will admit a new form of
-*polymorphism* for our language. *Type schemes* model polymorphic types, they
-indicate that the type variables bound in quantifier are polymorphic across the
-enclosed type and can be instantiated with any type consistent with the
-signature.
+*Type schemes* model polymorphic types, they indicate that the type variables
+bound in quantifier are polymorphic across the enclosed type and can be
+instantiated with any type consistent with the signature. Intuitively the
+indicate that the implementation of the function
 
 ```haskell
 data Scheme = Forall [TVar] Type
@@ -229,8 +276,8 @@ $$
 \begin{aligned}
 \FTV{\alpha}                    &= \{ \alpha \} \\
 \FTV{\tau_1 \rightarrow \tau_2} &= \FTV{\tau_1} \cup \FTV{\tau_2} \\
-\FTV{\t{Int}}                   &= \emptyset \\
-\FTV{\t{Bool}}                  &= \emptyset \\
+\FTV{\t{Int}}                   &= \varnothing \\
+\FTV{\t{Bool}}                  &= \varnothing \\
 \FTV{\forall x. t}              &= \FTV{t} - \{ x \} \\
 \end{aligned}
 $$
@@ -342,9 +389,9 @@ s := [n_0 / m_0, n_1 / m_1, ..., n_k / m_k] \\
 $$
 
 Two terms are said to be *unifiable* if there exists a unifying substitution set
-between them. A substitution set is said to be **confluent** if the application
-of substitutions is independent of the order applied, i.e. if we always arrive
-at the same normal form regardless of the order of substitution chosen.
+between them. A substitution set is said to be *confluent* if the application of
+substitutions is independent of the order applied, i.e. if we always arrive at
+the same normal form regardless of the order of substitution chosen.
 
 The notation we'll adopt for unification is, read as two types $\tau, \tau'$ are
 unifiable by a substitution $s$.
@@ -1206,7 +1253,7 @@ Finally tab completion for our shell will use the interpreter's typing
 environment keys to complete on the set of locally defined variables. Repline
 supports prefix based tab completion where the prefix of the current command
 will be used to determine what to tab complete. In the case where we start with
-the command ":load" we will instead tab complete on filenames in the current
+the command ``:load`` we will instead tab complete on filenames in the current
 working directly instead.
 
 ```haskell

@@ -1,6 +1,6 @@
+<div class="pagetitle">
 ![](img/titles/protohaskell.png)
-
-******
+</div>
 
 <!--
 > Functional languages are unnatural to use. [...] The important question is
@@ -115,6 +115,11 @@ Things we will not implement are:
 * Defaulting rules
 * Exceptions
 * Parallelism
+* Software Transactional Memory
+* Foreign Function Interface
+
+Now if one feels so inclined one could of course implement these features on top
+our final language, but they are left as an exercise to the reader!
 
 This of course begs the question of whether or not our language is "a Haskell".
 In the strictest sense, it will not be since it doesn't fully conform to either
@@ -131,16 +136,16 @@ Intermediate Forms
 
 The passes between each of the phases make up the main *compilation pipeline* .
 
-<p class="center">
+
 ![](img/proto_pass.png)
-</p>
+
 
 For *ProtoHaskell* our pipeline consists of the transitions between four
 intermediate forms of the program.
 
-<p class="center">
+
 ![](img/protohaskell.png)
-</p>
+
 
 * The **Source**, the textual representation of the program from a file or user
   input. This is stored in a ``Text`` type.
@@ -149,8 +154,7 @@ intermediate forms of the program.
   after type inference.
 * The **PHOAS**, the type-erased Core is transformed into Haskell expressions
   by mapping lambda expressions in our language directly into Haskell lambda
-  expressions and then evaluated using the Haskell runtime. This is simplest way
-  of implementing a small interpreter.
+  expressions and then evaluated using the Haskell runtime.
 
 Pass          Rep         Haskell Type
 --------      --------    ---------
@@ -269,6 +273,8 @@ Compiling module: prelude.fun
 3
 λ> :type (>>=)
 (>>=) :: Monad m => m a -> (a -> m b) -> m b
+λ> :set -ddump-rn
+λ> :load test.fun
 ```
 
 Command line conventions will follow the Haskell's naming conventions.  There
@@ -901,6 +907,11 @@ Data declarations are named block of various *ConDecl* constructors for each of
 the fields or constructors of a user-defined datatype.
 
 ```haskell
+data qname [var] where
+  [tydecl]
+```
+
+```haskell
 data Unit where
   Unit :: Unit
 ```
@@ -925,6 +936,10 @@ type annotation is specified it is stored in the ``matchType`` field. Likewise,
 if there is a sequence of where statements these are also attached directly to
 the declaration, and will later be desugared away into local let statements
 across the body of the function.
+
+```haskell
+qname [pat] = rhs [where decls]
+```
 
 ```haskell
 const x y = x
@@ -998,6 +1013,10 @@ declaration along with its associativity (Left, Right, Non-Associative) and the
 infix symbol.
 
 ```haskell
+[infixl|infixr|infix] [integer] ops;
+```
+
+```haskell
 infixl 4 +;
 ```
 
@@ -1009,17 +1028,17 @@ FixityDecl
 Typeclass Declarations
 ----------------------
 
-Consider a very simplified ``Num`` class. Typeclass declarations consist simply
-of the list of typeclass constraints, the name of the class, and the type
-variable ( single parameter only ). The body of the class is simply a sequence
-of scoped ``FunDecl`` declarations with only the ``matchType`` field.
+Typeclass declarations consist simply of the list of typeclass constraints, the
+name of the class, and the type variable ( single parameter only ). The body of
+the class is simply a sequence of scoped ``FunDecl`` declarations with only the
+``matchType`` field. 
 
 ```haskell
 class [context] => classname [var] where
   [body]
 ```
 
-For example:
+Consider a very simplified ``Num`` class. 
 
 ```haskell
 class Num a where

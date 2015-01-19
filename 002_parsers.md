@@ -1,6 +1,6 @@
+<div class="pagetitle">
 ![](img/titles/parsing.png)
-
-******
+</div>
 
 <!--
 > The tools we use have a profound (and devious!) influence on our thinking habits, and, therefore, on our thinking abilities.
@@ -29,7 +29,7 @@ NanoParsec
 So now let's build our own toy parser combinator library which we'll call
 **NanoParsec** just to get the feel of how these things are built.
 
-~~~~ {.haskell slice="chapter3/parsec.hs" lower=1 upper=8}
+~~~~ {.haskell slice="chapter3/parsec.hs" lower=0 upper=7}
 ~~~~
 
 Structurally a parser is a function which takes an input stream of characters
@@ -37,7 +37,7 @@ and yields an parse tree by applying the parser logic over sections of the
 character stream (called *lexemes*) to build up a composite data structure for
 the AST.
 
-~~~~ {.haskell slice="chapter3/parsec.hs" lower=8 upper=9}
+~~~~ {.haskell slice="chapter3/parsec.hs" lower=8 upper=8}
 ~~~~
 
 Running the function will result in traversing the stream of characters yielding
@@ -89,7 +89,7 @@ and concatenates the result. Together these give rise to both the Alternative
 and MonadPlus class instances which encode the logic for trying multiple parse
 functions over the same stream and handling failure and rollover.
 
-The core operator introduced here is (``(<|>)``) operator for combining two
+The core operator introduced here is (``<|>``) operator for combining two
 optional paths of parser logic, switching to second path if the first fails with
 the zero value.
 
@@ -173,10 +173,6 @@ $ runhaskell parsec.hs
 > 1+2*3
 7
 ```
-
-See:
-
-* [Monads for functional programming](http://homepages.inf.ed.ac.uk/wadler/papers/marktoberdorf/baastad.pdf)
 
 **Generalizing String**
 

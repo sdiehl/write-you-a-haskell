@@ -1,4 +1,5 @@
 digraph G {
+  graph [ dpi = 72 ]; 
   rankdir=TB
   node [shape=box]
   WriterT -> IO      [label = "  execWriterT"]
