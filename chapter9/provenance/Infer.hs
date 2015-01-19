@@ -178,6 +178,7 @@ bind a t
   | occursCheck a t  = throwError $ InfiniteType a t
   | otherwise        = return $ (Subst $ Map.singleton a t, [])
 
+-- | Type variables equal up to location
 eqLoc :: Type -> TVar -> Bool
 eqLoc (TVar _ a) b = a == b
 eqLoc _ _ = False
@@ -190,6 +191,7 @@ unifies t1 t2 | t1 == t2 = return emptyUnifer
 unifies (TVar _ v) t = v `bind` t
 unifies t (TVar _ v) = v `bind` t
 unifies (TArr _ t1 t2) (TArr _ t3 t4) = unifyMany [t1, t2] [t3, t4]
+unifies (TCon _ a) (TCon _ b) | a == b = return emptyUnifer
 unifies t1 t2 = throwError $ UnificationFail t1 (getLoc t1) t2 (getLoc t2)
 
 unifyMany :: [Type] -> [Type] -> Solve Unifier
