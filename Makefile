@@ -26,6 +26,8 @@ OBJ = $(SRC:.md=.html)
 
 all: $(OBJ) top
 
+index: index.html
+
 %.html: %.md $(FILTER)
 	$(PANDOC) -c $(STYLE) --filter ${FILTER} --template $(TEMPLATE_HTML) -s -f $(IFORMAT) -t html $(FLAGS) -o $@ $<
 
