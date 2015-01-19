@@ -165,7 +165,7 @@ infer env ex = case ex of
     (s2, t2) <- infer env tr
     (s3, t3) <- infer env fl
     s4 <- unify (apply (compose s2 s3) t1) typeBool
-    s5 <- unify (apply s4 t2) (apply s4 t3)
+    s5 <- unify (apply (compose s1 s4) t2) (apply (compose s1 s4) t3)
     let s6 = s4 `compose` s5
     return (s6, apply s6 t2)
 

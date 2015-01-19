@@ -329,7 +329,7 @@ bit of a riddle about this error came to be.
 
 ```haskell
 Cannot unify types: 
-	Int
+        Int
 with 
         Bool
 in the definition of 'foo'
@@ -462,14 +462,14 @@ them. Before we'd have a little riddle in order to guess which
 
 ```haskell
 Cannot unify types: 
-	Int
-	Introduced at line 27 column 5
+        Int
+        Introduced at line 27 column 5
 
           f 2 3
 
 with 
-	Int -> c
-	Introduced at line 5 column 9
+        Int -> c
+        Introduced at line 5 column 9
 
           let f x y = x y
 ```
@@ -738,6 +738,6 @@ parser is rather sophisicated.
 One of the few papers ever written in Type Error reporting gives some techniques
 for presentation and tracing provenance:
 
-* [Top Quality Type Error Messages](www.staff.science.uu.nl/~swier101/Papers/Theses/TopQuality.pdf)
+* [Top Quality Type Error Messages](http://www.staff.science.uu.nl/~swier101/Papers/Theses/TopQuality.pdf)
 
 \clearpage

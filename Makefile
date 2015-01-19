@@ -7,7 +7,21 @@ FILTER = includes.hs
 TEMPLATE_HTML = template.html
 TEMPLATE_TEX = template.latex
 
-SRC = $(wildcard *.md)
+#SRC = $(wildcard *.md)
+SRC = 000_introduction.md \
+      001_basics.md \
+      002_parsers.md \
+      003_lambda_calculus.md \
+      004_type_systems.md \
+      005_evaluation.md \
+      006_hindley_milner.md \
+      007_path.md \
+      008_extended_parser.md \
+      009_datatypes.md \
+      010_renamer.md \
+      011_pattern_matching.md \
+      #012_systemf.md
+      #026_llvm.md
 OBJ = $(SRC:.md=.html)
 
 all: $(OBJ) top
@@ -23,7 +37,7 @@ all: $(OBJ) top
 
 pdf: $(FILTER)
 	# $(PANDOC) --filter ${FILTER} -f $(IFORMAT) --template $(TEMPLATE_TEX) --latex-engine=xelatex $(FLAGS) -o WYAH.pdf title.md 0*.md contributing.md
-	$(PANDOC) --filter ${FILTER} -f $(IFORMAT) --template $(TEMPLATE_TEX) --latex-engine=xelatex $(FLAGS) -o WYAH.pdf title.md 0*.md
+	$(PANDOC) --filter ${FILTER} -f $(IFORMAT) --template $(TEMPLATE_TEX) --latex-engine=xelatex $(FLAGS) -o WYAH.pdf title.md $(SRC)
 
 epub: $(FILTER)
 	$(PANDOC) --filter ${FILTER} -f $(IFORMAT) $(FLAGS) -o WYAH.epub 0*.md
