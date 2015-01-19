@@ -48,15 +48,6 @@ extend (TypeEnv env) (x, s) = TypeEnv $ Map.insert x s env
 emptyTyenv :: TypeEnv
 emptyTyenv = TypeEnv Map.empty
 
-initTyenv :: TypeEnv
-initTyenv = TypeEnv $ Map.fromList
-  [ ( "ifthenelse#",   Forall [TV "a"] (typeBool `TArr` a `TArr` a `TArr` a))
-  , ( "fix#",          Forall [TV "a"] ((a `TArr` a) `TArr` a))
-  , ( "int#int->int",  Forall [] ( typeInt `TArr` typeInt `TArr` typeInt))
-  , ( "int#int->bool", Forall [] ( typeInt `TArr` typeInt `TArr` typeBool))
-  ]
-  where a = TVar (TV "a")
-
 typeof :: TypeEnv -> Var -> Maybe Type.Scheme
 typeof (TypeEnv env) name = Map.lookup name env
 
@@ -131,13 +122,11 @@ generalize :: TypeEnv -> Type -> Scheme
 generalize env t  = Forall as t
     where as = Set.toList $ ftv t `Set.difference` ftv env
 
-ops :: Map.Map Binop Var
-ops = Map.fromList [
-      (Add, "int#int->int")
-    , (Mul, "int#int->int")
-    , (Sub, "int#int->int")
-    , (Eql, "int#int->bool")
-  ]
+ops :: Binop -> Type
+ops Add = typeInt `TArr` typeInt `TArr` typeInt
+ops Mul = typeInt `TArr` typeInt `TArr` typeInt
+ops Sub = typeInt `TArr` typeInt `TArr` typeInt
+ops Eql = typeInt `TArr` typeInt `TArr` typeBool
 
 lookupEnv :: TypeEnv -> Var -> Infer (Subst, Type)
 lookupEnv (TypeEnv env) x = do
@@ -171,11 +160,28 @@ infer env ex = case ex of
     (s2, t2) <- infer (env' `extend` (x, t')) e2
     return (s1 `compose` s2, t2)
 
-  If cond tr fl -> infer env (App (App (App (Var "ifthenelse#") cond) tr) fl)
+  If cond tr fl -> do
+    (s1, t1) <- infer env cond
+    (s2, t2) <- infer env tr
+    (s3, t3) <- infer env fl
+    s4 <- unify (apply (compose s2 s3) t1) typeBool
+    s5 <- unify (apply s4 t2) (apply s4 t3)
+    let s6 = s4 `compose` s5
+    return (s6, apply s6 t2)
 
-  Fix e1 -> infer env (App (Var "fix#") e1)
+  Fix e1 -> do
+    (s1, t) <- infer env e1
+    tv <- fresh
+    s2 <- unify (apply s1 (TArr tv tv)) (apply s1 t)
+    let s3 = s2 `compose` s1
+    return (s3, apply s3 tv)
 
-  Op op e1 e2 -> infer env (App (App (Var (ops Map.! op)) e1) e2)
+  Op op e1 e2 -> do
+    (s1, t1) <- infer env e1
+    (s2, t2) <- infer env e2
+    tv <- fresh
+    s3 <- unify (TArr t1 (TArr t2 tv)) (ops op)
+    return (s1 `compose` s2 `compose` s3, apply s3 tv)
 
   Lit (LInt _)  -> return (nullSubst, typeInt)
   Lit (LBool _) -> return (nullSubst, typeBool)
