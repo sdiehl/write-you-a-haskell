@@ -1,12 +1,11 @@
+<div class="pagetitle">
 ![](img/titles/lambda_calculus.png)
+</div>
 
-******
-
-<!--
-> That language is an instrument of human reason, and not merely a
-> medium for the expression of thought, is a truth generally admitted.
+> *That language is an instrument of human reason, and not merely a medium for
+> the expression of thought, is a truth generally admitted.*
+> 
 > <cite>— George Boole</cite>
--->
 
 <p class="halfbreak">
 </p>
@@ -19,13 +18,14 @@ composition, function abstraction of a single variable.  The **lambda calculus**
 consists very simply of three terms and all valid recursive combinations
 thereof:
 
+![](img/lambda.png)
+
+The terms are named are typically referred to in code by the following
+contractions.
+
 - **Var** - A variable
 - **Lam** - A lambda abstraction
 - **App** - An application
-
-<p class="center">
-![](img/lambda.png)
-</p>
 
 $$
 \begin{aligned}
@@ -183,15 +183,8 @@ choose the Haskell convention which denotes lambda by the backslash (``\``) to
 the body with (``->``), and application by spaces. Named variables are simply
 alphanumeric sequences of characters.
 
-Logical notation:
-
-$\mathtt{const} = \lambda x y . x$
-
-Haskell notation:
-
-```haskell
-const = \x y -> x
-```
+* **Logical notation**: $\mathtt{const} = \lambda x y . x$
+* **Haskell notation**: ``const = \x y -> x``
 
 In addition other terms like literal numbers or booleans can be added, and these
 make writing expository examples a little easier. In addition we will add a

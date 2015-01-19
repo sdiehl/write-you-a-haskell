@@ -1,12 +1,15 @@
+<div class="pagetitle">
 ![](img/titles/type_systems.png)
+</div>
 
-******
+<p class="halfbreak">
+</p>
 
-> [A type system is a] tractable syntactic method for proving the
+> *[A type system is a] tractable syntactic method for proving the
 > absence of certain program behaviors by classifying phrases
-> according to the kinds of values they compute.
+> according to the kinds of values they compute.*
 >
-> <cite>- Benjamin Pierce</cite>
+> <cite>— Benjamin Pierce</cite>
 
 <p class="halfbreak">
 </p>
@@ -193,6 +196,11 @@ associate to the right.
 $$
 \tau_1 \to \tau_2 \to \tau_3 \to \tau_4 \quad = \quad \tau_1 \to (\tau_2 \to (\tau_3 \to \tau_4))
 $$
+
+In all the languages which we will implement the types present during
+compilation are *erased*. Although types are possibly present in the evaluation
+semantics, the runtime cannot dispatch on types of values at runtime. Types by
+definition only exist at compile-time in the static semantics of the language.
 
 Small-Step Semantics
 --------------------
@@ -603,18 +611,16 @@ the space of all programs and draw a large line around the universe of discourse
 programs that we are willing to consider, since these are the only programs that
 we can prove properties for.
 
-> Well-typed programs don't go wrong, but not every program that never goes wrong
+> *Well-typed programs don't go wrong, but not every program that never goes wrong
 > is well-typed. It's easy to exhibit programs that don't go wrong but are
 > ill-typed in ... any ... decidable type system. Many such programs are useful,
 > which is why dynamically-typed languages like Erlang and Lisp are justly
-> popular.
+> popular.*
 >
-> <cite>-Simon Peyton Jones</cite>
+> <cite>— Simon Peyton Jones</cite>
 
 <!--
-<p class="center">
 ![](img/abysmal_pain.png)
-</p>
 -->
 
 Power always comes at a price. Using one system you can do more things. In

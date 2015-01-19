@@ -1,0 +1,11 @@
+digraph "CFG for 'printstar' function" {
+        graph [ dpi = 72 ]; 
+	label="For loop";
+
+	Node0x11ea390 [shape=record,label="{entry:\l  br label %loop\l}"];
+	Node0x11ea390 -> Node0x11e72d0;
+	Node0x11e72d0 [shape=record,label="{loop:                                             \l  %i = phi i32 [ 1, %entry ], [ %nextvar, %loop ]\l  %nextvar = add i32 %i, 1\l  %cmptmp = icmp ult i32 %i, %n\l  %booltmp = zext i1 %cmptmp to i32\l  %loopcond = icmp ne i32 %booltmp, 0\l  br i1 %loopcond, label %loop, label %afterloop\l|{<s0>T|<s1>F}}"];
+	Node0x11e72d0:s0 -> Node0x11e72d0;
+	Node0x11e72d0:s1 -> Node0x11e7540;
+	Node0x11e7540 [shape=record,label="{afterloop:                                        \l  ret i32 %i\l}"];
+}

@@ -1,0 +1,22 @@
+name:                dsl
+version:             0.1.0.0
+--synopsis:            
+--description:         
+license:             MIT
+license-file:        LICENSE-MIT
+author:              Stephen Diehl
+maintainer:          stephen.m.diehl@gmail.com
+copyright:           2015 Stephen Diehl
+Category:            Compilers
+build-type:          Simple
+cabal-version:       >=1.10
+
+library 
+  default-language:    Haskell2010
+  build-depends:       
+      base                 >= 4.6
+    , haskeline            >= 0.7.1.2
+    , llvm-general         == 3.4.4.*
+    , llvm-general-pure    == 3.4.4.*
+    , mtl                  >= 2.2
+    , transformers

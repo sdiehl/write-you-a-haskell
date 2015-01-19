@@ -22,6 +22,7 @@ all: $(OBJ) top
 	$(PANDOC) --filter ${FILTER} -f $(IFORMAT) $(FLAGS) -o $@ $<
 
 pdf: $(FILTER)
+	# $(PANDOC) --filter ${FILTER} -f $(IFORMAT) --template $(TEMPLATE_TEX) --latex-engine=xelatex $(FLAGS) -o WYAH.pdf title.md 0*.md contributing.md
 	$(PANDOC) --filter ${FILTER} -f $(IFORMAT) --template $(TEMPLATE_TEX) --latex-engine=xelatex $(FLAGS) -o WYAH.pdf title.md 0*.md
 
 epub: $(FILTER)

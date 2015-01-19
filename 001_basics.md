@@ -1,6 +1,6 @@
+<div class="pagetitle">
 ![](img/titles/basics.png)
-
-******
+</div>
 
 <!--
 <blockquote>
@@ -33,14 +33,12 @@ add :: Integer -> Integer -> Integer
 add x y =  x + y
 ```
 
-```haskell
-add (x,y) = x + y
-```
+In Haskell all functions are pure, the only thing a function may do is return a
+value.
 
-In Haskell all functions are pure, the only thing a function may do is return a value.
-
-All functions in Haskell are curried, for example a function of three arguments takes up to three arguments and for
-anything less than three it yields a partially applied function which when given additional arguments yields a
+All functions in Haskell are curried, for example a function of three arguments
+takes up to three arguments and for anything less than three it yields a
+partially applied function which when given additional arguments yields a
 another function or the resulting value if saturated.
 
 ```haskell
@@ -51,7 +49,8 @@ h :: Int -> Int
 h = g 2 3
 ```
 
-Haskell supports higher-order functions, functions which take functions and yield other functions.
+Haskell supports higher-order functions, functions which take functions and
+yield other functions.
 
 ```haskell
 compose f g = \x -> f (g x)
@@ -86,10 +85,7 @@ constructors also generates special set of functions known as *selectors* which
 extract the values of a specific field from the record.
 
 ```haskell
-data Prod = Prod
-  { a :: Int
-  , b :: Bool
-  }
+data Prod = Prod { a :: Int , b :: Bool }
 
 -- a :: Prod -> Int
 -- b :: Prod -> Bool
@@ -158,7 +154,7 @@ Tuples are allowed (with compiler support) up to 15 fields in GHC.
 Pattern matching
 ----------------
 
-Pattern matching allows us to discriminate on the constructor(s) of a datatype,
+Pattern matching allows us to discriminate on the constructors of a datatype,
 mapping separate cases to separate code paths.
 
 ```haskell
@@ -216,12 +212,17 @@ Recursion
 In Haskell all iteration over data structures is performed by recursion.
 Entering a function in Haskell does not create a new stack frame, the logic of
 the function is simply entered with the arguments on the stack and yields result
-to the register. The resulting logic is compiled identically to ``while`` loops
-in other languages, via a ``jmp`` instruction instead of a ``call``.
+to the register. In the case where a function returns a invocation of itself
+invoked in the *tail position* the resulting logic is compiled identically to
+``while`` loops in other languages, via a ``jmp`` instruction instead of a
+``call``.
 
 ```haskell
-factorial 0 = 1
-factorial n = n * factorial (n - 1)
+sum :: [Int] -> [Int]
+sum ys = go ys 0
+  where
+    go (x:xs) i = go xs (i+x)
+    go [] i = i
 ```
 
 Functions can be defined to recurse mutually on each other.
@@ -421,19 +422,19 @@ all monad instances must satisfy.
 **Law 1**
 
 ```haskell
-return a >>= f ≡ f a
+return a >>= f = f a
 ```
 
 **Law 2**
 
 ```haskell
-m >>= return ≡ m
+m >>= return = m
 ```
 
 **Law 3**
 
 ```haskell
-(m >>= f) >>= g ≡ m >>= (\x -> f x >>= g)
+(m >>= f) >>= g = m >>= (\x -> f x >>= g)
 ```
 
 Haskell has a level of syntactic sugar for monads known as do-notation. In this
@@ -441,9 +442,9 @@ form binds are written sequentially in block form which extract the variable
 from the binder.
 
 ```haskell
-do { a <- f ; m } ≡ f >>= \a -> do { m }
-do { f ; m } ≡ f >> do { m }
-do { m } ≡ m
+do { a <- f ; m } = f >>= \a -> do { m }
+do { f ; m } = f >> do { m }
+do { m } = m
 ```
 
 So for example the following are equivalent.
@@ -503,6 +504,16 @@ actions while discarding the value of one of the arguments. The operator ``*>``
 discards the left while ``<*`` discards the right. For example in a monadic
 parser combinator library the ``*>`` would parse with first parser argument but
 return the second.
+
+Monoids
+-------
+
+```haskell
+class Monoid a where
+  mempty :: a
+  mappend :: a -> a -> a
+  mconcat :: [a] -> a
+```
 
 Deriving
 --------
@@ -638,9 +649,7 @@ evalStack m = execWriterT (evalStateT (unStack m) 0)
 
 As illustrated by the following stack diagram:
 
-<p class="center">
 ![](img/stack.png)
-</p>
 
 Using mtl and ``GeneralizedNewtypeDeriving`` we can produce the same stack but with
 a simpler forward facing interface to the transformer stack. Under the hood mtl

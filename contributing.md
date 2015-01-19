@@ -1,3 +1,6 @@
+Contributing
+============
+
 As always, I rely on the perpetual kindness and goodwill of Haskellers (like
 you!) to help correct grammar, clarify, and fix errors.
 
@@ -10,6 +13,10 @@ For most fixes you can simply edit the Markdown files at the toplevel of the Git
 repo and then submit a pull request on Github. There should be no need to
 compile the text locally. I will try to merge the changes quickly and rebuild
 the text daily.
+
+If you would like to add your name to
+[CONTRIBUTORS.md](https://github.com/sdiehl/write-you-a-haskell/blob/master/CONTRIBUTORS.md)
+submit this along with your pull request.
 
 *Complex Fixes*
 
@@ -59,6 +66,28 @@ syntax highlighting.
 
 *Math Typesetting*
 
+Equations can be included in display form:
+
+```latex
+$$
+\int_\Omega \mathrm{d}\omega = \oint_{\partial \Omega} \omega
+$$
+```
+
+$$
+\int_\Omega \mathrm{d}\omega = \oint_{\partial \Omega} \omega
+$$
+
+Or in inline form (like $a^2 + b^2 = c^2$) with single dollar signs. Specially
+there must be no spaces around the dollar signs otherwise Pandoc will not parse
+it properly.
+
+```latex
+$a^2 + b^2 = c^2$
+```
+
+For most definitions, the ``aligned`` block is used:
+
 ```latex
 $$
 \begin{aligned}
@@ -105,7 +134,7 @@ Typography
 LaTeX
 -----
 
-The $\latex$ styling is sourced from the ``template.latex`` file, which is an
+The LaTeX styling is sourced from the ``template.latex`` file, which is an
 extension of Pandoc's default template with some custom modifications.
 
 Images

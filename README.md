@@ -18,6 +18,7 @@
 
 [![Build Status](https://travis-ci.org/sdiehl/write-you-a-haskell.svg)](https://travis-ci.org/sdiehl/write-you-a-haskell)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sdiehl/write-you-a-haskell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
+[![MIT License](http://img.shields.io/badge/license-mit-blue.svg)](https://github.com/sdiehl/write-you-a-haskell/blob/master/LICENSE)
 
 Read Online:
 

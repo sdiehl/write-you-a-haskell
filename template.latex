@@ -1,5 +1,16 @@
 \documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$lang$,$endif$$if(papersize)$$papersize$,$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{graphicx}
 \usepackage[labelformat=empty]{caption}
+\usepackage{afterpage}
+
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
+
 $if(fontfamily)$
 \usepackage{$fontfamily$}
 $else$
@@ -34,11 +45,20 @@ $if(sansfont)$
     \setsansfont{$sansfont$}
 $endif$
 $if(monofont)$
-    \setmonofont[Mapping=tex-ansi]{$monofont$}
+    %\setmonofont[Mapping=tex-ansi]{$monofont$}
+    % custom override
 $endif$
+
 $if(mathfont)$
     \setmathfont(Digits,Latin,Greek){$mathfont$}
 $endif$
+
+\usepackage{fontspec}
+\setmainfont[Ligatures=Common,
+    ItalicFont={Adobe Garamond Pro Italic}]
+    {Adobe Garamond Pro}
+\setmonofont[Ligatures=NoCommon]{Source Code Pro}
+
 \fi
 % use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -106,7 +126,6 @@ $if(graphics)$
   \fi
 }
 \makeatother
-
 \setkeys{Gin}{width=\ScaleWidthIfNeeded,height=\ScaleHeightIfNeeded,keepaspectratio}%
 $endif$
 \ifxetex
@@ -160,11 +179,88 @@ $endfor$
 
 \begin{document}
 $if(title)$
+% ----------
+% Title page
+% ----------
+
+\begin{titlepage}
+
+\definecolor{titlepagecolor}{cmyk}{1,.60,0,.40}
+\definecolor{namecolor}{cmyk}{1,.50,0,.10} 
+\newgeometry{left=7.5cm} %defines the geometry for the titlepage
+\pagecolor{titlepagecolor}
 \begin{figure}
     \centering
-    \includegraphics[width=4cm]{img/Haskell-Logo.png}
+    \includegraphics[height=3in,width=3in]{img/Haskell-Logo.ps}
 \end{figure}
-\maketitle
+
+\color{white}
+\makebox[0pt][l]{\rule{1.3\textwidth}{1pt}}
+\par
+\noindent
+{\huge \textsf{Write You a Haskell}}
+\par
+\noindent
+{\textit{\textsf{Building a modern functional compiler from first principles}}}
+%\textbf{\textsf{Something}} \textcolor{namecolor}{\textsf{Else}}
+\vfill
+\noindent
+%{\huge \textsf{Write You a Haskell}}
+\vskip\baselineskip
+\noindent
+{\huge \textsf{Stephen Diehl}}
+\\
+\textsf{January 2015 (Draft)}
+
+\end{titlepage}
+\pagecolor{white}
+\restoregeometry % restores the geometry
+
+% Filler page
+%\null
+%\thispagestyle{empty}
+%\addtocounter{page}{-1}
+%\newpage
+
+% Subtitle page
+%\vfill{3in}
+%\begin{centering}
+%{\HUGE \textsf{Write You a Haskell}}
+%\end{centering}
+
+%\thispagestyle{empty}
+%\addtocounter{page}{-1}
+%\newpage
+
+% Copyright page
+\thispagestyle{empty}
+\addtocounter{page}{-1}
+
+\begin{minipage}[b]{0.9\textwidth}
+\footnotesize\raggedright
+\setlength{\parskip}{0.5\baselineskip}
+
+\begin{textsf}
+{\textbf{Write You a Haskell}}\\
+by Stephen Diehl
+
+\par
+Copyright \copyright\ 2013-2015. \\
+\href{http://www.stephendiehl.com}{www.stephendiehl.com}
+
+\par
+This written work is licensed under a Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International License. You may
+reproduce and edit this work with attribution for all non-commercial purposes.
+\par
+The included source is released under the terms of the MIT License.
+\par
+Git commit: f09d210be253a05fc8ad0827cd72ffa32404e2ba
+\end{textsf}
+\end{minipage}
+\vspace*{2\baselineskip}
+\cleardoublepage
+
 $endif$
 $if(abstract)$
 \begin{abstract}

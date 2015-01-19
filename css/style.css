@@ -23,6 +23,18 @@ pre code {
   font: 15px/19px Inconsolata, Monaco,"Lucida Console",Terminal,"Courier New",Courier;
 }
 
+.figure {
+  text-align: center;
+}
+
+.pagetitle .figure {
+  text-align: left !important;
+}
+
+.pagetitle .figure img {
+  height: 36px;
+}
+
 table th {
    border-right: 1em solid transparent;
 }
