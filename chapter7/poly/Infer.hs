@@ -161,32 +161,29 @@ infer env ex = case ex of
     return (s2 `compose` s1, t2)
 
   If cond tr fl -> do
-    (si, [t1, t2, t3]) <- inferList env [cond, tr, fl]
     tv <- fresh
-    su <- unify (      t1 `TArr` t2 `TArr` t3 `TArr` tv)
-                (typeBool `TArr` tv `TArr` tv `TArr` tv)
-    return (su `compose` si, apply su tv)
+    inferPrim env [cond, tr, fl] (typeBool `TArr` tv `TArr` tv `TArr` tv)
 
   Fix e1 -> do
-    (si, t) <- infer env e1
     tv <- fresh
-    su <- unify (t `TArr` tv) ((tv `TArr` tv) `TArr` tv)
-    return (su `compose` si, apply su tv)
+    inferPrim env [e1] ((tv `TArr` tv) `TArr` tv)
 
   Op op e1 e2 -> do
-    (si, [t1, t2]) <- inferList env [e1, e2]
-    tv <- fresh
-    su <- unify (t1 `TArr` t2 `TArr` tv) (ops op)
-    return (su `compose` si, apply su tv)
+    inferPrim env [e1, e2] (ops op)
 
   Lit (LInt _)  -> return (nullSubst, typeInt)
   Lit (LBool _) -> return (nullSubst, typeBool)
 
-inferList :: TypeEnv -> [Expr] -> Infer (Subst, [Type])
-inferList env = foldM inferStep (nullSubst, [])
-  where inferStep (s, ts) exp = do 
+inferPrim :: TypeEnv -> [Expr] -> Type -> Infer (Subst, Type)
+inferPrim env l t = do
+  tv <- fresh
+  (s1, tf) <- foldM inferStep (nullSubst, id) l
+  s2 <- unify (tf tv) t
+  return (s2 `compose` s1, apply s2 tv)
+
+  where inferStep (s, tf) exp = do 
           (s', t) <- infer (apply s env) exp
-          return (s' `compose` s, ts++[t])
+          return (s' `compose` s, tf . (TArr t))
 
 inferExpr :: TypeEnv -> Expr -> Either TypeError Scheme
 inferExpr env = runInfer . infer env
