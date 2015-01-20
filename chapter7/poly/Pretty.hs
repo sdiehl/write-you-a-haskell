@@ -71,7 +71,7 @@ instance Show TypeError where
   show (UnificationFail a b) =
     concat ["Cannot unify types: \n\t", pptype a, "\nwith \n\t", pptype b]
   show (InfiniteType (TV a) b) =
-    concat ["Cannot construct the the infinite type: ", a, " = ", pptype b]
+    concat ["Cannot construct the infinite type: ", a, " = ", pptype b]
   show (UnboundVariable a) = "Not in scope: " ++ a
 
 ppscheme :: Scheme -> String
