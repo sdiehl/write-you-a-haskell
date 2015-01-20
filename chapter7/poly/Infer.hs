@@ -178,7 +178,7 @@ inferPrim :: TypeEnv -> [Expr] -> Type -> Infer (Subst, Type)
 inferPrim env l t = do
   tv <- fresh
   (s1, tf) <- foldM inferStep (nullSubst, id) l
-  s2 <- unify (tf tv) t
+  s2 <- unify (apply s1 (tf tv)) t
   return (s2 `compose` s1, apply s2 tv)
 
   where inferStep (s, tf) exp = do 
