@@ -158,7 +158,7 @@ infer env ex = case ex of
     let env' = apply s1 env
         t'   = generalize env' t1
     (s2, t2) <- infer (env' `extend` (x, t')) e2
-    return (s1 `compose` s2, t2)
+    return (s2 `compose` s1, t2)
 
   If cond tr fl -> do
     (s1, t1) <- infer env cond
