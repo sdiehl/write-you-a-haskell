@@ -43,17 +43,17 @@ semiSep = Tok.semiSep lexer
 reservedOp :: String -> Parser ()
 reservedOp = Tok.reservedOp lexer
 
-infixOp :: String -> (a -> a) -> Ex.Operator String () Identity a
-infixOp s f = Ex.Prefix (reservedOp s >> return f)
+prefixOp :: String -> (a -> a) -> Ex.Operator String () Identity a
+prefixOp s f = Ex.Prefix (reservedOp s >> return f)
 
 
 -- Infix operators
 table :: Ex.OperatorTable String () Identity Expr
 table = [
     [
-      infixOp "succ" Succ
-    , infixOp "pred" Pred
-    , infixOp "iszero" IsZero
+      prefixOp "succ" Succ
+    , prefixOp "pred" Pred
+    , prefixOp "iszero" IsZero
     ]
   ]
 
