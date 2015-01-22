@@ -224,11 +224,11 @@ inferTop env ((name, ex):xs) = case (inferExpr env ex) of
 normalize :: Scheme -> Scheme
 normalize (Forall _ body) = Forall (map snd ord) (normtype body)
   where
-    ord = zip (nub $ fv [] body) (map TV letters)
+    ord = zip (nub $ fv body) (map TV letters)
 
-    fv xs (TVar a)   = xs ++ [a]
-    fv xs (TArr a b) = fv xs a ++ fv xs b
-    fv _ (TCon _)    = []
+    fv (TVar a)   = [a]
+    fv (TArr a b) = fv a ++ fv b
+    fv (TCon _)    = []
 
     normtype (TArr a b) = TArr (normtype a) (normtype b)
     normtype (TCon a)   = TCon a
