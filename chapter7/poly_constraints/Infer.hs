@@ -48,7 +48,7 @@ type Constraint = (Type, Type)
 type Unifier = (Subst, [Constraint])
 
 -- | Constraint solver monad
-type Solve a = StateT Unifier (ExceptT TypeError Identity) a
+type Solve a = ExceptT TypeError Identity a
 
 newtype Subst = Subst (Map.Map TVar Type)
   deriving (Eq, Ord, Show, Monoid)
@@ -251,7 +251,7 @@ compose :: Subst -> Subst -> Subst
 
 -- | Run the constraint solver
 runSolve :: [Constraint] -> Either TypeError Subst
-runSolve cs = runIdentity $ runExceptT $ (evalStateT solver st)
+runSolve cs = runIdentity $ runExceptT $ solver st
   where st = (emptySubst, cs)
 
 unifyMany :: [Type] -> [Type] -> Solve Subst
@@ -270,15 +270,13 @@ unifies (TArr t1 t2) (TArr t3 t4) = unifyMany [t1, t2] [t3, t4]
 unifies t1 t2 = throwError $ UnificationFail t1 t2
 
 -- Unification solver
-solver :: Solve Subst
-solver = do
-  (su, cs) <- get
+solver :: Unifier -> Solve Subst
+solver (su, cs) =
   case cs of
     [] -> return su
     ((t1, t2): cs0) -> do
       su1  <- unifies t1 t2
-      put (su1 `compose` su, (apply su1 cs0))
-      solver
+      solver (su1 `compose` su, (apply su1 cs0))
 
 bind ::  TVar -> Type -> Solve Subst
 bind a t | t == TVar a     = return emptySubst
