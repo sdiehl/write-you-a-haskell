@@ -254,20 +254,16 @@ runSolve :: [Constraint] -> Either TypeError Subst
 runSolve cs = runIdentity $ runExceptT $ (evalStateT solver st)
   where st = (emptySubst, cs)
 
--- | Empty unifier
-emptyUnifer :: Unifier
-emptyUnifer = (emptySubst, [])
-
-unifyMany :: [Type] -> [Type] -> Solve Unifier
-unifyMany [] [] = return emptyUnifer
+unifyMany :: [Type] -> [Type] -> Solve Subst
+unifyMany [] [] = return emptySubst
 unifyMany (t1 : ts1) (t2 : ts2) =
-  do (su1,cs1) <- unifies t1 t2
-     (su2,cs2) <- unifyMany (apply su1 ts1) (apply su1 ts2)
-     return (su2 `compose` su1, cs1 ++ cs2)
+  do su1 <- unifies t1 t2
+     su2 <- unifyMany (apply su1 ts1) (apply su1 ts2)
+     return (su2 `compose` su1)
 unifyMany t1 t2 = throwError $ UnificationMismatch t1 t2
 
-unifies :: Type -> Type -> Solve Unifier
-unifies t1 t2 | t1 == t2 = return emptyUnifer
+unifies :: Type -> Type -> Solve Subst
+unifies t1 t2 | t1 == t2 = return emptySubst
 unifies (TVar v) t = v `bind` t
 unifies t (TVar v) = v `bind` t
 unifies (TArr t1 t2) (TArr t3 t4) = unifyMany [t1, t2] [t3, t4]
@@ -280,14 +276,14 @@ solver = do
   case cs of
     [] -> return su
     ((t1, t2): cs0) -> do
-      (su1, cs1)  <- unifies t1 t2
-      put (su1 `compose` su, cs1 ++ (apply su1 cs0))
+      su1  <- unifies t1 t2
+      put (su1 `compose` su, (apply su1 cs0))
       solver
 
-bind ::  TVar -> Type -> Solve Unifier
-bind a t | t == TVar a     = return (emptySubst, [])
+bind ::  TVar -> Type -> Solve Subst
+bind a t | t == TVar a     = return emptySubst
          | occursCheck a t = throwError $ InfiniteType a t
-         | otherwise       = return $ (Subst $ Map.singleton a t, [])
+         | otherwise       = return $ (Subst $ Map.singleton a t)
 
 occursCheck ::  Substitutable a => TVar -> a -> Bool
 occursCheck a t = a `Set.member` ftv t
