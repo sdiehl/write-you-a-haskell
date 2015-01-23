@@ -48,7 +48,7 @@ type Constraint = (Type, Type)
 type Unifier = (Subst, [Constraint])
 
 -- | Constraint solver monad
-type Solve a = StateT Unifier (ExceptT TypeError Identity) a
+type Solve a = ExceptT TypeError Identity a
 
 newtype Subst = Subst (Map.Map TVar Type)
   deriving (Eq, Ord, Show, Monoid)
@@ -224,11 +224,11 @@ inferTop env ((name, ex):xs) = case (inferExpr env ex) of
 normalize :: Scheme -> Scheme
 normalize (Forall _ body) = Forall (map snd ord) (normtype body)
   where
-    ord = zip (nub $ fv [] body) (map TV letters)
+    ord = zip (nub $ fv body) (map TV letters)
 
-    fv xs (TVar a)   = xs ++ [a]
-    fv xs (TArr a b) = fv xs a ++ fv xs b
-    fv _ (TCon _)    = []
+    fv (TVar a)   = [a]
+    fv (TArr a b) = fv a ++ fv b
+    fv (TCon _)    = []
 
     normtype (TArr a b) = TArr (normtype a) (normtype b)
     normtype (TCon a)   = TCon a
@@ -251,43 +251,37 @@ compose :: Subst -> Subst -> Subst
 
 -- | Run the constraint solver
 runSolve :: [Constraint] -> Either TypeError Subst
-runSolve cs = runIdentity $ runExceptT $ (evalStateT solver st)
+runSolve cs = runIdentity $ runExceptT $ solver st
   where st = (emptySubst, cs)
 
--- | Empty unifier
-emptyUnifer :: Unifier
-emptyUnifer = (emptySubst, [])
-
-unifyMany :: [Type] -> [Type] -> Solve Unifier
-unifyMany [] [] = return emptyUnifer
+unifyMany :: [Type] -> [Type] -> Solve Subst
+unifyMany [] [] = return emptySubst
 unifyMany (t1 : ts1) (t2 : ts2) =
-  do (su1,cs1) <- unifies t1 t2
-     (su2,cs2) <- unifyMany (apply su1 ts1) (apply su1 ts2)
-     return (su2 `compose` su1, cs1 ++ cs2)
+  do su1 <- unifies t1 t2
+     su2 <- unifyMany (apply su1 ts1) (apply su1 ts2)
+     return (su2 `compose` su1)
 unifyMany t1 t2 = throwError $ UnificationMismatch t1 t2
 
-unifies :: Type -> Type -> Solve Unifier
-unifies t1 t2 | t1 == t2 = return emptyUnifer
+unifies :: Type -> Type -> Solve Subst
+unifies t1 t2 | t1 == t2 = return emptySubst
 unifies (TVar v) t = v `bind` t
 unifies t (TVar v) = v `bind` t
 unifies (TArr t1 t2) (TArr t3 t4) = unifyMany [t1, t2] [t3, t4]
 unifies t1 t2 = throwError $ UnificationFail t1 t2
 
 -- Unification solver
-solver :: Solve Subst
-solver = do
-  (su, cs) <- get
+solver :: Unifier -> Solve Subst
+solver (su, cs) =
   case cs of
     [] -> return su
     ((t1, t2): cs0) -> do
-      (su1, cs1)  <- unifies t1 t2
-      put (su1 `compose` su, cs1 ++ (apply su1 cs0))
-      solver
+      su1  <- unifies t1 t2
+      solver (su1 `compose` su, (apply su1 cs0))
 
-bind ::  TVar -> Type -> Solve Unifier
-bind a t | t == TVar a     = return (emptySubst, [])
+bind ::  TVar -> Type -> Solve Subst
+bind a t | t == TVar a     = return emptySubst
          | occursCheck a t = throwError $ InfiniteType a t
-         | otherwise       = return $ (Subst $ Map.singleton a t, [])
+         | otherwise       = return $ (Subst $ Map.singleton a t)
 
 occursCheck ::  Substitutable a => TVar -> a -> Bool
 occursCheck a t = a `Set.member` ftv t
