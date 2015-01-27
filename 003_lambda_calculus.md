@@ -222,13 +222,26 @@ $$
 
 A substitution metavariable will be written as $[s]$.
 
-The fundamental issue with using locally named binders is the problem of *name
-capture*, or how to handle the case where a substitution conflicts with the
-names of free variables. For instance naive substitution would fundamentally
-alter the meaning of the following expression when $y$ is rewritten to $x$.
+In detail, substitution is defined like this:
 
 $$
-[y / x] (\lambda y.yx)  \to  \lambda x.xx
+\begin{array}{rll}
+[x/a] x = & a\\
+[x/a] y = & y & \text{if $x\neq y$}\\
+[x/a]ee' = & ([x/a]e)([x/a]e')\\
+[x/a]\lambda x.e = & \lambda x.e\\
+[x/a]\lambda y.e = & \lambda y.[x/a]e & \text{if $x\neq y$ and $y\notin\FV{e}}\\
+\end{array}
+$$
+
+The fundamental issue with using locally named binders is the problem of *name
+capture*, or how to handle the case where a substitution conflicts with the
+names of free variables. We need the condition in the last case to avoid the
+naive substitution that would fundamentally alter the meaning of the following
+expression when $y$ is rewritten to $x$.
+
+$$
+[y / x] (\lambda x.xy)  \to  \lambda x.xx
 $$
 
 By convention we will always use a *capture-avoiding* substitution.
@@ -237,7 +250,7 @@ variables of the expression, and if it does then a fresh variable will be
 created in its place.
 
 $$
-(\lambda x. e) a \to [x / a] e \quad \text{if}\ x \notin \FV{e}
+(\lambda x. e) a \to [x / a] e \quad \text{if}\ x \notin \FV{a}
 $$
 
 There are several binding libraries and alternative implementations of the
