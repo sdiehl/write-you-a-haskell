@@ -89,9 +89,9 @@ and concatenates the result. Together these give rise to both the Alternative
 and MonadPlus class instances which encode the logic for trying multiple parse
 functions over the same stream and handling failure and rollover.
 
-The core operator introduced here is (``<|>``) operator for combining two
-optional paths of parser logic, switching to second path if the first fails with
-the zero value.
+The core operator introduced here is the (``<|>``) operator for combining two
+optional paths of parser logic, switching to the second path if the first fails
+with the zero value.
 
 ~~~~ {.haskell slice="chapter3/parsec.hs" lower=40 upper=59}
 ~~~~
@@ -188,7 +188,7 @@ newtype Parser s a = Parser { parse :: s -> [(a,s)] }
 For the first couple of simple parsers we will use the String type for
 simplicity's sake, but later we will generalize our parsers to use the ``Text``
 type. The combinators and parsing logic will not change, only the lexer and
-language definitions types will change slightly to a generalized form.
+language definition types will change slightly to a generalized form.
 
 Parsec
 ------
@@ -278,8 +278,8 @@ which will be called as the entry point in our REPL.
 Evaluation
 ----------
 
-Our small language gives rise has two syntactic classes, values and expressions.
-Values are in *normal form* and cannot be reduced further. These consist of
+Our small language gives rise to two syntactic classes, values and expressions.
+Values are in *normal form* and cannot be reduced further. They consist of
 ``True`` and ``False`` values and literal numbers.
 
 ~~~~ {.haskell slice="chapter3/calc/Eval.hs" lower=8 upper=17}
@@ -289,15 +289,15 @@ The evaluation of our languages uses the ``Maybe`` applicative to accommodate
 the fact that our reduction may halt at any level with a Nothing if the
 expression being reduced has reached a normal form or cannot proceed because the
 reduction simply isn't well-defined. The rules for evaluation are a single step
-by which an expression takes a single small step one from form to another by a
+by which an expression takes a single small step from one form to another by a
 given rule.
 
 ~~~~ {.haskell slice="chapter3/calc/Eval.hs" lower=19 upper=31}
 ~~~~
 
-At the toplevel we simply apply the ``nf`` repeatedly until either a value is
+At the toplevel we simply apply ``eval'`` repeatedly until either a value is
 reached or we're left with an expression that has no well-defined way to
-proceed. The term is "stuck" and the program is an undefined state.
+proceed. The term is "stuck" and the program is in an undefined state.
 
 ~~~~ {.haskell slice="chapter3/calc/Eval.hs" lower=33 upper=39}
 ~~~~

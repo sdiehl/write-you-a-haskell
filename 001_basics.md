@@ -310,7 +310,7 @@ Higher-Kinded Types
 -------------------
 
 The "type of types" in Haskell is the language of kinds. Kinds are either an
-arrow (``* -> *``) or a star (``*``).
+arrow (``k -> k'``) or a star (``*``).
 
 
 The kind of Int is ``*``, while the kind of ``Maybe`` is ``* -> *``. Haskell
@@ -720,6 +720,7 @@ context.
 
 ```haskell
 ask   :: Reader r r                            -- get the value
+asks  :: (r -> a) -> Reader r a                -- apply a function to the value, and return the result
 local :: (r -> r) -> Reader r a -> Reader r a  -- run a monadic action, with the value modified by a function
 ```
 

@@ -186,10 +186,10 @@ Prelude> True && "false"
 
 Catching minor type mismatch errors is the simplest example of usage, although
 they occur extremely frequently as we humans are quite fallible in our reasoning
-about even the simplest of program constructions! Although this just the tip of
-the iceberg, the gradual trend over the last 20 years toward more *expressive
-types* in modern type systems; which are capable of guaranteeing a large variety
-of program correctness properties.
+about even the simplest of program constructions! Although this is just the tip
+of the iceberg, the gradual trend over the last 20 years goes toward more
+*expressive types* in modern type systems which are capable of guaranteeing a
+large variety of program correctness properties.
 
 * Preventing resource allocation errors.
 * Enforcing security access for program logic.
@@ -244,7 +244,8 @@ Parsing
 
 The source code is simply the raw sequence of text that specifies the program.
 Lexing splits the text stream into a sequence of *tokens*. Only the presence of
-invalid symbols is enforced, otherwise meaningless programs are accepted.
+invalid symbols is checked, programs that are meaningless in other ways are
+accepted.
 Whitespace is either ignored or represented as a unique token in the stream.
 
 ```haskell
@@ -315,7 +316,7 @@ Type Inference
 
 Type inference is the process by which the untyped syntax is endowed with type
 information by a process known as *type reconstruction* or *type inference*. The
-inference process may take into account explicit user annotated types.
+inference process may take into account explicit type annotations.
 
 ```haskell
 let f x = x + 1

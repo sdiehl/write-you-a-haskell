@@ -47,15 +47,15 @@ StandardML, etc. The variation we will discuss first is known as **untyped
 lambda calculus**, by contrast later we will discuss the **typed lambda
 calculus** which is an extension thereof.
 
-A lambda expression is said to bind its enclosing variable. So the lambda here
-binds the name $x$.
+A lambda abstraction is said to bind its variable.
+For example the lambda here binds $x$.
 
 $$
 \lambda x. e
 $$
 
-There are several lexical conventions that we will adopt when writing lambda
-expressions. Application of multiple lambda expressions associates to the left.
+There are several syntactical conventions that we will adopt when writing lambda
+expressions. Application of multiple expressions associates to the left.
 
 $$
 x_1\ x_2\  x_3\ ... x_n =  (... ((x_1 x_2 )x_3 ) ... x_n )
@@ -64,10 +64,11 @@ $$
 By convention application extends as far to the right as is syntactically
 meaningful. Parenthesis are used to disambiguate.
 
-In the lambda calculus all lambdas are of a single argument which may itself
-return another lambda. Out of convenience we often express multiple lambda
-expressions with their variables on one lambda symbol. This is merely a lexical
-convention and does not change the underlying meaning.
+In the lambda calculus all lambda abstractions bind a single variable, their
+body may be another lambda abstraction. Out of convenience we often write
+multiple lambda abstractions with their variables on one lambda symbol.
+This is merely a syntactical convention and does not change the underlying
+meaning.
 
 $$
 \lambda xy.z = \lambda x. \lambda y.z
@@ -92,10 +93,11 @@ $$
 $e_0$ is a combinator while $e_1$ is not. In $e_1$ both occurances of $x$ are bound. The first $y$ is bound,
 while the second is free. $a$ is also free.
 
-Variables that appear multiple times in an expression are only bound by the
-inner most binder. For example  the $x$ variable in the following expression is
-bound on the inner lambda, while $y$ is bound on the outer lambda. This kind of
-occurrence is referred to as *name shadowing*.
+Multiple lambda abstractions may bind the same variable name.
+Each occurance of a variable is then bound by the nearest enclosing binder.
+For example  the $x$ variable in the following expression is
+bound on the inner lambda, while $y$ is bound on the outer lambda. This
+phenomenon is referred to as *name shadowing*.
 
 $$
 \lambda x y. (\lambda x z. x + y)
@@ -104,7 +106,7 @@ $$
 SKI Combinators
 ----------------
 
-There are several important closed expressions called the SKI combinators.
+There are three fundamental closed expressions called the SKI combinators.
 
 $$
 \begin{aligned}
@@ -122,8 +124,8 @@ k x y = x
 i x = x
 ```
 
-Rather remarkably Moses Schönfinkel showed that all closed lambda expression can be expressed in terms of the
-**S** and **K** combinators including the **I** combinator. For example one can easily show that **SKK**
+Rather remarkably Moses Schönfinkel showed that all closed lambda expression can be expressed in terms of only the
+**S** and **K** combinators - even the **I** combinator. For example one can easily show that **SKK**
 reduces to **I**.
 
 $$
@@ -150,7 +152,7 @@ $$
 $$
 
 When we apply the $\omega$ combinator to itself we find that this results in an
-equal and infinitely long chain of reductions. A sequence of reductions that has
+infinitely long repeating chain of reductions. A sequence of reductions that has
 no normal form ( i.e. it reduces indefinitely ) is said to *diverge*.
 
 $$
@@ -192,7 +194,7 @@ alphanumeric sequences of characters.
 * **Haskell notation**: ``const = \x y -> x``
 
 In addition other terms like literal numbers or booleans can be added, and these
-make writing expository examples a little easier. In addition we will add a
+make writing expository examples a little easier. For these we will add a
 ``Lit`` constructor.
 
 ```haskell
@@ -209,7 +211,7 @@ Substitution
 ------------
 
 Evaluation of a lambda term ($(\lambda x.e) a$) proceeds by substitution of all
-occurrences of the variable $x$ with the argument $a$ in $e$. A single
+free occurrences of the variable $x$ in $e$ with the argument $a. A single
 substitution step is called a *reduction*. We write the substitution application
 in brackets before the expression it is to be applied over, $[x / a]e$ maps the
 variable $x$ to the new replacement $a$ over the expression $e$.
@@ -273,12 +275,15 @@ $$
 **Eta-reduction**
 
 $$
-(\lambda x.e) x \overset{\eta}\rightarrow e \quad \text{if} \quad x \notin \FV{e}
+\lambda x.ex \overset{\eta}{\rightarrow} e \quad \text{if} \quad x \notin \FV{e}
 $$
 
-Intuition for eta reduction is that abstracting over a term with a expression
-that does not contain the binding variable is equivalent to the body of the
-abstraction under beta reduction.
+This is justified by the fact that if we apply both sides to a term,
+one step of beta reduction turns the left side to the right side:
+
+$$
+(\lambda x.ex)e' \overset{\beta}{\rightarrow} ee' \quad \text{if} \quad x \notin \FV{e}
+$$
 
 **Eta-expansion**
 
@@ -347,8 +352,9 @@ let a = e in b
 ```
 
 Toplevel expression will be written as ``let`` statements without a body to
-indicate that they are added to the global scope. Haskell does not use this
-convention but OCaml and StandardML do. In Haskell the proceeding let is simply
+indicate that they are added to the global scope. The Haskell lanuage does
+not use this convention but OCaml, StandardML and the interactive mode of the
+Haskell compiler GHC do. In Haskell the preceding let is simply
 omitted.
 
 ```haskell
@@ -381,6 +387,8 @@ itself and reduce on itself permitting recursion and looping logic.
 
 $$\textbf{Y} = \lambda f.(\lambda x.(f (x x)) \lambda x.(f (x x)))$$
 
+The Y combinator satisfies:
+
 $$\textbf{Y} f  = f (\textbf{Y} f) $$
 
 For fun one can prove that the Y-combinator can be expressed in terms of the S
@@ -407,13 +415,13 @@ Where $\t{fix}$ has the evaluation rule:
 
 $$
 \begin{array}{cll}
-\mathtt{fix} \ v     & \rightarrow & v\ (\lambda x. (\mathtt{fix}\ v) x) \\
+\mathtt{fix} \ v     & \rightarrow & v\ (\mathtt{fix}\ v) \\
 \end{array}
 $$
 
 Together with the fixpoint (or the Y combinator) we can create let bindings
 which contain a reference to itself within the body of the bound expression.
-We'll call these *recursive let bindings* and are written as ``let rec`` in ML
+We'll call these *recursive let bindings*, they are written as ``let rec`` in ML
 dialects.  For now we will implement recursive lets as simply syntactic sugar
 for wrapping a fixpoint around a lambda binding by the following equivalence.
 
@@ -422,8 +430,8 @@ let rec x = e1 in e2    =    let x = fix (\x. e1) in e2
 ```
 
 So for example we can now write down every functional programmer's favorite two
-functions: ``factorial`` and ``fibonacci``. One is written with ``let rec`` and
-the other with explicit ``fix``.
+functions: ``factorial`` and ``fibonacci``. To show both styles, one is written
+with ``let rec`` and the other with explicit ``fix``.
 
 ```ocaml
 let fact = fix (\fact -> \n ->
