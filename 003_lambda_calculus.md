@@ -79,7 +79,7 @@ identifier for the binding variables. A variable is said to be *bound* if it is
 contained in a lambda expression of the same variable binding. Conversely a
 variable is *free* if it is not bound.
 
-A term with free variables is said to a *open term* while one without open
+A term with free variables is said to be an *open term* while one without free
 variables is said to be *closed* or a *combinator*.
 
 $$
@@ -161,7 +161,7 @@ $$
 
 We'll call this expression the $\Omega$ combinator. It is the canonical looping
 term in the lambda calculus. Quite a few of our type systems which are
-statically typed will reject this term from being well-formed, so it is quite
+statically typed will reject this term from being well-formed, so it is quite a
 useful tool for testing.
 
 $$
@@ -171,7 +171,7 @@ $$
 Implementation
 --------------
 
-The simplest implementation of the lambda calculus syntax with named binders, is
+The simplest implementation of the lambda calculus syntax with named binders is
 the following definition.
 
 ```haskell
@@ -245,7 +245,7 @@ and it is very easy to implement incorrectly even for experts.
 Conversion and Equivalences
 ---------------------------
 
-**Alpha equivelance**
+**Alpha equivalence**
 
 $$
 (\lambda x.e) \overset{\alpha} = (\lambda y. [x / y] e)
@@ -290,9 +290,9 @@ Eta-expansion will be important when we discuss translation into STG.
 Reduction
 ---------
 
-Evaluation of the lambda calculus expressions proceeds by beta reduction. The
+Evaluation of lambda calculus expressions proceeds by beta reduction. The
 variables bound in a lambda are substituted across the body of the lambda. There
-are several degrees of freedom in the design space about how to do this, and
+are several degrees of freedom in the design space about how to do this, and in
 which order an expression should be evaluated. For instance we could evaluate
 under the lambda and then substitute variables into it, or instead evaluate the
 arguments and then substitute and then reduce the lambda expressions. More on

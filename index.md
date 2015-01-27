@@ -36,7 +36,7 @@ response I got from so many people was very encouraging.
 
 I've done a great bit of thinking about what the most impactful topic I could
 write about in 2015 could be; and decided throughout this year I will follow up
-with an large endeavor for another project-based tutorial on *building a simple
+with a large endeavor for another project-based tutorial on *building a simple
 functional programming language from first principles*.
 
 This is a nontrivial topic and is unfortunately very much underserved, the
