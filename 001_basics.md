@@ -33,10 +33,8 @@ add :: Integer -> Integer -> Integer
 add x y =  x + y
 ```
 
-In Haskell all functions are pure, the only thing a function may do is return a
+In Haskell all functions are pure. The only thing a function may do is return a
 value.
-
-In Haskell all functions are pure. The only thing a function may do is return a value.
 
 All functions in Haskell are curried. For example, when a function of three
 arguments receives less than three arguments, it yields a partially applied
@@ -214,7 +212,7 @@ Recursion
 In Haskell all iteration over data structures is performed by recursion.
 Entering a function in Haskell does not create a new stack frame, the logic of
 the function is simply entered with the arguments on the stack and yields result
-to the register. In the case where a function returns a invocation of itself
+to the register. In the case where a function returns an invocation of itself
 invoked in the *tail position* the resulting logic is compiled identically to
 ``while`` loops in other languages, via a ``jmp`` instruction instead of a
 ``call``.
@@ -312,10 +310,10 @@ Higher-Kinded Types
 -------------------
 
 The "type of types" in Haskell is the language of kinds. Kinds are either an
-arrow (``* -> *``) or a star (``*``).
+arrow (``k -> k'``) or a star (``*``).
 
 
-The kind of an Int is ``*``, while the kind of ``Maybe`` is ``* -> *``. Haskell
+The kind of Int is ``*``, while the kind of ``Maybe`` is ``* -> *``. Haskell
 supports higher-kinded types, which are types that take other types and
 construct a new type. A type constructor in Haskell always has a kind which
 terminates in a ``*``.
@@ -722,6 +720,7 @@ context.
 
 ```haskell
 ask   :: Reader r r                            -- get the value
+asks  :: (r -> a) -> Reader r a                -- apply a function to the value, and return the result
 local :: (r -> r) -> Reader r a -> Reader r a  -- run a monadic action, with the value modified by a function
 ```
 

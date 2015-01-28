@@ -45,8 +45,8 @@ Throughout our discussion we will stress the importance of semantics and the
 construction of core calculi.  The frontend language syntax will be in the
 ML-family syntax out of convenience rather than principle. Choice of lexical
 syntax is arbitrary, uninteresting, and quite often distracts from actual
-substance in comparative language discussion. If there is one central theme is
-that the *design of the core calculus should drive development*, not the
+substance in comparative language discussion. If there is one central theme it
+is that the *design of the core calculus should drive development*, not the
 frontend language.
 
 Prerequisites
@@ -107,14 +107,14 @@ Functional Languages
 In mathematics a *function* is defined as a correspondence that assigns exactly
 one element of a set to each element in another set.  If a function $f(x) = a$
 then the function evaluated at $x$ will always have the value $a$. Central to
-the notion of all mathematics is the notion is of *equational reasoning*, where
+the notion of all mathematics is the notion of *equational reasoning*, where
 if $a= f(x)$ then for an expression $g(f(x), f(x))$, this is always equivalent
 to $g(a, a)$. In other words the values computed by functions can always be
 substituted freely at all occurrences.
 
 The central idea of *functional programming* is to structure our programs in
-such a way that we can reason about them as a system of equations just like one
-we can in mathematics. The evaluation of a pure function is one which *side
+such a way that we can reason about them as a system of equations just like
+we can in mathematics. The evaluation of a pure function is one in which *side
 effects* are prohibited, a function may only return a result without altering
 the world in any *observable* way.
 
@@ -186,17 +186,17 @@ Prelude> True && "false"
 
 Catching minor type mismatch errors is the simplest example of usage, although
 they occur extremely frequently as we humans are quite fallible in our reasoning
-about even the simplest of program constructions! Although this just the tip of
-the iceberg, the gradual trend over the last 20 years toward more *expressive
-types* in modern type systems; which are capable of guaranteeing a large variety
-of program correctness properties.
+about even the simplest of program constructions! Although this is just the tip
+of the iceberg, the gradual trend over the last 20 years goes toward more
+*expressive types* in modern type systems which are capable of guaranteeing a
+large variety of program correctness properties.
 
 * Preventing resource allocation errors.
 * Enforcing security access for program logic.
 * Side effect management.
 * Preventing buffer overruns.
 * Ensuring cryptographic properties for network protocols.
-* Modeling and verify theorems in mathematics and logic.
+* Modeling and verifying theorems in mathematics and logic.
 * Preventing data races and deadlocks in concurrent systems.
 
 Type systems can never capture all possible behavior of the program. Although
@@ -244,7 +244,8 @@ Parsing
 
 The source code is simply the raw sequence of text that specifies the program.
 Lexing splits the text stream into a sequence of *tokens*. Only the presence of
-invalid symbols is enforced, otherwise meaningless programs are accepted.
+invalid symbols is checked, programs that are meaningless in other ways are
+accepted.
 Whitespace is either ignored or represented as a unique token in the stream.
 
 ```haskell
@@ -305,7 +306,7 @@ simpler form of itself by reducing the number of complex structures by
 expressing them in terms of a fixed set of simpler constructs.
 
 Haskell's frontend is very large and many constructs are simplified down. For
-example ``where`` clauses and operation sections are the most common examples.
+example ``where`` clauses and operator sections are the most common examples.
 Where clauses are effectively syntactic sugar for let bindings and operator
 sections are desugared into lambdas with the left or right
 hand side argument assigned to a fresh variable.
@@ -315,7 +316,7 @@ Type Inference
 
 Type inference is the process by which the untyped syntax is endowed with type
 information by a process known as *type reconstruction* or *type inference*. The
-inference process may take into account explicit user annotated types.
+inference process may take into account explicit type annotations.
 
 ```haskell
 let f x = x + 1

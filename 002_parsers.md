@@ -33,7 +33,7 @@ So now let's build our own toy parser combinator library which we'll call
 ~~~~
 
 Structurally a parser is a function which takes an input stream of characters
-and yields an parse tree by applying the parser logic over sections of the
+and yields a parse tree by applying the parser logic over sections of the
 character stream (called *lexemes*) to build up a composite data structure for
 the AST.
 
@@ -49,7 +49,7 @@ failures for error reporting.
 ~~~~ {.haskell slice="chapter3/parsec.hs" lower=10 upper=16}
 ~~~~
 
-Recall that in Haskell in the String type is itself defined to be a list of
+Recall that in Haskell the String type is defined to be a list of
 ``Char`` values, so the following are equivalent forms of the same data.
 
 ```haskell
@@ -89,14 +89,14 @@ and concatenates the result. Together these give rise to both the Alternative
 and MonadPlus class instances which encode the logic for trying multiple parse
 functions over the same stream and handling failure and rollover.
 
-The core operator introduced here is (``<|>``) operator for combining two
-optional paths of parser logic, switching to second path if the first fails with
-the zero value.
+The core operator introduced here is the (``<|>``) operator for combining two
+optional paths of parser logic, switching to the second path if the first fails
+with the zero value.
 
 ~~~~ {.haskell slice="chapter3/parsec.hs" lower=40 upper=59}
 ~~~~
 
-Derived automatically from the Alternative typeclass definition is the ``many``
+Derived automatically from the Alternative typeclass definition are the ``many``
 and ``some`` functions. Many takes a single function argument and repeatedly
 applies it until the function fails and then yields the collected results up to
 that point. The ``some`` function behaves similar except that it will fail
@@ -177,7 +177,7 @@ $ runhaskell parsec.hs
 **Generalizing String**
 
 The limitations of the String type are well-known, but what is particularly nice
-about this approach is that it is adapts to different stream type simply by
+about this approach is that it adapts to different stream types simply by
 adding an additional parameter to the Parser type which holds the stream type.
 In place a more efficient data structure like ``Data.Text`` can replaced.
 
@@ -186,16 +186,16 @@ newtype Parser s a = Parser { parse :: s -> [(a,s)] }
 ```
 
 For the first couple of simple parsers we will use the String type for
-simplicity's sake, but later will generalize our parsers to use the ``Text``
+simplicity's sake, but later we will generalize our parsers to use the ``Text``
 type. The combinators and parsing logic will not change, only the lexer and
-language definitions types will change slightly to a generalized form.
+language definition types will change slightly to a generalized form.
 
 Parsec
 ------
 
-Now that we have the feel for parser combinators work, we can graduate to full
-the Parsec library. We'll effectively ignore the gritty details of parsing and
-lexing from here out. Although an interesting subject parsing is effectively a
+Now that we have the feel for parser combinators work, we can graduate to the
+full Parsec library. We'll effectively ignore the gritty details of parsing and
+lexing from now on. Although an interesting subject parsing is effectively a
 solved problem and the details are not terribly important for our purposes.
 
 The *Parsec* library defines a set of common combinators much like the operators
@@ -206,7 +206,7 @@ Combinator    Description
 ``char``      Match the given character.
 ``string``    Match the given string.
 ``<|>``       The choice operator tries to parse the first argument before 
-              proceeding to the second. Can be chained sequentially to a 
+              proceeding to the second. Can be chained sequentially to
               generate a sequence of options.
 ``many``      Consumes an arbitrary number of patterns matching the given 
               pattern and returns them as a list.
@@ -217,7 +217,7 @@ Combinator    Description
               Maybe.
 ``try``       Backtracking operator will let us parse ambiguous matching 
               expressions and restart with a different pattern.
-``parens``    Parsers the given pattern surrounded by parentheses.
+``parens``    Parses the given pattern surrounded by parentheses.
 
 **Tokens**
 
@@ -262,14 +262,14 @@ datatype.
 **Parser**
 
 Much like before our parser is simply written in monadic blocks, each mapping a
-a set of patterns to a construct in our ``Expr`` type. The toplevel entry point
+set of patterns to a construct in our ``Expr`` type. The toplevel entry point
 to our parser is the ``expr`` function which we can parse with by using the
 Parsec function ``parse``.
 
 ~~~~ {.haskell slice="chapter3/calc/Parser.hs" lower=46 upper=94}
 ~~~~
 
-The toplevel function we'll expose from our Parse module is the ``parseExpr``
+The toplevel function we'll expose from our Parse module is ``parseExpr``
 which will be called as the entry point in our REPL.
 
 ~~~~ {.haskell slice="chapter3/calc/Parser.hs" lower=99 upper=100}
@@ -278,8 +278,8 @@ which will be called as the entry point in our REPL.
 Evaluation
 ----------
 
-Our small language gives rise has two syntactic classes, values and expressions.
-Values are in *normal form* and cannot be reduced further. These consist of
+Our small language gives rise to two syntactic classes, values and expressions.
+Values are in *normal form* and cannot be reduced further. They consist of
 ``True`` and ``False`` values and literal numbers.
 
 ~~~~ {.haskell slice="chapter3/calc/Eval.hs" lower=8 upper=17}
@@ -289,15 +289,15 @@ The evaluation of our languages uses the ``Maybe`` applicative to accommodate
 the fact that our reduction may halt at any level with a Nothing if the
 expression being reduced has reached a normal form or cannot proceed because the
 reduction simply isn't well-defined. The rules for evaluation are a single step
-by which an expression takes a single small step one from form to another by a
+by which an expression takes a single small step from one form to another by a
 given rule.
 
 ~~~~ {.haskell slice="chapter3/calc/Eval.hs" lower=19 upper=31}
 ~~~~
 
-At the toplevel we simply apply the ``nf`` repeatedly until either a value is
+At the toplevel we simply apply ``eval'`` repeatedly until either a value is
 reached or we're left with an expression that has no well-defined way to
-proceed. The term is "stuck" and the program is an undefined state.
+proceed. The term is "stuck" and the program is in an undefined state.
 
 ~~~~ {.haskell slice="chapter3/calc/Eval.hs" lower=33 upper=39}
 ~~~~
@@ -322,7 +322,7 @@ runInputT :: Settings IO -> InputT IO a -> IO a
 getInputLine :: String -> InputT IO (Maybe String)
 ```
 
-When the user enters a ``EOF`` or sends a ``SIGQUIT`` to input, ``getInputLine``
+When the user enters an ``EOF`` or sends a ``SIGQUIT`` to input, ``getInputLine``
 will yield ``Nothing`` and can handle the exit logic.
 
 ```haskell
