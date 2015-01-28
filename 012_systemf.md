@@ -250,8 +250,6 @@ Substitution
 Erasure
 -------
 
-The type erasure:
-
 $$
 \begin{aligned}[lcl]
 & \t{erase}(x)      &=&\ x \\
@@ -269,6 +267,6 @@ unbound-generics
 ----------------
 
 Up until now we've been writing our own binding implementation. There is however
-a better way
+a better way to automate writing a lot of the substitution boilerplate.
 
 \clearpage
