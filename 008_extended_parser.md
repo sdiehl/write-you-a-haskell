@@ -660,7 +660,7 @@ addOperator fixdecl = do
 The initial state will consist of the default arithmetic and list operators
 defined with the same specification as the Haskell specification.
 
-```
+```haskell
 defaultOps :: [FixitySpec]
 defaultOps = [
     FixitySpec (Infix L 4) ">"
