@@ -199,10 +199,11 @@ large variety of program correctness properties.
 * Modeling and verifying theorems in mathematics and logic.
 * Preventing data races and deadlocks in concurrent systems.
 
-Type systems can never capture all possible behavior of the program. Although
-more sophisticated type systems are increasingly able to model a large space of
-behavior and is one of the most exciting areas of modern computer science
-research. Put most bluntly, **static types let you be dumb** and offload the
+Even though type systems will never be able to capture all aspects of a
+program, more sophisticated type systems are increasingly able to model a large
+space of program behavior.
+They are one of the most exciting areas of modern computer science research.
+Put most bluntly, **static types let you be dumb** and offload the
 checking that you would otherwise have to do in your head to a system that can
 do the reasoning for you and work with you to interactively build your program.
 

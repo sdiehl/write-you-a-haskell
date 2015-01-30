@@ -758,7 +758,8 @@ context. The primary function ``tell`` adds a value to the writer context.
 tell :: (Monoid w) => w -> Writer w ()
 ```
 
-The monad can be devalued with or without the collected values.
+The monad can be evaluated returning the collected writer context and
+optionally the returned value.
 
 ```haskell
 execWriter :: (Monoid w) => Writer w a -> w
