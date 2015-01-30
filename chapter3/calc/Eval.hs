@@ -34,6 +34,6 @@ nf :: Expr -> Expr
 nf x = fromMaybe x (nf <$> eval' x)
 
 eval :: Expr -> Maybe Expr
-eval t = case isVal (nf t) of
-  True  -> Just (nf t)
-  False -> Nothing -- term is "stuck"
+eval t = case nf t of
+  nft | isVal nft -> Just nft
+      | otherwise -> Nothing -- term is "stuck"
