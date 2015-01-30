@@ -13,7 +13,7 @@ runParser m s =
   case parse m s of
     [(res, [])] -> res
     [(_, rs)]   -> error "Parser did not consume entire stream."
-    []          -> error "Parser error."
+    _           -> error "Parser error."
 
 item :: Parser Char
 item = Parser $ \s ->
