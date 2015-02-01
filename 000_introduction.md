@@ -359,7 +359,7 @@ The type core representation is often suitable for evaluation, but quite often
 different intermediate representations are more amenable to certain
 optimizations and make various semantic properties of the language explicit.
 These kind of intermediate forms will often attach information about free
-variables, allocations, and usage information directly onto the AST to make it 
+variables, allocations, and usage information directly in the AST structure.
 
 The most important form we will use is called the *Spineless Tagless G-Machine*
 ( STG ), an abstract machine that makes many of the properties of lazy
