@@ -71,7 +71,7 @@ it over the result of second parse function. Since the parser operation yields a
 list of tuples, composing a second parser function simply maps itself over the
 resulting list and concat's the resulting nested list of lists into a single
 flat list in the usual list monad fashion. The unit operation injects a single
-pure value as result without reading from the parse stream.
+pure value as the result, without reading from the parse stream.
 
 ~~~~ {.haskell slice="chapter3/parsec.hs" lower=23 upper=28}
 ~~~~
