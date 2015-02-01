@@ -192,7 +192,7 @@ of the iceberg, the gradual trend over the last 20 years goes toward more
 large variety of program correctness properties.
 
 * Preventing resource allocation errors.
-* Enforcing security access for program logic.
+* Enforcing security in communication protocols.
 * Side effect management.
 * Preventing buffer overruns.
 * Ensuring cryptographic properties for network protocols.
