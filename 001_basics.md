@@ -596,8 +596,8 @@ which effectively is embedded inside of ``IO``).
 1
 ```
 
-The IO monad is a special monad wired into the runtime. It is a degenerate case
-and most monads in Haskell have nothing to do with effects in this sense.
+The IO monad is wired into the runtime with compiler support. It is a special
+case and most monads in Haskell have nothing to do with effects in this sense.
 
 ```haskell
 putStrLn :: String -> IO ()
