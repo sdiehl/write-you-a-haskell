@@ -40,8 +40,9 @@ the AST.
 ~~~~ {.haskell slice="chapter3/parsec.hs" lower=8 upper=8}
 ~~~~
 
-Running the function will result in traversing the stream of characters yielding
-a resultant AST structure for the type variable ``a``, or failing with a parse
+Running the function will result in traversing the stream of characters
+yielding a value of type ``a`` that usually represents the AST for the
+parsed expression, or failing with a parse
 error for malformed input, or failing by not consuming the entire stream of
 input. A more robust implementation would track the position information of
 failures for error reporting.
@@ -70,7 +71,7 @@ it over the result of second parse function. Since the parser operation yields a
 list of tuples, composing a second parser function simply maps itself over the
 resulting list and concat's the resulting nested list of lists into a single
 flat list in the usual list monad fashion. The unit operation injects a single
-pure value into the parse stream.
+pure value as result without reading from the parse stream.
 
 ~~~~ {.haskell slice="chapter3/parsec.hs" lower=23 upper=28}
 ~~~~

@@ -13,7 +13,7 @@ runParser m s =
   case parse m s of
     [(res, [])] -> res
     [(_, rs)]   -> error "Parser did not consume entire stream."
-    []          -> error "Parser error."
+    _           -> error "Parser error."
 
 item :: Parser Char
 item = Parser $ \s ->
@@ -54,9 +54,9 @@ failure = Parser (\cs -> [])
 
 option :: Parser a -> Parser a -> Parser a
 option  p q = Parser $ \s ->
-  case parse (mplus p q) s of
-    []     -> []
-    (x:xs) -> [x]
+  case parse p s of
+    []     -> parse q s
+    res    -> res
 
 satisfy :: (Char -> Bool) -> Parser Char
 satisfy p = item `bind` \c ->
