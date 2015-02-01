@@ -357,7 +357,7 @@ Transformation
 
 The type core representation is often suitable for evaluation, but quite often
 different intermediate representations are more amenable to certain
-optimizations and make explicit semantic properties of the language explicit.
+optimizations and make various semantic properties of the language explicit.
 These kind of intermediate forms will often attach information about free
 variables, allocations, and usage information directly onto the AST to make it 
 
