@@ -25,8 +25,8 @@ thereof:
 ![](img/lambda.png)
 </div>
 
-The terms are named are typically referred to in code by the following
-contractions.
+These types are typically referred to in code by several contractions of their
+names:
 
 - **Var** - A variable
 - **Lam** - A lambda abstraction
