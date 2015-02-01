@@ -227,10 +227,10 @@ In detail, substitution is defined like this:
 $$
 \begin{array}{rll}
 [x/a] x = & a\\
-[x/a] y = & y & \text{if $x\neq y$}\\
+[x/a] y = & y & \text{if}\ x\neq y\\
 [x/a]ee' = & ([x/a]e)([x/a]e')\\
 [x/a]\lambda x.e = & \lambda x.e\\
-[x/a]\lambda y.e = & \lambda y.[x/a]e & \text{if $x\neq y$ and $y\notin\FV{e}}\\
+[x/a]\lambda y.e = & \lambda y.[x/a]e & \text{if}\ x \neq y\ \text{and}\ y \notin\FV{e}\\
 \end{array}
 $$
 
