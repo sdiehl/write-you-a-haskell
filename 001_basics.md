@@ -507,11 +507,27 @@ argument but return the value of the second.
 Monoids
 -------
 
+Monoids provide an interface for structures which have an associative operation
+(``mappend``) and a neutral element (``mempty``) which is the zero for the join
+operation.
+
 ```haskell
 class Monoid a where
   mempty :: a
   mappend :: a -> a -> a
   mconcat :: [a] -> a
+```
+
+The canonical example is the list type with the zero being the empty list.
+
+```haskell
+import Data.Monoid
+
+a :: [Integer]
+a = [1,2,3] <> [4,5,6]
+
+b :: [Integer]
+b = ([1,2,3] <> mempty) <> (mempty <> [4,5,6])
 ```
 
 Deriving
