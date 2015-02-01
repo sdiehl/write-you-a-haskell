@@ -158,9 +158,9 @@ programs.
 
 In a language like Python all expressions have the same type at compile time,
 and all syntactically valid programs can be evaluated. In the case where the
-program is nonsensical the runtime will bubble up exceptions at runtime. The
-Python interpreter makes no attempt to analyze the given program for soundness
-at all before running it.
+program is nonsensical the runtime will bubble up exceptions during evaluation.
+The Python interpreter makes no attempt to analyze the given program for
+soundness at all before running it.
 
 ```bash
 >>> True & "false"
