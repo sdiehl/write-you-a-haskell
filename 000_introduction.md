@@ -142,8 +142,8 @@ function f() {
 ```
 
 The behavior of a pure function is independent of where and when it is
-evaluated, whereas the sequence a impure function is intrinsically tied to its
-behavior.
+evaluated, whereas the behavior of an impure function is intrinsically tied to
+its execution order.
 
 Functional programming is defined simply as programming strictly with pure
 referentially transparent functions.
