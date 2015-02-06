@@ -499,7 +499,7 @@ a one-to-one mapping between each syntax term and a typing rule.
 $$
 \begin{array}{cl}
  \displaystyle \frac{x:\sigma \in \Gamma}{\Gamma \vdash x:\sigma} & \trule{T-Var} \\ \\
- \displaystyle \infrule{\Gamma, x : \tau_1 \vdash e : \tau_2}{\Gamma \vdash \lambda x . \tau_2 : e_1 \rightarrow e_2 } & \trule{T-Lam} \\ \\
+ \displaystyle \infrule{\Gamma, x : \tau_1 \vdash e : \tau_2}{\Gamma \vdash \lambda x . e : tau_1 \rightarrow tau_2 } & \trule{T-Lam} \\ \\
  \displaystyle \infrule{\Gamma \vdash e_1 : \tau_1 \rightarrow \tau_2 \andalso \Gamma \vdash e_2 : \tau_1}{\Gamma \vdash e_1 e_2 : \tau_2} & \trule{T-App} \\ \\
  \displaystyle
    \frac{\Gamma \vdash c : \t{Bool} \quad \Gamma \vdash e_1 : \tau
