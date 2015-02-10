@@ -688,7 +688,7 @@ $a \times b$                    Product type
 $a + b$                         Sum type
 $\bot$                          Bottom type
 $\forall \alpha. \tau$          Universal quantifier
-$\exists \tau$                  Existential quantifier
+$\exists \alpha. \tau$          Existential quantifier
 $\mathtt{Nat}, \mathtt{Bool}$   Ground type
 
 <p class="halfbreak">
