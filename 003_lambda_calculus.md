@@ -355,7 +355,7 @@ added to the lambda calculus syntax. In the untyped lambda calculus, let
 bindings are semantically equivalent to applied lambda expressions.
 
 $$
-\mathtt{let}\ a = e\ \mathtt{in}\ b \quad := \quad (λa.b) e
+\mathtt{let}\ a = e\ \mathtt{in}\ b \quad := \quad (\lambda a.b) e
 $$
 
 In our languages we will write let statements like they appear in Haskell.
