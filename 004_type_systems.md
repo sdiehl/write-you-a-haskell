@@ -668,7 +668,7 @@ Notation                        Convention
 -----------                     ------------
 $\{ a, b, c \}$                 Set
 $\overline{\alpha}$             Vector
-$x : \tau$                      Type judgement
+$e : \tau$                      Type judgement
 $P(x)$                          Predicate
 $P(x) : Q(x)$                   Conditional
 $P \vdash Q$                    Implication
@@ -680,14 +680,14 @@ $\tau$                          Type metavariable
 $\kappa$                        Kind metavariable
 $\sigma$                        Type scheme metavariable
 $C$                             Type constraint
-$\alpha \sim \beta$             Unification constraint
-$[\alpha / \beta]$              Substitution
-$[s] x$                         Substitution application
+$\tau_1 \sim \tau_2$            Unification constraint
+$[\tau / \alpha]$               Substitution
 $s$                             Substitution metavariable
-$a \rightarrow b$               Function type
-$C \Rightarrow b$               Qualified type
-$a \times b$                    Product type
-$a + b$                         Sum type
+$[s] \tau$                      Substitution application
+$\tau_1 \rightarrow \tau_2$     Function type
+$C \Rightarrow \tau$            Qualified type
+$\tau_1 \times \tau_2$          Product type
+$\tau_1 + \tau_2$               Sum type
 $\bot$                          Bottom type
 $\forall \alpha. \tau$          Universal quantifier
 $\exists \alpha. \tau$          Existential quantifier
