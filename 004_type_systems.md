@@ -31,8 +31,8 @@ Rules
 -----
 
 In the study of programming language semantics, logical statements are written
-in a specific logical notation. A property, for our purposes will be a fact
-about the type of a term and written with the following notation:
+in a specific logical notation. A property, for our purposes, will be a fact
+about the type of a term. It is written with the following notation:
 
 $$
 1 : \t{Nat}
@@ -61,12 +61,12 @@ In this notation, the expression above the line is called the *antecedent*, and
 expression below the line is called the *conclusion*. A rule with no antecedent
 is an *axiom*.
 
-The variable $n$ is *metavariable* standing for any natural number, an instances
+The variable $n$ is *metavariable* standing for any natural number, an instance
 of a rule is a substitution of values for these metavariables. A *derivation* is
 a tree of rules of finite depth. We write $\vdash C$ to indicate that there
 exists a derivation whose conclusion is $C$, that $C$ is provable.
 
-For example with $\vdash 2 : \t{Nat}$ by the derivation.
+For example $\vdash 2 : \t{Nat}$ by the derivation:
 
 $$
 \dfrac
@@ -97,7 +97,8 @@ environment* written as $\Gamma$. The context is a sequence of named variables
 mapped to properties about the named variable. The comma operator for the
 context extends $\Gamma$ by adding a new property on the right of the existing
 set. The empty context is denoted $\varnothing$ and is the terminal element in
-this chain of properties that carries no information. For example:
+this chain of properties that carries no information. So contexts are defined
+by:
 
 $$
 \begin{aligned}
@@ -105,6 +106,8 @@ $$
             & \Gamma,\  x : \tau  \\
 \end{aligned}
 $$
+
+Here is an example for a typing rule for addition using contexts:
 
 $$
 \frac{\Gamma \vdash e_1 : \t{Nat} \quad \Gamma \vdash e_2 :
@@ -167,10 +170,10 @@ java.lang.Long
 While this is a perfectly acceptable alternative definition, we are not going to
 go that route and instead restrict ourselves purely to the discussion of *static
 types*, in other words types which are known before runtime. Under this set of
-definitions many of so-called dynamically typed language often only have a
+definitions many so-called dynamically typed languages often only have a
 single static type. For instance in Python all static types are subsumed by the
 ``PyObject`` and it is only at runtime that the tag ``PyTypeObject *ob_type`` is
-discriminated on to give rise to Python notion of "types". Again, this is not
+discriminated on to give rise to the Python notion of "types". Again, this is not
 the kind of type we will discuss. The trade-offs that these languages make is
 that they often have trivial static semantics while the dynamics for the
 language are often exceedingly complicated. Languages like Haskell and OCaml are
@@ -206,14 +209,14 @@ Small-Step Semantics
 --------------------
 
 The real quantity we're interested in formally describing is expressions in
-programming languages. A programming language semantics are described by the
+programming languages. A programming language semantics is described by the
 *operational semantics* of the language. The operational semantics can be
 thought of as a description of an abstract machine which operates over the
 abstract terms of the programming language in the same way that a virtual
 machine might operate over instructions.
 
-We use a framework called *small-step semantics* where a deviation shows how
-individual rewrites compose to produce a term, which can evaluate to a value
+We use a framework called *small-step semantics* where a derivation shows how
+individual rewrites compose to produce a term, which we can evaluate to a value
 through a sequence of state changes. This is a framework for modeling aspects of
 the runtime behavior of the program before running it by describing the space of
 possible transitions type and terms may take. Ultimately we'd like the term to
@@ -248,7 +251,7 @@ e ::=\ & \t{True} \\
 \end{aligned}
 $$
 
-The small step evaluation semantics for this little language are uniquely
+The small step evaluation semantics for this little language is uniquely
 defined by the following 9 rules. They describe each step that an expression may
 take during evaluation which may or may not terminate and converge on a value.
 
@@ -267,8 +270,8 @@ $$
 $$
 
 The evaluation logic for our interpreter simply reduced an expression by the
-predefined evaluation rules until either it reached a normal norm ( a value ) or
-because it got stuck.
+predefined evaluation rules until either it reached a normal form ( a value ) or
+got stuck.
 
 ```haskell
 nf :: Expr -> Expr
@@ -344,8 +347,7 @@ $$
  \displaystyle \t{True} : \t{Bool} & \trule{T-True} \\ \\
  \displaystyle \t{False} : \t{Bool} & \trule{T-False} \\ \\
  \displaystyle
-   \frac{\Gamma \vdash e_1 : \t{Bool} \quad \Gamma \vdash e_2 : \tau
-     \quad \Gamma \vdash e_3 : \tau}{\Gamma \vdash \ite{e_1}{e_2}{e_3} :
+   \frac{e_1 : \t{Bool} \quad e_2 : \tau \quad e_3 : \tau}{\ite{e_1}{e_2}{e_3} :
      \tau} & \trule{T-If} \\ \\
 \end{array}
 $$
@@ -473,12 +475,12 @@ e :=\ & x \\
 \end{aligned}
 $$
 
-We can consider a very simple type system for our language that will consist of ``int``
-and ``Bool`` types and function types.
+We can consider a very simple type system for our language that will consist of
+``Int`` and ``Bool`` types and function types.
 
 $$
 \begin{aligned}
-\tau :=\ & \t{int} \\
+\tau :=\ & \t{Int} \\
          & \t{Bool} \\ 
          & \tau \rightarrow \tau \\
 \end{aligned}
@@ -499,13 +501,13 @@ a one-to-one mapping between each syntax term and a typing rule.
 $$
 \begin{array}{cl}
  \displaystyle \frac{x:\sigma \in \Gamma}{\Gamma \vdash x:\sigma} & \trule{T-Var} \\ \\
- \displaystyle \infrule{\Gamma, x : \tau_1 \vdash e : \tau_2}{\Gamma \vdash \lambda x . e : tau_1 \rightarrow tau_2 } & \trule{T-Lam} \\ \\
+ \displaystyle \infrule{\Gamma, x : \tau_1 \vdash e : \tau_2}{\Gamma \vdash \lambda x:\tau_1 . e : \tau_1 \rightarrow \tau_2 } & \trule{T-Lam} \\ \\
  \displaystyle \infrule{\Gamma \vdash e_1 : \tau_1 \rightarrow \tau_2 \andalso \Gamma \vdash e_2 : \tau_1}{\Gamma \vdash e_1 e_2 : \tau_2} & \trule{T-App} \\ \\
  \displaystyle
    \frac{\Gamma \vdash c : \t{Bool} \quad \Gamma \vdash e_1 : \tau
      \quad \Gamma \vdash e_2 : \tau}{\Gamma \vdash \ite{c}{e_1}{e_2} :
      \tau} & \trule{T-If} \\ \\
- \displaystyle \Gamma \vdash n : \t{int} & \trule{T-Int} \\ \\
+ \displaystyle \Gamma \vdash n : \t{Int} & \trule{T-Int} \\ \\
  \displaystyle \Gamma \vdash \t{True} : \t{Bool} & \trule{T-True} \\ \\
  \displaystyle \Gamma \vdash \t{False} : \t{Bool} & \trule{T-False} \\ \\
 \end{array}
@@ -547,7 +549,7 @@ lookupVar x = do
 
 The typechecker will be a ``ExceptT`` + ``Reader`` monad transformer stack, with
 the reader holding the typing environment. There are three possible failure
-modes for the our simply typed lambda calculus typechecker:
+modes for our simply typed lambda calculus typechecker:
 
 * The case when we try to unify two unlike types.
 * The case when we try to apply a non-function to an argument.
@@ -583,7 +585,7 @@ check expr = case expr of
     t2 <- check e2
     case t1 of
        (TArr a b) | a == t2 -> return b
-       (TArr a _) -> throwError $ Mismatch t2 a
+                  | otherwise -> throwError $ Mismatch t2 a
        ty -> throwError $ NotFunction ty
 
   Var x -> lookupVar x
@@ -599,8 +601,8 @@ runtime by definition. The only difference is that the simply typed lambda
 calculus admits strictly less programs than the untyped lambda calculus.
 
 The foundational idea in compilation of static typed languages is that a typed
-program can be transformed into an untyped program that *erases* type
-information but preserves the evaluation semantics of the typed program. If our
+program can be transformed into an untyped program by *erasing* type
+information but preserving the evaluation semantics of the typed program. If our
 program has *type safety* then it can never "go wrong" at runtime.
 
 Of course the converse is not true, programs that do not "go wrong" are not
@@ -666,7 +668,7 @@ Notation                        Convention
 -----------                     ------------
 $\{ a, b, c \}$                 Set
 $\overline{\alpha}$             Vector
-$x : \tau$                      Type judgement
+$e : \tau$                      Type judgement
 $P(x)$                          Predicate
 $P(x) : Q(x)$                   Conditional
 $P \vdash Q$                    Implication
@@ -678,14 +680,14 @@ $\tau$                          Type metavariable
 $\kappa$                        Kind metavariable
 $\sigma$                        Type scheme metavariable
 $C$                             Type constraint
-$\alpha \sim \beta$             Unification constraint
-$[\alpha / \beta]$              Substitution
-$[s] x$                         Substitution application
+$\tau_1 \sim \tau_2$            Unification constraint
+$[\tau / \alpha]$               Substitution
 $s$                             Substitution metavariable
-$a \rightarrow b$               Function type
-$C \Rightarrow b$               Qualified type
-$a \times b$                    Product type
-$a + b$                         Sum type
+$[s] \tau$                      Substitution application
+$\tau_1 \rightarrow \tau_2$     Function type
+$C \Rightarrow \tau$            Qualified type
+$\tau_1 \times \tau_2$          Product type
+$\tau_1 + \tau_2$               Sum type
 $\bot$                          Bottom type
 $\forall \alpha. \tau$          Universal quantifier
 $\exists \alpha. \tau$          Existential quantifier
