@@ -585,7 +585,7 @@ check expr = case expr of
     t2 <- check e2
     case t1 of
        (TArr a b) | a == t2 -> return b
-       (TArr a _) -> throwError $ Mismatch t2 a
+                  | otherwise -> throwError $ Mismatch t2 a
        ty -> throwError $ NotFunction ty
 
   Var x -> lookupVar x
