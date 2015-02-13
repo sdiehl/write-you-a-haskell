@@ -508,8 +508,8 @@ Monoids
 -------
 
 Monoids provide an interface for structures which have an associative operation
-(``mappend``) and a neutral element (``mempty``) which is the zero for the join
-operation.
+(``mappend``, there is also the synonym ``<>``) and a neutral
+(also: unit or zero) element (``mempty``) for that operation.
 
 ```haskell
 class Monoid a where
@@ -518,7 +518,8 @@ class Monoid a where
   mconcat :: [a] -> a
 ```
 
-The canonical example is the list type with the zero being the empty list.
+The canonical example is the list type with concatenation as the operation
+and the empty list as zero.
 
 ```haskell
 import Data.Monoid
