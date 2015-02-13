@@ -179,9 +179,9 @@ $ runhaskell parsec.hs
 
 The limitations of the String type are well-known, but what is particularly nice
 about this approach is that it adapts to different stream types simply by adding
-an additional parameter to the Parser type which holds the stream type.  In it's
-place a more efficient string data structure (``Text``, ``ByteString``) can used
-instead.
+an additional parameter to the Parser type which holds the stream type.  In its
+place a more efficient string data structure (``Text``, ``ByteString``) can be
+used.
 
 ```haskell
 newtype Parser s a = Parser { parse :: s -> [(a,s)] }
