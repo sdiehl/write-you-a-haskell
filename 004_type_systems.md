@@ -475,12 +475,12 @@ e :=\ & x \\
 \end{aligned}
 $$
 
-We can consider a very simple type system for our language that will consist of ``int``
-and ``Bool`` types and function types.
+We can consider a very simple type system for our language that will consist of
+``Int`` and ``Bool`` types and function types.
 
 $$
 \begin{aligned}
-\tau :=\ & \t{int} \\
+\tau :=\ & \t{Int} \\
          & \t{Bool} \\ 
          & \tau \rightarrow \tau \\
 \end{aligned}
@@ -507,7 +507,7 @@ $$
    \frac{\Gamma \vdash c : \t{Bool} \quad \Gamma \vdash e_1 : \tau
      \quad \Gamma \vdash e_2 : \tau}{\Gamma \vdash \ite{c}{e_1}{e_2} :
      \tau} & \trule{T-If} \\ \\
- \displaystyle \Gamma \vdash n : \t{int} & \trule{T-Int} \\ \\
+ \displaystyle \Gamma \vdash n : \t{Int} & \trule{T-Int} \\ \\
  \displaystyle \Gamma \vdash \t{True} : \t{Bool} & \trule{T-True} \\ \\
  \displaystyle \Gamma \vdash \t{False} : \t{Bool} & \trule{T-False} \\ \\
 \end{array}
