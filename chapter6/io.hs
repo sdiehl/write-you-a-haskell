@@ -39,7 +39,7 @@ fromVChar val = case val of
 fromVEff :: Value -> (IO Value)
 fromVEff val = case val of
   VEffect f -> f
-  _         -> error "not a effect"
+  _         -> error "not an effect"
 
 lam :: (Value -> Value) -> Value
 lam = VFun

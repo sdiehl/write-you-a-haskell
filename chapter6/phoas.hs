@@ -18,7 +18,7 @@ fromVFun val = case val of
 fromVLit :: Value -> Integer
 fromVLit val = case val of
   VLit n -> n
-  _      -> error "not a integer"
+  _      -> error "not an integer"
 
 eval :: Expr -> Value
 eval e = ev (unExpr e) where
