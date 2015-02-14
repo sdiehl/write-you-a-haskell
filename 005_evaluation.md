@@ -36,8 +36,8 @@ There are many different models, and various hybrids thereof. We will consider t
 dominant models:
 
 * Call-by-value: arguments are evaluated before a function is entered
-* Call-by-name: arguments passed unevaluated
-* Call-by-need: arguments passed unevaluated but an expression is only evaluated
+* Call-by-name: arguments are passed unevaluated
+* Call-by-need: arguments are passed unevaluated but an expression is only evaluated
   once and shared upon subsequent references
 
 Given an expression $f x$ the reduction in different evaluation models proceeds
@@ -81,9 +81,10 @@ how the subexpression ``(2 + 2)`` is evaluated to normal form before being
 bound.
 
 ```haskell
-(\x. \y. y x) (2 + 2) λx. x + 1
-=> (\y. y 4) \x. x + 1
-=> (\y. x + 1) 4
+(\x. \y. y x) (2 + 2) (\x. x + 1)
+=> (\x. \y. y x) 4 (\x. x + 1)
+=> (\y. y 4) (\x. x + 1)
+=> (\x. x + 1) 4
 => 4 + 1
 => 5
 ```
@@ -161,7 +162,7 @@ evaluated.
 $$
 \begin{array}{cl}
  \displaystyle \frac{e_1 \to e_1'}{e_1 e_2 \to e_1' e_2} & \trule{E-App} \\ \\
- \displaystyle {(\lambda x . e) v \to [x / v] e } & \trule{E-AppLam} \\ \\
+ \displaystyle {(\lambda x . e_1) e_2 \to [x / e_2] e_1 } & \trule{E-AppLam} \\ \\
 \end{array}
 $$
 
@@ -169,9 +170,9 @@ For example, the same expression we looked at for call-by-value has the same
 normal form but arrives at it by a different sequence of reductions:
 
 ```haskell
-(\x. \y. y x) (2 + 2) \x. x + 1
-=> (\y.y (2 + 2)) λx. x + 1
-=> (\x.x + 1) (2 + 2)
+(\x. \y. y x) (2 + 2) (\x. x + 1)
+=> (\y. y (2 + 2)) (\x. x + 1)
+=> (\x. x + 1) (2 + 2)
 => (2 + 2) + 1
 => 4 + 1
 => 5
@@ -388,7 +389,7 @@ s =
 ```
 
 Evaluation will result in a runtime ``Value`` type, just as before with our
-outer interpreters. We will use several "extractor" function which use
+outer interpreters. We will use several "extractor" functions which use
 incomplete patterns under the hood. The model itself does not prevent malformed
 programs from blowing up here, and so it is necessary to guarantee that the
 program is sound before evaluation. Normally this would be guaranteed at a
@@ -407,7 +408,7 @@ fromVFun val = case val of
 fromVLit :: Value -> Integer
 fromVLit val = case val of
   VLit n -> n
-  _      -> error "not a integer"
+  _      -> error "not an integer"
 ```
 
 Evaluation simply exploits the fact that nestled up under our existential type
@@ -476,7 +477,7 @@ data Value
 fromVEff :: Value -> (IO Value)
 fromVEff val = case val of
   VEffect f -> f
-  _         -> error "not a effect"
+  _         -> error "not an effect"
 ```
 
 ```haskell
