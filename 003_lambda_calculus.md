@@ -43,7 +43,7 @@ $$
 The lambda calculus is often called the "assembly language" of functional
 programming, and variations and extensions on it form the basis of many
 functional compiler intermediate forms for languages like Haskell, OCaml,
-StandardML, etc. The variation we will discuss first is known as **untyped
+Standard ML, etc. The variation we will discuss first is known as **untyped
 lambda calculus**, by contrast later we will discuss the **typed lambda
 calculus** which is an extension thereof.
 
@@ -62,9 +62,9 @@ x_1\ x_2\  x_3\ ... x_n =  (... ((x_1 x_2 )x_3 ) ... x_n )
 $$
 
 By convention application extends as far to the right as is syntactically
-meaningful. Parenthesis are used to disambiguate.
+meaningful. Parentheses are used to disambiguate.
 
-In the lambda calculus all lambda abstractions bind a single variable, their
+In the lambda calculus, each lambda abstraction binds a single variable, and the lambda abstraction's
 body may be another lambda abstraction. Out of convenience we often write
 multiple lambda abstractions with their variables on one lambda symbol.
 This is merely a syntactical convention and does not change the underlying
@@ -75,8 +75,8 @@ $$
 $$
 
 The actual implementation of the lambda calculus admits several degrees of
-freedom in how they are represented. The most notable is the choice of
-identifier for the binding variables. A variable is said to be *bound* if it is
+freedom in how lambda abstractions are represented. The most notable is the choice of
+identifiers for the binding variables. A variable is said to be *bound* if it is
 contained in a lambda expression of the same variable binding. Conversely a
 variable is *free* if it is not bound.
 
@@ -90,12 +90,12 @@ e_1 &= \lambda x. (x (\lambda y. y a) x) y \\
 \end{aligned}
 $$
 
-$e_0$ is a combinator while $e_1$ is not. In $e_1$ both occurances of $x$ are bound. The first $y$ is bound,
+$e_0$ is a combinator while $e_1$ is not. In $e_1$ both occurrences of $x$ are bound. The first $y$ is bound,
 while the second is free. $a$ is also free.
 
 Multiple lambda abstractions may bind the same variable name.
-Each occurance of a variable is then bound by the nearest enclosing binder.
-For example  the $x$ variable in the following expression is
+Each occurrence of a variable is then bound by the nearest enclosing binder.
+For example, the $x$ variable in the following expression is
 bound on the inner lambda, while $y$ is bound on the outer lambda. This
 phenomenon is referred to as *name shadowing*.
 
@@ -124,7 +124,7 @@ k x y = x
 i x = x
 ```
 
-Rather remarkably Moses Schönfinkel showed that all closed lambda expression can be expressed in terms of only the
+Rather remarkably Moses Schönfinkel showed that all closed lambda expressions can be expressed in terms of only the
 **S** and **K** combinators - even the **I** combinator. For example one can easily show that **SKK**
 reduces to **I**.
 
