@@ -379,8 +379,8 @@ we will create a fresh type variable.
 Unification
 -----------
 
-Central to the idea of inference is the notion *unification*. A unifier is a
-function $s$ for two expressions $e_1$ and $e_2$ is a relation such that:
+Central to the idea of inference is the notion of *unification*. A unifier
+for two expressions $e_1$ and $e_2$ is a substitution $s$ such that:
 
 $$
 s := [n_0 / m_0, n_1 / m_1, ..., n_k / m_k] \\
@@ -392,14 +392,14 @@ between them. A substitution set is said to be *confluent* if the application of
 substitutions is independent of the order applied, i.e. if we always arrive at
 the same normal form regardless of the order of substitution chosen.
 
-The notation we'll adopt for unification is, read as two types $\tau, \tau'$ are
-unifiable by a substitution $s$.
+We'll adopt the notation
 
 $$
 \tau \sim \tau' : s
 $$
 
-Such that:
+for the fact that two types $\tau, \tau'$ are unifiable by a substitution $s$,
+such that:
 
 $$
 [s] \tau = [s] \tau'
