@@ -134,19 +134,18 @@ $$
 
 A rather remarkably fact of universal quantification is that many properties
 about inhabitants of a type are guaranteed by construction, these are the
-so-called *free theorems*. For instance the only (nonpathological)
-implementation that can inhabit a function of type ``(a, b) -> a`` is an
-implementation precisely identical to that of ``fst``.
+so-called *free theorems*. For instance any (nonpathological)
+inhabitant of the type ``(a, b) -> a`` must be equivalent to ``fst``.
 
 A slightly less trivial example is that of the ``fmap`` function of type
-``Functor f => (a -> b) -> f a -> f b``. The second functor law states that.
+``Functor f => (a -> b) -> f a -> f b``. The second functor law demands that:
 
 ```haskell
 forall f g. fmap f . fmap g = fmap (f . g)
 ```
 
 However it is impossible to write down a (nonpathological) function for ``fmap``
-that was well-typed and didn't have this property. We get the theorem for free!
+that has the required type and doesn't have this property. We get the theorem for free!
 
 Types
 -----
