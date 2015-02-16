@@ -40,7 +40,7 @@ $$
 
 Milner's observation was that since the typing rules map uniquely onto syntax,
 we can in effect run the typing rules "backwards" and whenever we don't have a
-known type for an subexpression, we "guess" by putting a fresh variable in its
+known type for a subexpression, we "guess" by putting a fresh variable in its
 place, collecting constraints about its usage induced by subsequent typing
 judgements.  This is the essence of *type inference* in the ML family of
 languages, that by the generation and solving of a class of unification problems
@@ -107,11 +107,11 @@ Polymorphism
 ------------
 
 We will add an additional constructs to our language that will admit a new form
-of *polymorphism* for our language.  Polymorphism is property of a term to
+of *polymorphism* for our language.  Polymorphism is the property of a term to
 simultaneously admit several distinct types for the same function
 implementation. 
 
-For instance the polymorphic signature for the identity function maps a input of
+For instance the polymorphic signature for the identity function maps an input of
 type $\alpha$
 
 $$
@@ -198,7 +198,7 @@ $$
 $$
 
 We've now divided our types into two syntactic categories, the *monotypes* and
-*polytypes*. In our simple initial languages type schemes will always be the
+the *polytypes*. In our simple initial languages type schemes will always be the
 representation of top level signature, even if there are no polymorphic type
 variables. In implementation terms this means when a monotype is yielded from
 our Infer monad after inference, we will immediately generalize it at the
@@ -209,7 +209,7 @@ Context
 
 The typing context or environment is the central container around which all
 information during the inference process is stored and queried.  In Haskell our
-implementation will simply be a newtype wrapper around a Map` of ``Var`` to
+implementation will simply be a newtype wrapper around a Map of ``Var`` to
 ``Scheme`` types.
 
 ```haskell
@@ -238,7 +238,7 @@ extend (TypeEnv env) (x, s) = TypeEnv $ Map.insert x s env
 Inference Monad
 ---------------
 
-All our logic for type inference will live inside of the ``Infer`` monad. Which
+All our logic for type inference will live inside of the ``Infer`` monad. It
 is a monad transformer stack of ``ExcpetT`` + ``State``, allowing various error
 reporting and statefully holding the fresh name supply.
 
@@ -270,7 +270,7 @@ $$
 \end{aligned}
 $$
 
-Likewise the same pattern applies for type variables at the type level.
+The same pattern applies to type variables at the type level.
 
 $$
 \begin{aligned}
@@ -291,7 +291,7 @@ $$
 {[x / e'] x} &= e' \\
 [x / e'] y &= y \quad (y \ne x) \\
 [x / e'] (e_1 e_2) &= ([x / e'] \ e_1) ([x / e']  e_2) \\
-[x / e'] (\lambda y. e_1) &= \lambda y. [x / e']e \quad y \ne x, x \notin \FV{e'} \\
+[x / e'] (\lambda y. e_1) &= \lambda y. [x / e']e \quad y \ne x, y \notin \FV{e'} \\
 \end{aligned}
 $$
 
@@ -324,7 +324,7 @@ s1 `compose` s2 = Map.map (apply s1) s2 `Map.union` s1
 ```
 
 The implementation in Haskell is via a series of implementations of a
-``Substitutable`` typeclass which exposes the ``apply`` which applies the
+``Substitutable`` typeclass which exposes an ``apply`` function which applies the
 substitution given over the structure of the type replacing type variables as
 specified.
 
@@ -358,7 +358,7 @@ instance Substitutable TypeEnv where
 
 Throughout both the typing rules and substitutions we will require a fresh
 supply of names. In this naive version we will simply use an infinite list of
-strings and slice into n'th element of list per a index that we hold in a State
+strings and slice into n'th element of list per an index that we hold in a State
 monad. This is a simplest implementation possible, and later we will adapt this
 name generation technique to be more robust.
 
@@ -374,8 +374,8 @@ fresh = do
 ```
 
 The creation of fresh variables will be essential for implementing the inference
-rules. Whenever we encounter the first use a variable within some expression we
-will create a fresh type variable.
+rules. Whenever we encounter the first use of a variable within some expression
+we will create a fresh type variable.
 
 Unification
 -----------
