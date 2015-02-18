@@ -436,20 +436,33 @@ $$
 \end{array}
 $$
 
-There is a precondition for unifying two variables known as the *occurs check*
-which asserts that if we are applying a substitution of variable $x$ to an
-expression $e$, the variable $x$ cannot be free in $e$. Otherwise the rewrite
-would diverge, constantly rewriting itself. For example the following
-substitution would not pass the occurs check and would generate an infinitely
-long function type.
+If we want to unify a type variable $\alpha$ with a type $\tau$, we usually
+can just substitute the variable with the type: $[\alpha/\tau]$.
+However, our rules state a precondition known as the *occurs check*
+for that unification: the type variable $\alpha$ must not occur free in $\tau$.
+If it did, the substitution would not be a unifier.
 
-$$
-[x/x \rightarrow x]
-$$
+Take for example the problem of unifying $\alpha$ and $\alpha\rightarrow\beta$.
+The substitution $s=[\alpha/\alpha\rightarrow\beta]$ doesn't unify:
+we get
+$$[s]\alpha=\alpha\rightarrow\beta$$
+and
+$$[s]\alpha\rightarrow\beta=(\alpha\rightarrow\beta)\rightarrow\beta.$$
 
-The occurs check will forbid the existence of many of the pathological livering
-terms we discussed when covering the untyped lambda calculus, including the
-omega combinator.
+Indeed, whatever substitution $s$ we try, $[s]\alpha\rightarrow\beta$ will
+always be longer than $[s]\alpha$, so no unifier exists.
+The only chance would be to substitute with an infinite type:
+$[\alpha/(\dots((\alpha\rightarrow\beta)\rightarrow\beta)\rightarrow\dots
+ \rightarrow\beta)\rightarrow\beta]$
+would be a unifier, but our language has no such types.
+
+If the unification fails because of the occurs check, we say that unification
+would give an infinite type.
+
+Note that unifying $\alpha\rightarrow\beta$ and $\alpha$ is exactly what
+we would have to do if we tried to type check the omega combinator
+$\lambda x.x x$, so it is ruled out by the occurs check, as are other
+pathological terms we discussed when covering the untyped lambda calculus.
 
 ```haskell
 occursCheck ::  Substitutable a => TVar -> a -> Bool
