@@ -960,31 +960,34 @@ This a much more elegant solution than having to intermingle inference and
 solving in the same pass, and adapts itself well to the generation of a typed
 Core form which we will discuss in later chapters.
 
-Worked Example
---------------
+Worked Examples
+---------------
+
+Let's walk through two examples of how inference works for simple
+functions.
 
 **Example 1**
 
-Let's walk through a few examples of how inference works for a few simple
-functions. Consider:
+Consider:
 
 ```haskell
 \x y z -> x + y + z
 ```
 
-The generated type from the ``infer`` function is simply a fresh variable for
-each of the arguments and return type. This is completely unconstrained.
+The generated type from the ``infer`` function consists simply of a fresh
+variable for each of the arguments and the return type.
 
 ```haskell
 a -> b -> c -> e
 ```
 
 The constraints induced from **T-BinOp** are emitted as we traverse both of
-addition operations.
+the addition operations.
 
 1. ``a -> b -> d  ~  Int -> Int -> Int``
 2. ``d -> c -> e  ~  Int -> Int -> Int``
 
+Here ``d`` is the type of the intermediate term ``x + y``.
 By applying **Uni-Arrow** we can then deduce the following set of substitutions.
 
 1. ``a ~ Int``
@@ -1005,29 +1008,32 @@ Int -> Int -> Int -> Int
 compose f g x = f (g x)
 ```
 
-The generated type from the ``infer`` function is again simply a set of unique
+The generated type from the ``infer`` function consists again simply of unique
 fresh variables.
 
 ```haskell
 a -> b -> c -> e
 ```
 
-Induced two cases of the **T-App** we get the following constraints.
+Induced by two cases of the **T-App** rule we get the following constraints:
 
 1. ``b ~ c -> d``
 2. ``a ~ d -> e``
 
-These are already in a canonical form, but applying **Uni-VarLeft** twice we get
-the following trivial set of substitutions.
+Here ``d`` is the type of ``(g x)``.
+The constraints are already in a canonical form, by applying **Uni-VarLeft**
+twice we get the following set of substitutions:
 
 1. ``b ~ c -> d``
 2. ``a ~ d -> e``
+
+So we get this type:
 
 ```haskell
 compose :: forall c d e. (d -> e) -> (c -> d) -> c -> e
 ```
 
-If desired, you can rearrange the variables in alphabetical order to get: 
+If desired, we can rename the variables in alphabetical order to get: 
 
 ```haskell
 compose :: forall a b c. (a -> b) -> (c -> a) -> c -> b
