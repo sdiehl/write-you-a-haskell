@@ -61,68 +61,32 @@ month-by-month basis to allow me to progressively refine the text with feedback
 from readers and testers.  The later chapters on runtime and code generation are
 somewhat involved and much longer.
 
-December
---------
-
 * [Chapter 1: Introduction](000_introduction.html)
 * [Chapter 2: Haskell Basics](001_basics.html)
 * [Chapter 3: Parsing](002_parsers.html)
 * [Chapter 4: Lambda Calculus](003_lambda_calculus.html)
-
-January
--------
-
 * [Chapter 5: Type Systems](004_type_systems.html)
 * [Chapter 6: Evaluation](005_evaluation.html)
 * [Chapter 7: Hindley-Milner Inference](006_hindley_milner.html)
 * [Chapter 8: Design of ProtoHaskell](007_path.html)
-
-February 
---------
-
 * [Chapter 9: Extended Parser](http://dev.stephendiehl.com/fun/008_extended_parser.html)
 * Chapter 10: Custom Datatypes
 * Chapter 11: Renamer
 * Chapter 12: Pattern Matching & Desugaring
-
-March 
------
-
 * Chapter 13: System-F
 * Chapter 14: Type Classes
 * Chapter 15: Core Language
-
-
-April 
------
-
 * Chapter 16: Kinds
 * Chapter 17: Haskell Type Checker
 * Chapter 18: Core Interpreter
 * Chapter 19: Prelude
-
-May 
-----
-
 * Chapter 20: Design of Lazy Evaluation
 * Chapter 21: STG
-
-June 
-----
-
 * Chapter 22: Compilation
 * Chapter 23: Design of the Runtime
-
-July 
-----
-
 * Chapter 24: Imp
 * Chapter 25: Code Generation ( C )
 * Chapter 26: Code Generation ( LLVM )
-
-August 
-------
-
 * Chapter 27: Row Polymorphism & Effect Typing
 * Chapter 28: Future Work
 
