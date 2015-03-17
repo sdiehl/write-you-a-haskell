@@ -40,7 +40,7 @@ $$
 
 Milner's observation was that since the typing rules map uniquely onto syntax,
 we can in effect run the typing rules "backwards" and whenever we don't have a
-known type for an subexpression, we "guess" by putting a fresh variable in its
+known type for a subexpression, we "guess" by putting a fresh variable in its
 place, collecting constraints about its usage induced by subsequent typing
 judgements.  This is the essence of *type inference* in the ML family of
 languages, that by the generation and solving of a class of unification problems
@@ -107,11 +107,11 @@ Polymorphism
 ------------
 
 We will add an additional constructs to our language that will admit a new form
-of *polymorphism* for our language.  Polymorphism is property of a term to
+of *polymorphism* for our language.  Polymorphism is the property of a term to
 simultaneously admit several distinct types for the same function
 implementation. 
 
-For instance the polymorphic signature for the identity function maps a input of
+For instance the polymorphic signature for the identity function maps an input of
 type $\alpha$
 
 $$
@@ -134,19 +134,18 @@ $$
 
 A rather remarkably fact of universal quantification is that many properties
 about inhabitants of a type are guaranteed by construction, these are the
-so-called *free theorems*. For instance the only (nonpathological)
-implementation that can inhabit a function of type ``(a, b) -> a`` is an
-implementation precisely identical to that of ``fst``.
+so-called *free theorems*. For instance any (nonpathological)
+inhabitant of the type ``(a, b) -> a`` must be equivalent to ``fst``.
 
 A slightly less trivial example is that of the ``fmap`` function of type
-``Functor f => (a -> b) -> f a -> f b``. The second functor law states that.
+``Functor f => (a -> b) -> f a -> f b``. The second functor law demands that:
 
 ```haskell
 forall f g. fmap f . fmap g = fmap (f . g)
 ```
 
 However it is impossible to write down a (nonpathological) function for ``fmap``
-that was well-typed and didn't have this property. We get the theorem for free!
+that has the required type and doesn't have this property. We get the theorem for free!
 
 Types
 -----
@@ -198,7 +197,7 @@ $$
 $$
 
 We've now divided our types into two syntactic categories, the *monotypes* and
-*polytypes*. In our simple initial languages type schemes will always be the
+the *polytypes*. In our simple initial languages type schemes will always be the
 representation of top level signature, even if there are no polymorphic type
 variables. In implementation terms this means when a monotype is yielded from
 our Infer monad after inference, we will immediately generalize it at the
@@ -209,7 +208,7 @@ Context
 
 The typing context or environment is the central container around which all
 information during the inference process is stored and queried.  In Haskell our
-implementation will simply be a newtype wrapper around a Map` of ``Var`` to
+implementation will simply be a newtype wrapper around a Map of ``Var`` to
 ``Scheme`` types.
 
 ```haskell
@@ -238,7 +237,7 @@ extend (TypeEnv env) (x, s) = TypeEnv $ Map.insert x s env
 Inference Monad
 ---------------
 
-All our logic for type inference will live inside of the ``Infer`` monad. Which
+All our logic for type inference will live inside of the ``Infer`` monad. It
 is a monad transformer stack of ``ExcpetT`` + ``State``, allowing various error
 reporting and statefully holding the fresh name supply.
 
@@ -270,7 +269,7 @@ $$
 \end{aligned}
 $$
 
-Likewise the same pattern applies for type variables at the type level.
+The same pattern applies to type variables at the type level.
 
 $$
 \begin{aligned}
@@ -291,7 +290,7 @@ $$
 {[x / e'] x} &= e' \\
 [x / e'] y &= y \quad (y \ne x) \\
 [x / e'] (e_1 e_2) &= ([x / e'] \ e_1) ([x / e']  e_2) \\
-[x / e'] (\lambda y. e_1) &= \lambda y. [x / e']e \quad y \ne x, x \notin \FV{e'} \\
+[x / e'] (\lambda y. e_1) &= \lambda y. [x / e']e \quad y \ne x, y \notin \FV{e'} \\
 \end{aligned}
 $$
 
@@ -324,7 +323,7 @@ s1 `compose` s2 = Map.map (apply s1) s2 `Map.union` s1
 ```
 
 The implementation in Haskell is via a series of implementations of a
-``Substitutable`` typeclass which exposes the ``apply`` which applies the
+``Substitutable`` typeclass which exposes an ``apply`` function which applies the
 substitution given over the structure of the type replacing type variables as
 specified.
 
@@ -358,7 +357,7 @@ instance Substitutable TypeEnv where
 
 Throughout both the typing rules and substitutions we will require a fresh
 supply of names. In this naive version we will simply use an infinite list of
-strings and slice into n'th element of list per a index that we hold in a State
+strings and slice into n'th element of list per an index that we hold in a State
 monad. This is a simplest implementation possible, and later we will adapt this
 name generation technique to be more robust.
 
@@ -374,14 +373,14 @@ fresh = do
 ```
 
 The creation of fresh variables will be essential for implementing the inference
-rules. Whenever we encounter the first use a variable within some expression we
-will create a fresh type variable.
+rules. Whenever we encounter the first use of a variable within some expression
+we will create a fresh type variable.
 
 Unification
 -----------
 
-Central to the idea of inference is the notion *unification*. A unifier is a
-function $s$ for two expressions $e_1$ and $e_2$ is a relation such that:
+Central to the idea of inference is the notion of *unification*. A unifier
+for two expressions $e_1$ and $e_2$ is a substitution $s$ such that:
 
 $$
 s := [n_0 / m_0, n_1 / m_1, ..., n_k / m_k] \\
@@ -393,14 +392,14 @@ between them. A substitution set is said to be *confluent* if the application of
 substitutions is independent of the order applied, i.e. if we always arrive at
 the same normal form regardless of the order of substitution chosen.
 
-The notation we'll adopt for unification is, read as two types $\tau, \tau'$ are
-unifiable by a substitution $s$.
+We'll adopt the notation
 
 $$
 \tau \sim \tau' : s
 $$
 
-Such that:
+for the fact that two types $\tau, \tau'$ are unifiable by a substitution $s$,
+such that:
 
 $$
 [s] \tau = [s] \tau'
@@ -437,20 +436,33 @@ $$
 \end{array}
 $$
 
-There is a precondition for unifying two variables known as the *occurs check*
-which asserts that if we are applying a substitution of variable $x$ to an
-expression $e$, the variable $x$ cannot be free in $e$. Otherwise the rewrite
-would diverge, constantly rewriting itself. For example the following
-substitution would not pass the occurs check and would generate an infinitely
-long function type.
+If we want to unify a type variable $\alpha$ with a type $\tau$, we usually
+can just substitute the variable with the type: $[\alpha/\tau]$.
+However, our rules state a precondition known as the *occurs check*
+for that unification: the type variable $\alpha$ must not occur free in $\tau$.
+If it did, the substitution would not be a unifier.
 
-$$
-[x/x \rightarrow x]
-$$
+Take for example the problem of unifying $\alpha$ and $\alpha\rightarrow\beta$.
+The substitution $s=[\alpha/\alpha\rightarrow\beta]$ doesn't unify:
+we get
+$$[s]\alpha=\alpha\rightarrow\beta$$
+and
+$$[s]\alpha\rightarrow\beta=(\alpha\rightarrow\beta)\rightarrow\beta.$$
 
-The occurs check will forbid the existence of many of the pathological livering
-terms we discussed when covering the untyped lambda calculus, including the
-omega combinator.
+Indeed, whatever substitution $s$ we try, $[s]\alpha\rightarrow\beta$ will
+always be longer than $[s]\alpha$, so no unifier exists.
+The only chance would be to substitute with an infinite type:
+$[\alpha/(\dots((\alpha\rightarrow\beta)\rightarrow\beta)\rightarrow\dots
+ \rightarrow\beta)\rightarrow\beta]$
+would be a unifier, but our language has no such types.
+
+If the unification fails because of the occurs check, we say that unification
+would give an infinite type.
+
+Note that unifying $\alpha\rightarrow\beta$ and $\alpha$ is exactly what
+we would have to do if we tried to type check the omega combinator
+$\lambda x.x x$, so it is ruled out by the occurs check, as are other
+pathological terms we discussed when covering the untyped lambda calculus.
 
 ```haskell
 occursCheck ::  Substitutable a => TVar -> a -> Bool
@@ -948,31 +960,34 @@ This a much more elegant solution than having to intermingle inference and
 solving in the same pass, and adapts itself well to the generation of a typed
 Core form which we will discuss in later chapters.
 
-Worked Example
---------------
+Worked Examples
+---------------
+
+Let's walk through two examples of how inference works for simple
+functions.
 
 **Example 1**
 
-Let's walk through a few examples of how inference works for a few simple
-functions. Consider:
+Consider:
 
 ```haskell
 \x y z -> x + y + z
 ```
 
-The generated type from the ``infer`` function is simply a fresh variable for
-each of the arguments and return type. This is completely unconstrained.
+The generated type from the ``infer`` function consists simply of a fresh
+variable for each of the arguments and the return type.
 
 ```haskell
 a -> b -> c -> e
 ```
 
 The constraints induced from **T-BinOp** are emitted as we traverse both of
-addition operations.
+the addition operations.
 
 1. ``a -> b -> d  ~  Int -> Int -> Int``
 2. ``d -> c -> e  ~  Int -> Int -> Int``
 
+Here ``d`` is the type of the intermediate term ``x + y``.
 By applying **Uni-Arrow** we can then deduce the following set of substitutions.
 
 1. ``a ~ Int``
@@ -993,29 +1008,32 @@ Int -> Int -> Int -> Int
 compose f g x = f (g x)
 ```
 
-The generated type from the ``infer`` function is again simply a set of unique
+The generated type from the ``infer`` function consists again simply of unique
 fresh variables.
 
 ```haskell
 a -> b -> c -> e
 ```
 
-Induced two cases of the **T-App** we get the following constraints.
+Induced by two cases of the **T-App** rule we get the following constraints:
 
 1. ``b ~ c -> d``
 2. ``a ~ d -> e``
 
-These are already in a canonical form, but applying **Uni-VarLeft** twice we get
-the following trivial set of substitutions.
+Here ``d`` is the type of ``(g x)``.
+The constraints are already in a canonical form, by applying **Uni-VarLeft**
+twice we get the following set of substitutions:
 
 1. ``b ~ c -> d``
 2. ``a ~ d -> e``
+
+So we get this type:
 
 ```haskell
 compose :: forall c d e. (d -> e) -> (c -> d) -> c -> e
 ```
 
-If desired, you can rearrange the variables in alphabetical order to get: 
+If desired, we can rename the variables in alphabetical order to get: 
 
 ```haskell
 compose :: forall a b c. (a -> b) -> (c -> a) -> c -> b

@@ -27,14 +27,14 @@ Language        Chapters Description
 *ProtoHaskell*  8 - 18   Interpreted minimal Haskell subset.
 *Fun*           18 - 27  ProtoHaskell with native code generator.
 
-The defining feature of ProtoHaskell is that is independent of an evaluation
-model, so hypothetically one could write either a lazy or strict backend and use
+The defining feature of ProtoHaskell is that it is independent of an evaluation
+model, so hypothetically one could write either a lazy or a strict backend and use
 the same frontend.
 
 Before we launch into writing compiler passes let's look at the overview of
 where we're going, the scope of what we're going to do, and what needs to be
 done to get there. *We will refer to concepts that are not yet introduced, so
-keep is meant to be referred to as a high-level overview of the ProtoHaskell
+keep in mind this is meant to be a high-level overview of the ProtoHaskell
 compiler pipeline.*
 
 Haskell: A Rich Language
@@ -119,7 +119,7 @@ Things we will not implement are:
 * Foreign Function Interface
 
 Now if one feels so inclined one could of course implement these features on top
-our final language, but they are left as an exercise to the reader!
+of our final language, but they are left as an exercise to the reader!
 
 This of course begs the question of whether or not our language is "a Haskell".
 In the strictest sense, it will not be since it doesn't fully conform to either
@@ -277,7 +277,7 @@ Compiling module: prelude.fun
 λ> :load test.fun
 ```
 
-Command line conventions will follow the Haskell's naming conventions.  There
+Command line conventions will follow GHCi's naming conventions.  There
 will be a strong emphasis on building debugging systems on top of our
 architecture so that when subtle bugs creep up you will have the tools to
 diagnose the internal state of the type system and detect flaws in the
@@ -302,9 +302,9 @@ Command           Action
 
 The most notable difference is the very important ``:core`` command which will
 dump out the core representation of any expression given in the interactive
-shell. Also the ``:constraints`` which will interactively walk you through the
-type checker's reasoning about it how derived the type it did for a given
-expression.
+shell. Another one is the ``:constraints`` command which will interactively
+walk you through the type checker's reasoning about how it derived the type
+it did for a given expression.
 
 ```haskell
 ProtoHaskell> :type plus
@@ -348,7 +348,7 @@ Parser
 ------
 
 We will use the normal Parsec parser with a few extensions. We will add
-indentation sensitive parser so that block syntax ( where statements, let
+indentation sensitive parsing so that block syntax ( where statements, let
 statements, do-notation ) can be parsed.
 
 ```haskell
@@ -359,7 +359,7 @@ main = do
     msg = "Hello World"
 ```
 
-In addition we will need to allow for the addition of infix operators from be
+We will also need to allow the addition of infix operators from
 user-defined declarations, and allow this information to be used during parsing.
 
 ```haskell
@@ -383,7 +383,7 @@ f x y = \g a0 -> a0 + y
 ```
 
 We will also devise a general method of generating fresh names for each pass
-such that the names generated are uniquely identifiable to that pass and cannot
+such that the names generated are uniquely relatable to that pass and cannot
 conflict with later passes.
 
 Ensuring that all names are unique in the syntax tree will allow us more safety
@@ -412,11 +412,11 @@ Desugaring
 ----------
 
 Pattern matching is an extremely important part of a modern functional
-programming, but the implementation of the pattern desugaring is remarkably
+programming language, but the implementation of the pattern desugaring is remarkably
 subtle. The frontend syntax allows the expression of nested pattern matches and
 incomplete patterns, both can generate very complex *splitting trees* of case
 expressions that need to be expanded out recursively. We will use the algorithm
-devised Phil Wadler to perform this transformation.
+devised by Phil Wadler to perform this transformation.
 
 **Multiple Equations**
 
@@ -504,7 +504,7 @@ syntactic sugar translations:
 * Expand out numeric literals.
 
 We will however punt on an important part of the Haskell specification, namely
-*overloaded literals*. In GHC Haskell numeric literals are replaced by specific
+*overloaded literals*. In Haskell numeric literals are replaced by specific
 functions from the ``Num`` or ``Fractional`` typeclasses.
 
 ```haskell
@@ -519,8 +519,8 @@ fromRational (3.14 :: Rational)
 
 We will not implement this, as it drastically expands the desugarer scope.
 
-We will however follow GHC's example in manifesting unboxed types are first
-class values in the language so literals that they appear in the AST rewritten
+We will however follow GHC's example in manifesting unboxed types as first
+class values in the language so literals that appear in the AST are rewritten
 in terms of the wired-in constructors (``Int#``, ``Char#``, ``Addr#``, etc).
 
 ```haskell
@@ -541,12 +541,12 @@ Core
 ----
 
 The Core language is the result of translation of the frontend language into an
-explicitly typed form. Just like Haskell we will use a System-F variant,
+explicitly typed form. Just like GHC we will use a System-F variant,
 although unlike GHC we will effectively just be using vanilla System-F without
 all of the extensions ( coercions, equalities, roles, etc ) that GHC uses to
 implement more complicated features like GADTs and type families.
 
-This is one of the most defining feature of GHC Haskell, is its compilation
+This is one of the most defining feature of GHC Haskell, its compilation
 into a statically typed intermediate Core language. It is a well-engineers
 detail of GHC's design that has informed much of how Haskell the language has
 evolved as a language with a exceedingly large frontend language that all melts
@@ -586,8 +586,8 @@ data Kind
 ```
 
 Since the Core language is explicitly typed, it is trivial to implement an
-internal type checker for. Running the typechecker on the generated core is a
-good way to catch optimization, desugaring bugs, and determine if the compiler
+internal type checker for it. Running the typechecker on the generated core is a
+good way to catch optimization and desugaring bugs, and determine if the compiler
 has produced invalid intermediate code.
 
 <!--
@@ -662,9 +662,9 @@ same restriction rules that GHC enforces.
 Type Checker
 ------------
 
-The type checker is largest module and probably the most nontrivial part of our
+The type checker is the largest module and probably the most nontrivial part of our
 compiler. The module consists of roughly 1200 lines of code. Although the logic
-is not drastically different than the simple little HM typechecker we wrote
+is not drastically different from the simple little HM typechecker we wrote
 previously, it simply has to do more bookkeeping and handle more cases.
 
 The implementation of the typechecker will be split across four modules:
@@ -727,7 +727,7 @@ ProtoHaskell> take 5 (cycle [1,2])
 [1,2,1,2,1]
 
 ProtoHaskell> take 5 primes
-[1,2,5,7,11]
+[2,3,5,7,11]
 ```
 
 Error Reporting
@@ -735,7 +735,7 @@ Error Reporting
 
 We will do quite a bit of error reporting for the common failure modes of the
 type checker, desugar, and rename phases including position information tracking
-in Fun.  However doing in this in full is surprisingly involved and would add a
+in Fun.  However doing this in full is surprisingly involved and would add a
 significant amount of code to the reference implementation. As such we will not
 be as thorough as GHC in handling every failure mode by virtue of the scope of
 our project being a toy language with the primary goal being conciseness and
@@ -744,7 +744,7 @@ simplicity.
 Frontend
 ========
 
-The Frontend language for ProtoHaskell a fairly large language, consisting of
+The Frontend language for ProtoHaskell is a fairly large language, consisting of
 many different types. Let's walk through the different constructions.
 
 At the top is the named *Module* and all toplevel declarations contained
@@ -775,8 +775,9 @@ A binding group is a single line of definition for a function declaration. For
 instance the following function has two binding groups.
 
 ```haskell
--- Group #1
 factorial :: Int -> Int
+
+-- Group #1
 factorial 0 = 1
 
 -- Group #2
@@ -858,7 +859,7 @@ data Literal
 ```
 
 For data declarations we have two categories of constructor declarations that
-can appear in the body, Regular constructors and record declarations. We will
+can appear in the body, regular constructors and record declarations. We will
 adopt the Haskell ``-XGADTSyntax`` for all data declarations.
 
 ```haskell
@@ -903,7 +904,7 @@ data Fixity
 Data Declarations
 -----------------
 
-Data declarations are named block of various *ConDecl* constructors for each of
+Data declarations are named blocks of various *ConDecl* constructors for each of
 the fields or constructors of a user-defined datatype.
 
 ```haskell
@@ -1008,7 +1009,7 @@ FunDecl
 Fixity Declarations
 -------------------
 
-Fixity declarations are exceedingly simple, the store either arity of the
+Fixity declarations are exceedingly simple, they store the binding precedence of the
 declaration along with its associativity (Left, Right, Non-Associative) and the
 infix symbol.
 
@@ -1031,14 +1032,14 @@ Typeclass Declarations
 Typeclass declarations consist simply of the list of typeclass constraints, the
 name of the class, and the type variable ( single parameter only ). The body of
 the class is simply a sequence of scoped ``FunDecl`` declarations with only the
-``matchType`` field. 
+``matchType`` field.
 
 ```haskell
 class [context] => classname [var] where
   [body]
 ```
 
-Consider a very simplified ``Num`` class. 
+Consider a very simplified ``Num`` class.
 
 ```haskell
 class Num a where
@@ -1070,7 +1071,7 @@ ClassDecl
 ```
 
 Typeclass instances follow the same pattern, they are simply the collection of
-instance constraints, the name of name of the typeclass, and the *head* of the
+instance constraints, the name of the typeclass, and the *head* of the
 type class instance type. The declarations are a sequence of ``FunDecl`` objects
 with the bodies of the functions for each of the overloaded function
 implementations.
@@ -1084,7 +1085,7 @@ For example:
 
 ```haskell
 instance Num Int where
-  plus = plusInt#
+  plus = plusInt
 ```
 
 ```haskell
@@ -1107,7 +1108,7 @@ Wired-in Types
 --------------
 
 While the base Haskell is quite small, several portions of the desugaring
-process require the compiler to be aware about certain types before they
+process require the compiler to be aware about certain types before they are
 otherwise defined in the Prelude. For instance the type of every guarded pattern
 in the typechecker is ``Bool``. These are desugared into a case statement that
 includes the ``True`` and ``False`` constructors. The Bool type is therefore
@@ -1146,8 +1147,8 @@ Syntax      Name    Kind              Description
 Traversals
 ----------
 
-Bottom-up traversals and rewrites in a monadic context are so that common that
-we'd like to automate this process so that we don't have duplicate the same
+Bottom-up traversals and rewrites in a monadic context are so common that
+we'd like to automate this process so that we don't have to duplicate the same
 logic across all our code. So we'll write several generic traversal functions.
 
 ```haskell
@@ -1181,8 +1182,8 @@ use pattern matching to match specific syntactic structure and rewrite it or
 simply yield the input and traverse to the next element in the bottom-up
 traversal.
 
-A pure trnasformation that rewrites all variables named "a" to "b" might be
-written concisely as the following higher order function. 
+A pure transformation that rewrites all variables named "a" to "b" might be
+written concisely as the following higher order function.
 
 ```haskell
 transform :: Expr -> Expr
@@ -1193,8 +1194,9 @@ transform = descend f
 ```
 
 This is good for pure logic, but most often our transformations will have to
-have access to some sort of state or context during traversal and thus the
-``descedM`` will let us write the same rewrite but in a custom monadic context. 
+have access to some sort of state or context during traversal and thus
+``descendM`` will let us write the same rewrite but in a custom monadic context.
+
 
 ```haskell
 transform :: Expr -> RewriteM Expr
@@ -1217,7 +1219,7 @@ compose
 compose f g = descend (f . g)
 ```
 
-Recall from that monadic actions can be composed like functions using Kleisli
+Recall that monadic actions can be composed like functions using the Kleisli
 composition operator.
 
 ```haskell
@@ -1235,7 +1237,7 @@ f . g = \x -> g (f x)
 f <=< g ≡ \x -> g x >>= f
 ```
 
-We can now write composition ``descendM`` functions in terms of of Kleisli
+We can now write composition ``descendM`` functions in terms of Kleisli
 composition to give us a very general notion of AST rewrite composition.
 
 ```haskell
@@ -1249,7 +1251,7 @@ composeM f g = descendM (f <=< g)
 
 So for instance if we have three AST monadic transformations (``a``, ``b``,
 ``c``) that we wish to compose into a single pass ``t`` we can use ``composeM``
-to to generate the composite transformation.
+to generate the composite transformation.
 
 
 ```haskell
@@ -1287,7 +1289,7 @@ Full Source
 -----------
 
 The partial source for the Frontend of ProtoHaskell is given. This is a stub of
-the all the data structure and scaffolding we will use to construct the compiler
+all the data structures and scaffolding we will use to construct the compiler
 pipeline.
 
 * [ProtoHaskell Frontend](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter8/protohaskell)

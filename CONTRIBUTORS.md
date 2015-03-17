@@ -13,3 +13,4 @@ Contributors
 * Brandon Williams
 * Dmitry Ivanov
 * Christian Sievers
+* Franklin Chen
