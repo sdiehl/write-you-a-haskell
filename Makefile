@@ -6,6 +6,7 @@ STYLE = css/style.css
 FILTER = includes.hs
 TEMPLATE_HTML = template.html
 TEMPLATE_TEX = template.latex
+PNG_IMAGES = $(patsubst %.pdf,%.png,$(wildcard img/*.pdf))
 
 #SRC = $(wildcard *.md)
 SRC = 000_introduction.md \
@@ -27,6 +28,9 @@ OBJ = $(SRC:.md=.html)
 all: $(OBJ) top
 
 index: index.html
+
+img/%.png: img/%.pdf
+	convert -density 150 $< $@
 
 %.html: %.md $(FILTER)
 	$(PANDOC) -c $(STYLE) --filter ${FILTER} --template $(TEMPLATE_HTML) -s -f $(IFORMAT) -t html $(FLAGS) -o $@ $<
