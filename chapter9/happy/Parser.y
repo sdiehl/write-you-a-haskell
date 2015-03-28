@@ -64,7 +64,7 @@ Atom : '(' Expr ')'                { $2 }
      | NUM                         { Lit (LInt $1) }
      | VAR                         { Var $1 }
      | true                        { Lit (LBool True) }
-     | false                       { Lit (LBool True) }
+     | false                       { Lit (LBool False) }
 
 {
 
