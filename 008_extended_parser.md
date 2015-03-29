@@ -602,7 +602,7 @@ maybeBraces1 p = braces (endBy1 p semi) <|> block p
 Extensible Operators
 --------------------
 
-Haskell famously allows the definition of custom infix operators, and extremely
+Haskell famously allows the definition of custom infix operators, an extremely
 useful language feature although this poses a bit of a challenge to parse! There
 are several ways to do this and both depend on two properties of the operators.
 
@@ -698,7 +698,7 @@ mkTable ops =
       reverse $ sortBy (compare `on` fixityPrec) $ ops
 ```
 
-Now when parsing a infix operator declarations we simply do a state operation
+Now when parsing an infix operator declaration we simply do a state operation
 and add the operator to the parser state so that all subsequent definitions.
 This differs from Haskell slightly in that operators must be defined before
 their usage in a module.
@@ -733,8 +733,8 @@ fixitydecl = do
  <?> "operator fixity definition"
 ```
 
-And now when we need to parser a infix expression term we simply pull our state
-out and build the custom operator table, and feed this the build Expression
+And now when we need to parse an infix expression term we simply pull our state
+out and build the custom operator table, and feed this to the build Expression
 Parser just as before.
 
 ```haskell
