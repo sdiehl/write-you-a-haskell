@@ -9,15 +9,16 @@ Extended Parser
 ===============
 
 Up until now we've been using parser combinators to build our parsers. Parser
-combinators are a top-down parser formally in the $\mathtt{LL}(k)$ family of
-parsers. The parser proceeds top-down, with a sequence of $k$ characters used to
-dispatch on the leftmost production rule. Combined with backtracking (i.e.  try
+combinators build top-down parsers that formally belong to the $\mathtt{LL}(k)$
+family of parsers. The parser proceeds top-down, with a sequence of $k$
+characters used to dispatch on the leftmost production rule.
+Combined with backtracking (i.e. the ``try``
 combinator) this is simultaneously both an extremely powerful and simple model
 to implement as we saw before with our simple 100 line parser library.
 
-However there are a family of grammars that include left-recursion that
+However there is a family of grammars that include left-recursion that
 $\mathtt{LL}(k)$ can be inefficient and often incapable of parsing.
-Left-recursive rules are the case where the left-most symbol of the rule
+Left-recursive rules are such where the left-most symbol of the rule
 recurses on itself. For example:
 
 $$
@@ -26,17 +27,17 @@ e ::=\ e\ \t{op}\ \t{atom}
 \end{aligned}
 $$
 
-Now we demonstrated a way before that we could handle these cases using the
-parser combinator ``chainl1`` function, and while this is possible sometimes it
-can in many cases be inefficient use of parser stack and lead to ambiguous
+Now we demonstrated before that we could handle these cases using the
+parser combinator ``chainl1``, and while this is possible sometimes it
+can in many cases be an inefficient use of the parser stack and lead to ambiguous
 cases. 
 
-The other major family of parsers $\mathtt{LR}$ are not plagued with the same
+The other major family of parsers, $\mathtt{LR}$, are not plagued with the same
 concerns over left recursion. On the other hand $\mathtt{LR}$ parser are
 exceedingly more complicated to implement, relying on a rather sophisticated
-method known as Tomita's algorithm to do the heavy lifting. The tooling can
+method known as Tomita's algorithm to do the heavy lifting. The tooling
 around the construction of the *production rules* in a form that can be handled
-by the algorithm is often handled a DSL that generates the code for the parser.
+by the algorithm is often handled by a DSL that generates the code for the parser.
 While the tooling is fairly robust, there is a level of indirection between us
 and the code that can often be a bit of brittle to extend with custom logic.
 
@@ -83,7 +84,7 @@ $eol   = [\n]
 
 The files will be used during the code generation of the two modules ``Lexer``
 and ``Parser``. The toolchain is accessible in several ways, first via the
-command-line tools ``alex`` and ``happy`` will will generate the resulting
+command-line tools ``alex`` and ``happy`` which will generate the resulting
 modules by passing the appropriate input file to the tool.
 
 ```haskell
@@ -153,7 +154,7 @@ scanTokens :: String -> [Token]
 scanTokens = alexScanTokens
 ```
 
-The token definition is list of function definitions mapping atomic character
+The token definition is a list of function definitions mapping atomic characters
 and alphabetical sequences to constructors for our ``Token`` datatype.
 
 
@@ -252,7 +253,7 @@ simple case we'll just add error handling with the ``Except`` monad.
 ```
 
 And finally our production rules, the toplevel entry point for our parser will
-be the ``expr`` rule.  Notice how naturally we can right left recursive grammar
+be the ``expr`` rule.  Notice how naturally we can write a left recursive grammar
 for our infix operators.
 
 ```haskell
@@ -280,7 +281,7 @@ Atom : '(' Expr ')'                { $2 }
      | NUM                         { Lit (LInt $1) }
      | VAR                         { Var $1 }
      | true                        { Lit (LBool True) }
-     | false                       { Lit (LBool True) }
+     | false                       { Lit (LBool False) }
 ```
 
 Syntax Errors
@@ -324,8 +325,8 @@ Type Error Provenance
 
 Before our type inference engine would generate somewhat typical type inference
 error messages. If two terms couldn't be unified it simply told us this and some
-information about the toplevel declaration where it occurred. Leaving us with a
-bit of a riddle about this error came to be.
+information about the toplevel declaration where it occurred, leaving us with a
+bit of a riddle about how exactly this error came to be.
 
 ```haskell
 Cannot unify types: 
@@ -337,19 +338,18 @@ in the definition of 'foo'
 
 Effective error reporting in the presence of type inference is a difficult task,
 effectively our typechecker takes our frontend AST and transforms it into a
-large constraint problem but effectively destroys position information
+large constraint problem, destroying position
 information in the process. Even if the position information were tracked, the
-nature of unification is that a cascade of several unifications can give rise to
-invalid solution and the immediate two syntactic constructs that gave rise to a
-unification fail are not necessarily the two that map back to human intuition
+nature of unification is that a cascade of several unifications can lead to
+unsolvability and the immediate two syntactic constructs that gave rise to a
+unification failure are not necessarily the two that map back to human intuition
 about how the type error arose. Very little research has done on this topic and
-it remains a open topic with very immediate and applicable results to
+it remains an open topic with very immediate and applicable results to
 programming. 
 
-To do simple provenance tracking we will use a technique of track the "flow" of
-type information through out typechecker and associate position information
-associated with the inferred types back to their position information in the
-source.
+To do simple provenance tracking we will use a technique of tracking the "flow"
+of type information through our typechecker and associate position information
+with the inferred types.
 
 ```haskell
 type Name = String
@@ -376,7 +376,7 @@ variable = do
 ```
 
 Our type system will also include information, although by default it will use
-the ``NoLoc`` type until explicit information is provided during inference. The
+the ``NoLoc`` value until explicit information is provided during inference. The
 two functions ``getLoc`` and ``setLoc`` will be used to update and query the
 position information from type terms.
 
@@ -405,7 +405,7 @@ getLoc (TArr l _ _) = l
 ```
 
 Our fresh variable supply now also takes a location field which is attached to
-resulting type variable.
+the resulting type variable.
 
 ```haskell
 fresh :: Loc -> Check Type
@@ -474,8 +474,8 @@ with
           let f x y = x y
 ```
 
-This is of course the simplest implementation of the this tracking method and
-could be further extended by giving an weighted ordering to the constraints
+This is of course the simplest implementation of the tracking method and
+could be further extended by giving a weighted ordering to the constraints
 based on their likelihood of importance and proximity and then choosing which
 location to report based on this information. This remains an open area of work.
 
@@ -484,10 +484,10 @@ Indentation
 
 Haskell's syntax uses indentation blocks to delineated sections of code.  This
 use of indentation sensitive layout to convey the structure of logic is
-sometimes called the *offside rule* in parsing literature. At the beginning of
+sometimes called the *offside rule* in parsing literature. At the beginning of a
 "laidout" block the first declaration or definition can start in any column, and
-the parser marks that indentation level. Every subsequent top-level declaration
-must have the same indentation.
+the parser marks that indentation level. Every subsequent declaration at the
+same logical level must have the same indentation.
 
 
 ```haskell
@@ -501,10 +501,10 @@ fib x = truncate $ ( 1 / sqrt 5 ) * ( phi ^ x - psi ^ x ) -- (Column: > 0)
       psi = ( 1 - sqrt 5 ) / 2
 ```
 
-The Parsec monad is itself parameterized over a type variable ``s`` which stands
+The Parsec monad is parameterized over a type which stands
 for the State layer baked into the monad allowing us to embed custom parser
 state inside of our rules. To adopt our parser to handle sensitive whitespace we
-will
+will use:
 
 ```haskell
 -- Indentation sensitive Parsec monad.
@@ -518,8 +518,8 @@ initParseState :: ParseState
 initParseState = ParseState 0
 ```
 
-Inside of the Parsec the internal position state (SourcePos) is stored during
-each traversal, and is accessible inside of rule logic via ``getPosition``
+The parser stores the internal position state (SourcePos) during its
+traversal, and makes it accessible inside of rule logic via the ``getPosition``
 function.
 
 ```haskell
@@ -558,7 +558,7 @@ indentCmp cmp = do
 ```
 
 We can then write two combinators in terms of this function which match on
-either positive and identical indentation difference. 
+either further or identical indentation.
 
 ```haskell
 indented :: IParsec ()
@@ -577,9 +577,9 @@ block  p = laidout (many (align >> p))
 block1 p = laidout (many1 (align >> p))
 ```
 
-GHC uses an optional layout rule for several constructs, allowing us to
+Haskell uses an optional layout rule for several constructs, allowing us to
 equivalently manually delimit indentation sensitive syntax with braces. The most
-common is for do-notation. So for example:
+common use is for do-notation. So for example:
 
 ```haskell
 example = do { a <- m; b }
@@ -589,7 +589,7 @@ example = do
   b
 ```
 
-To support this in Parsec style we adopt implement a ``maybeBraces`` function.
+To support this in Parsec style we implement a ``maybeBraces`` function.
 
 ```haskell
 maybeBraces :: Parser a -> Parser [a]
@@ -604,21 +604,21 @@ Extensible Operators
 
 Haskell famously allows the definition of custom infix operators, an extremely
 useful language feature although this poses a bit of a challenge to parse! There
-are several ways to do this and both depend on two properties of the operators.
+are two ways to do this and both depend on two properties of the operators.
 
 * Precedence
 * Associativity
 
-1. The first is the way that GHC does is to parse all operators as left associative
+1. The first, the way that GHC does it, is to parse all operators as left associative
 and of the same precedence, and then before desugaring go back and "fix" the
 parse tree given all the information we collected after finishing parsing.
 
 2. The second method is a bit of a hack, and involves simply storing the collected
 operators inside of the Parsec state monad and then simply calling
-``buildExpressionParser`` on the current state each time we want to parse and
+``buildExpressionParser`` on the current state each time we want to parse an
 infix operator expression.
 
-To do later method we set up the AST objects for our fixity definitions, which
+To do the later method we set up the AST objects for our fixity definitions, which
 associate precedence and associativity annotations with a custom symbol.
 
 ```haskell
@@ -640,8 +640,8 @@ data Fixity
   deriving (Eq,Ord,Show)
 ```
 
-Our parser state monad will hold a list of the at Ivie fixity specifications and
-whenever a definition is uncounted we will append to this list.
+Our parser state monad will hold a list of the active fixity specifications and
+whenever a definition is encountered we will append to this list.
 
 ```haskell
 data ParseState = ParseState
@@ -678,7 +678,7 @@ defaultOps = [
   ]
 ```
 
-Now In our parser we need to be able to transform the fixity specifications into
+Now in our parser we need to be able to transform the fixity specifications into
 Parsec operator definitions. This is a pretty straightforward sort and group
 operation on the list.
 
@@ -699,7 +699,8 @@ mkTable ops =
 ```
 
 Now when parsing an infix operator declaration we simply do a state operation
-and add the operator to the parser state so that all subsequent definitions.
+and add the operator to the parser state so that all subsequent definitions
+can use it.
 This differs from Haskell slightly in that operators must be defined before
 their usage in a module.
 
@@ -764,7 +765,7 @@ extensively inside of GHC:
 * [A Tool for Generalized LR Parsing In Haskell](http://www.benmedlock.co.uk/Functional_GLR_Parsing.pdf)
 * [Haskell Syntax Definition](https://www.haskell.org/onlinereport/haskell2010/haskellch10.html#x17-17500010)
 
-Haskell itself uses Alex and Happy for it's parser infastructure. The resulting
+GHC itself uses Alex and Happy for its parser infastructure. The resulting
 parser is rather sophisicated. 
 
 * [Lexer.x](https://github.com/ghc/ghc/blob/master/compiler/parser/Lexer.x)
