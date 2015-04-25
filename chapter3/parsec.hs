@@ -12,7 +12,7 @@ runParser :: Parser a -> String -> a
 runParser m s =
   case parse m s of
     [(res, [])] -> res
-    [(_, rs)]   -> error "Parser did not consume entire stream."
+    [(_, _)]   -> error "Parser did not consume entire stream."
     _           -> error "Parser error."
 
 item :: Parser Char
@@ -62,7 +62,7 @@ satisfy :: (Char -> Bool) -> Parser Char
 satisfy p = item `bind` \c ->
   if p c
   then unit c
-  else (Parser (\cs -> []))
+  else failure
 
 -------------------------------------------------------------------------------
 -- Combinators
