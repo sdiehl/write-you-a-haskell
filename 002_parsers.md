@@ -105,14 +105,14 @@ itself if there is not at least a single match.
 
 ```haskell
 -- | One or more.
-some :: f a -> f [a]
+some :: Alternative f => f a -> f [a]
 some v = some_v
   where
     many_v = some_v <|> pure []
     some_v = (:) <$> v <*> many_v
 
 -- | Zero or more.
-many :: f a -> f [a]
+many :: Alternative f => f a -> f [a]
 many v = many_v
   where
     many_v = some_v <|> pure []
