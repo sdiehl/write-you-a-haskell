@@ -14,3 +14,4 @@ Contributors
 * Dmitry Ivanov
 * Christian Sievers
 * Franklin Chen
+* Jake Taylor
