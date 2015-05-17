@@ -109,13 +109,13 @@ one element of a set to each element in another set.  If a function $f(x) = a$
 then the function evaluated at $x$ will always have the value $a$. Central to
 the notion of all mathematics is the notion of *equational reasoning*, where
 if $a= f(x)$ then for an expression $g(f(x), f(x))$, this is always equivalent
-to $g(a, a)$. In other words the values computed by functions can always be
+to $g(a, a)$. In other words, the values computed by functions can always be
 substituted freely at all occurrences.
 
 The central idea of *functional programming* is to structure our programs in
 such a way that we can reason about them as a system of equations just like
 we can in mathematics. The evaluation of a pure function is one in which *side
-effects* are prohibited, a function may only return a result without altering
+effects* are prohibited; a function may only return a result without altering
 the world in any *observable* way.
 
 The implementation may perform effects, but central to this definition is the
@@ -245,7 +245,7 @@ Parsing
 
 The source code is simply the raw sequence of text that specifies the program.
 Lexing splits the text stream into a sequence of *tokens*. Only the presence of
-invalid symbols is checked, programs that are meaningless in other ways are
+invalid symbols is checked; programs that are meaningless in other ways are
 accepted.
 Whitespace is either ignored or represented as a unique token in the stream.
 
