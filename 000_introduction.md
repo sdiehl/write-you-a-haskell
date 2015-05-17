@@ -268,9 +268,9 @@ following:
 ]
 ```
 
-We can then scan the token stream via and dispatch on predefined patterns of
-tokens called *productions* and recursively builds up the syntax datatype for
-the *abstract syntax tree* (AST) by traversal of the input stream.
+We can then scan the token stream via dispatch on predefined patterns of
+tokens called *productions*, and recursively build up the syntax datatype for
+the *abstract syntax tree* (AST).
 
 ```haskell
 type Name = String
