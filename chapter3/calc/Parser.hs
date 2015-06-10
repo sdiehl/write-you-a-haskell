@@ -47,7 +47,7 @@ prefixOp :: String -> (a -> a) -> Ex.Operator String () Identity a
 prefixOp s f = Ex.Prefix (reservedOp s >> return f)
 
 
--- Infix operators
+-- Prefix operators
 table :: Ex.OperatorTable String () Identity Expr
 table = [
     [
