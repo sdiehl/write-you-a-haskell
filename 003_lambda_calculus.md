@@ -25,7 +25,12 @@ thereof:
 ![](img/lambda.png)
 </div>
 
-These types are typically referred to in code by several contractions of their
+This compact notation looks slightly different from what you're used to in Haskell
+but it's actually not: $\lambda x.xa$ is equivalent to ``\x -> x a``. This means
+what you see in the picture above would translate to ``(\x -> x) (\y -> y)``, which
+would be equivalent to writing ``id id`` (which of course evaluates to ``id``).
+
+The three terms are typically referred to in code by several contractions of their
 names:
 
 - **Var** - A variable
@@ -211,7 +216,7 @@ Substitution
 ------------
 
 Evaluation of a lambda term ($(\lambda x.e) a$) proceeds by substitution of all
-free occurrences of the variable $x$ in $e$ with the argument $a. A single
+free occurrences of the variable $x$ in $e$ with the argument $a$. A single
 substitution step is called a *reduction*. We write the substitution application
 in brackets before the expression it is to be applied over, $[x / a]e$ maps the
 variable $x$ to the new replacement $a$ over the expression $e$.
@@ -233,6 +238,8 @@ $$
 & [x/a]\lambda y.e &=& \ \lambda y.[x/a]e & \text{if}\ x \neq y\ \text{and}\ y \notin\FV{a}
 \end{aligned}
 $$
+
+where $\FV{e}$ is the set of free variables in $e$.
 
 The fundamental issue with using locally named binders is the problem of *name
 capture*, or how to handle the case where a substitution conflicts with the
@@ -333,6 +340,8 @@ Untyped> (\x y z. x z (y z)) (\x y . x) (\x y . x)
 \z . z
 ```
 
+Note that the last evaluation was **SKK** which we encountered earlier.
+
 In the untyped lambda calculus we can freely represent infinitely diverging
 expressions:
 
@@ -364,8 +373,8 @@ In our languages we will write let statements like they appear in Haskell.
 let a = e in b
 ```
 
-Toplevel expression will be written as ``let`` statements without a body to
-indicate that they are added to the global scope. The Haskell lanuage does
+Toplevel expressions will be written as ``let`` statements without a body to
+indicate that they are added to the global scope. The Haskell language does
 not use this convention but OCaml, StandardML and the interactive mode of the
 Haskell compiler GHC do. In Haskell the preceding let is simply
 omitted.
@@ -404,12 +413,23 @@ The Y combinator satisfies:
 
 $$\textbf{Y} f  = f (\textbf{Y} f) $$
 
+since
+
+$$
+\begin{aligned}
+\textbf{Y} f & = (\lambda f.(\lambda x.(f(x x)) \lambda x.(f(x x)))) f 
+& = (\lambda x.(f(x x))) (\lambda x.(f(x x)))
+& = f((\lambda x.(f (x x))) (\lambda x.(f (x x))))
+& = f(\textbf{Y} f)
+\end{aligned}
+$$
+
 For fun one can prove that the Y-combinator can be expressed in terms of the S
 and K combinators.
 
 $$ \textbf{Y} = \textbf{SSK(S(K(SS(S(SSK))))K)}$$
 
-In a untyped lambda calculus language without explicit fixpoint or recursive let
+In an untyped lambda calculus language without explicit fixpoint or recursive let
 bindings, the Y combinator can be used to create both of these constructs out of
 nothing but lambda expressions. However it is more common to just add either an
 atomic fixpoint operator or a recursive let as a fundamental construct in the
@@ -484,7 +504,7 @@ debugging internal state much easier.
 
 The core type of the pretty printer is the ``Doc`` type which is the abstract
 type of documents. Combinators over this type will manipulate the internal
-structure of this document which is then finally reified to an physical string
+structure of this document which is then finally reified to a physical string
 using the ``render`` function. Since we intend to pretty print across multiple
 types we will create a ``Pretty`` typeclass.
 
