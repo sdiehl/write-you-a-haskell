@@ -368,18 +368,20 @@ evaluation explicit directly in the AST.
 Code Generation
 ---------------
 
-From the core language we will either evaluate it on top of a high-level
-interpreter written in Haskell itself, or into another intermediate language
-like C or LLVM which can itself be compiled into native code.
+After translating an expression to the core language we will either evaluate
+it with a high-level interpreter written in Haskell itself, or translate it
+to another intermediate language (such as LLVM IR or GHC's Cmm) which can be
+compiled into native code. This intermediate language abstracts over the
+process of assigning values to, and moving values between CPU registers and
+main memory.
+
+As an example, the statement
 
 ```haskell
 let f x = x + 1
 ```
 
-Quite often this process will involve another intermediate representation which
-abstracts over the process of assigning and moving values between CPU registers
-and main memory. LLVM and GHC's Cmm are two target languages serving this
-purpose.
+which corresponds to the following assembly instructions:
 
 ```haskell
 f:
@@ -387,6 +389,8 @@ f:
   add res, 1
   ret
 ```
+
+looks like this in LLVM IR (note the absence of mov instructions):
 
 ```haskell
 define i32 @f(i32 %x) {
@@ -396,9 +400,9 @@ entry:
 }
 ```
 
-From here the target language can be compiled into the system's assembly
-language. All code that is required for evaluation is *linked* into the
-resulting module.
+From the intermediate representation the code can be compiled into the
+system's assembly language. Any additional code that is required for
+evaluation is *linked* into the resulting module.
 
 ```perl
 f:
