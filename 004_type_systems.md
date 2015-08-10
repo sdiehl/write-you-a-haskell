@@ -318,13 +318,15 @@ that would become stuck. Looking at the evaluation rules, each of the guarded
 pattern matches gives us a hint of where things might "go wrong" whenever a
 boolean is used in the place of a number and vice versa. We'd like to statically
 enforce this invariant at compile-time instead, and so we'll introduce a small
-type system to handle the two syntactic categories of terms that exist. The
-abstract type of natural numbers and the type of booleans:
+type system to handle the two syntactic categories of terms that exist. In
+addition to the arrow type, we add the abstract type of natural numbers and the
+type of booleans:
 
 $$
 \begin{aligned}
 \tau ::=\ & \t{Bool} \\
           & \t{Nat} \\
+          & \tau \rightarrow \tau \\
 \end{aligned}
 $$
 
@@ -334,6 +336,7 @@ Which is implemented in Haskell as the following datatype:
 data Type
   = TBool
   | TNat
+  | TArr Type Type
 ```
 
 Now for the typing rules:
