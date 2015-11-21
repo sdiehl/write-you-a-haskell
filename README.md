@@ -68,6 +68,13 @@ $ cabal sandbox init
 $ cabal install --only-dependencies
 $ cabal exec bash
 $ make
+```
+
+To make the generate the pdf, the LaTeX packages must be installed on the
+system.
+
+```bash
+$ sudo apt-get install texlive-xetex texlive-latex-extra
 $ make pdf
 ```
 
