@@ -55,11 +55,7 @@ lazy evaluation, interpreter, native code generator, a runtime, and several
 optimization passes.
 
 As with most of my writing, this is the pre-edited rough cut version, which I
-will refine over time. The compiler itself is fully complete as of December
-2014, but each of the chapters (28 in total) will be staggered on a
-month-by-month basis to allow me to progressively refine the text with feedback
-from readers and testers.  The later chapters on runtime and code generation are
-somewhat involved and much longer.
+will refine over time.
 
 * [Chapter 1: Introduction](000_introduction.html)
 * [Chapter 2: Haskell Basics](001_basics.html)

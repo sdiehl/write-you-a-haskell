@@ -57,6 +57,20 @@ Releases
 * Chapter 27: Row Polymorphism & Effect Typing
 * Chapter 28: Future Work
 
+Building
+--------
+
+To generate the build scripts provision a cabal sandbox with pandoc in it. This
+is done by the ``write-you-a-haskell.cabal`` file.
+
+```bash
+$ cabal sandbox init
+$ cabal install --only-dependencies
+$ cabal exec bash
+$ make
+$ make pdf
+```
+
 Contributing
 ------------
 

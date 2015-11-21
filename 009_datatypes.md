@@ -4,6 +4,25 @@
 Datatypes
 =========
 
+Algebraic data types
+--------------------
+
+**Algebraic datatypes** are a family of constructions arising out of two
+operations, sums and products. A product encodes multiple arguments to
+constructors and sums encode choice between constructors.
+
+```haskell
+data Unit = Unit                 -- 1
+data Empty                       -- 0
+data (a * b) = Product a b       -- a * b
+data (a + b) = Inl a | Inr b     -- a + b
+data Exp a b = Exp (a -> b)      -- a^b
+data Rec f   = Rec (f (Rec f))   -- \mu
+```
+
+Catamorphisms
+-------------
+
 Syntax
 ------
 
