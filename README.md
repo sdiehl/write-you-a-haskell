@@ -63,10 +63,19 @@ Building
 To generate the build scripts provision a cabal sandbox with pandoc in it. This
 is done by the ``write-you-a-haskell.cabal`` file.
 
+**Cabal**
+
 ```bash
 $ cabal sandbox init
 $ cabal install --only-dependencies
 $ cabal exec bash
+$ make
+```
+
+**Stack**
+
+```bash
+$ stack exec bash
 $ make
 ```
 

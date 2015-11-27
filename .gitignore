@@ -11,3 +11,4 @@ includes
 *.agdai
 *.history
 Setup.hs
+.stack-work
