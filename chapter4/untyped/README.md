@@ -9,6 +9,17 @@ To compile and run:
 $ cabal run
 ```
 
+Example
+-------
+
+```bash
+Untyped> (\x. x) 1
+ => \x . x
+ => 1
+ => x
+1
+```
+
 License
 =======
 

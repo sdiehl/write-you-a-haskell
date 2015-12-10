@@ -400,6 +400,23 @@ In later variations of the lambda calculus let expressions will have different
 semantics and will differ from applied lambda expressions. More on this will be
 discussed in the section on Hindley-Milner inference.
 
+Everything Can Be a $\lambda$ term
+----------------------------------
+
+* 0
+* 1
+* 2
+
+* succ
+* pred
+
+* not
+* and
+* or
+
+* add
+* mul
+
 Recursion
 ---------
 
@@ -407,22 +424,28 @@ Probably the most famous combinator is Curry's Y combinator. Within an untyped
 lambda calculus, Y can be used to allow an expression to contain a reference to
 itself and reduce on itself permitting recursion and looping logic.
 
-$$\textbf{Y} = \lambda f.(\lambda x.(f (x x)) \lambda x.(f (x x)))$$
+$$
+f = \textbf{YR}
+$$
 
-The Y combinator satisfies:
+The $\textbf{Y}$ combinator is one of many so called fixed point combinators.
 
-$$\textbf{Y} f  = f (\textbf{Y} f) $$
+$$
+\textbf{Y} = \lambda R.(\lambda x.(R (x x)) \lambda x.(R (x x)))
+$$
 
-since
+The combinator Y is called the fixed point combinator. Given R It returns the
+fixed point of R.
 
 $$
 \begin{aligned}
-\textbf{Y} f & = (\lambda f.(\lambda x.(f(x x)) \lambda x.(f(x x)))) f 
-& = (\lambda x.(f(x x))) (\lambda x.(f(x x)))
-& = f((\lambda x.(f (x x))) (\lambda x.(f (x x))))
-& = f(\textbf{Y} f)
+\textbf{YR} &= \lambda f.(\lambda x.(f (x x)) \lambda x.(f (x x))) R \\
+& = (\lambda x.(\textbf{R} (x x)) \lambda x.(\textbf{R} (x x))) \\
+& = \textbf{R} (\lambda x.(\textbf{R} (x x)) \lambda x.(\textbf{R} (x x))) \\
+& = \textbf{R Y R}
 \end{aligned}
 $$
+
 
 For fun one can prove that the Y-combinator can be expressed in terms of the S
 and K combinators.
