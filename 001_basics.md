@@ -879,8 +879,8 @@ str :: T.Text
 str = "bar"
 ```
 
-Cabal
------
+Cabal & Stack
+-------------
 
 To set up an existing project with a sandbox, run:
 
@@ -921,8 +921,8 @@ lecture notes.
 * [Real World Haskell](http://www.amazon.com/Real-World-Haskell-Bryan-OSullivan/dp/05965149800) by Bryan O'Sullivan, Don Stewart, and John Goerzen
 
 There are some books as well, but your mileage may vary with these. Much of the
-material is dated and only covers basic functional programming and not
-"programming in the large".
+material is dated and only covers basic programming and not "programming in the
+large".
 
 * [Learn you a Haskell](http://learnyouahaskell.com/) by Miran Lipovača
 * [Programming in Haskell](http://www.amazon.com/gp/product/0521692695) by Graham Hutton
