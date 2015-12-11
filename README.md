@@ -84,6 +84,8 @@ system.
 
 ```bash
 $ sudo apt-get install texlive-xetex texlive-latex-extra
+$ sudo apt-get install xzdec
+$ sudo tlmgr install zapfding
 $ make pdf
 ```
 
