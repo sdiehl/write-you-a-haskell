@@ -1,0 +1,7 @@
+resolver: lts-3.15
+packages:
+- '.'
+extra-deps:
+- repline-0.1.4.0
+flags: {}
+extra-package-dbs: []
