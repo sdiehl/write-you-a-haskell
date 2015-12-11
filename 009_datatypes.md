@@ -20,9 +20,6 @@ data Exp a b = Exp (a -> b)      -- a^b
 data Rec f   = Rec (f (Rec f))   -- \mu
 ```
 
-Catamorphisms
--------------
-
 Syntax
 ------
 
