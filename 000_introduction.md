@@ -53,10 +53,10 @@ Prerequisites
 -------------
 
 An intermediate understanding at the level of the *Real World Haskell* book is
-recommended.  We will shy away from advanced type-level programming that is
-often present in modern Haskell and will make heavy use of more value-level
-constructs.  Although a strong familiarity with monads, monad transformers,
-applicatives, and the standard Haskell data structures is strongly recommended.
+recommended.  We will avoid advanced type-level programming that is often
+present in modern Haskell, and instead will make heavy use of more value-level
+constructs. A strong familiarity with monads, monad transformers, applicatives,
+and the standard Haskell data structures is strongly recommended.
 
 Some familiarity with the standard 3rd party libraries will be useful. Many of
 these are briefly overviewed in [What I Wish I Knew When Learning
@@ -83,7 +83,6 @@ In particular we will use:
 * ``pretty-show``
 * ``uniplate``
 * ``optparse-applicative``
-* ``unbound-generics``
 * ``language-c-quote``
 * ``bytestring``
 * ``hoopl``
@@ -145,7 +144,7 @@ The behavior of a pure function is independent of where and when it is
 evaluated, whereas the behavior of an impure function is intrinsically tied to
 its execution order.
 
-Functional programming is defined simply as programming strictly with pure
+**Functional programming** is defined simply as programming strictly with pure
 referentially transparent functions.
 
 Static Typing
