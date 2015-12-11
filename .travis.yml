@@ -2,7 +2,7 @@ language: haskell
 
 ghc:
   - 7.8
-  - "7.10"
+    #- "7.10"
 
 install:
   #- sudo apt-get install texlive-xetex texlive-latex-extra
