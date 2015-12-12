@@ -38,8 +38,8 @@ value.
 
 All functions in Haskell are curried. For example, when a function of three
 arguments receives less than three arguments, it yields a partially applied
-function, which, when given additional arguments, yields yet another function
-or the resulting value if all the arguments were supplied.
+function, which, when given additional arguments, yields yet another function or
+the resulting value if all the arguments were supplied.
 
 ```haskell
 g :: Int -> Int -> Int -> Int
@@ -49,8 +49,10 @@ h :: Int -> Int
 h = g 2 3
 ```
 
-Haskell supports higher-order functions, i.e., functions which take functions
-and yield other functions.
+Haskell supports higher-order functions, i.e., functions which take functions as
+arguments and yield other functions. For example the ``compose`` function takes
+two functions as arguments f and g and returns the composite function of
+applying f then g.
 
 ```haskell
 compose f g = \x -> f (g x)
@@ -74,7 +76,7 @@ discriminated using pattern matching.
 data Sum = A Int | B Bool
 ```
 
-A product type combines multiple typed fields into the same type.
+A product type combines multiple fields into the same type.
 
 ```haskell
 data Prod = Prod Int Bool
@@ -149,13 +151,12 @@ a = Pair 1 2
 (,) = Pair
 ```
 
-Tuples are allowed (with compiler support) to have up to 15 fields in GHC.
-
 Pattern matching
 ----------------
 
 Pattern matching allows us to discriminate on the constructors of a datatype,
-mapping separate cases to separate code paths.
+mapping separate cases to separate code paths and binding variables for each of
+the fields of the datatype.
 
 ```haskell
 data Maybe a = Nothing | Just a
@@ -179,6 +180,14 @@ Wildcards can be placed for patterns where the resulting value is not used.
 ```haskell
 const :: a -> b -> a
 const x _ = x
+```
+
+Subexpression in the pattern can be explicitly bound to variables scoped on the
+right hand side of the pattern match.
+
+```haskell
+f :: Maybe (Maybe a) -> Maybe a
+f (Just x @ (Just _)) = x
 ```
 
 List and tuples have special pattern syntax.
@@ -239,8 +248,8 @@ Laziness
 --------
 
 A Haskell program can be thought of as being equivalent to a large directed
-graph. Each edge represents the use of a value, and each node is the source of
-a value. A node can be:
+graph. Each edge represents the use of a value, and each node is the source of a
+value. A node can be:
 
 * A *thunk*, i.e., the application of a function to values that have not been
   evaluated yet
@@ -534,8 +543,8 @@ b = ([1,2,3] <> mempty) <> (mempty <> [4,5,6])
 Deriving
 --------
 
-Instances for typeclasses like ``Read``, ``Show``, ``Eq`` and ``Ord`` can be derived automatically by the
-Haskell compiler.
+Instances for typeclasses like ``Read``, ``Show``, ``Eq`` and ``Ord`` can be
+derived automatically by the Haskell compiler.
 
 ```haskell
 data PlatonicSolid
@@ -624,8 +633,8 @@ Monad Transformers
 
 Monads can be combined together to form composite monads. Each of the composite
 monads consists of *layers* of different monad functionality. For example, we
-can combine an error-reporting monad with a state monad to encapsulate
-a certain set of computations that need both functionalities. The use of monad
+can combine an error-reporting monad with a state monad to encapsulate a certain
+set of computations that need both functionalities. The use of monad
 transformers, while not always necessary, is often one of the primary ways to
 structure modern Haskell programs.
 
@@ -670,8 +679,8 @@ As illustrated by the following stack diagram:
 Using ``mtl`` and ``GeneralizedNewtypeDeriving``, we can produce the same stack
 but with a simpler forward-facing interface to the transformer stack. Under the
 hood, ``mtl`` is using an extension called ``FunctionalDependencies`` to
-automatically infer which layer of a transformer stack a function belongs to
-and can then lift into it.
+automatically infer which layer of a transformer stack a function belongs to and
+can then lift into it.
 
 ```haskell
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
@@ -924,6 +933,7 @@ There are some books as well, but your mileage may vary with these. Much of the
 material is dated and only covers basic programming and not "programming in the
 large".
 
+* [Introduction to Functioanl Programming](http://www.amazon.com/Introduction-Functional-Programming-International-Computing/dp/0134841891) by Richard Bird and Philip Wadler
 * [Learn you a Haskell](http://learnyouahaskell.com/) by Miran Lipovača
 * [Programming in Haskell](http://www.amazon.com/gp/product/0521692695) by Graham Hutton
 * [Thinking Functionally](http://www.cambridge.org/us/academic/subjects/computer-science/programming-languages-and-applied-logic/thinking-functionally-haskell) by Richard Bird

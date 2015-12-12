@@ -178,8 +178,8 @@ Transformation  STG         ``STG.Expr``
 Transformation  Imp         ``Imp.Expr``
 Code Generation LLVM        ``LLVM.General.Module``
 
-CompilerM
----------
+Compiler Monad
+--------------
 
 The main driver of the compiler will be a ``ExceptT`` + ``State`` + ``IO``
 transformer stack . All other passes and transformations in the compiler will
