@@ -37,6 +37,22 @@ names:
 - **Lam** - A lambda abstraction
 - **App** - An application
 
+A lambda term is said to bind its variable. For example the lambda here binds
+$x$. In mathematics we would typically write:
+
+$$
+f(x) = e
+$$
+
+Using the lambda calculus notation we write:
+
+$$
+f = \lambda x. e
+$$
+
+In other words, $\lambda x.e$ is a function that takes a variable $x$ and
+returns $e$.
+
 $$
 \begin{aligned}
 e :=\ & x            & \trule{Var} \\
@@ -51,13 +67,6 @@ functional compiler intermediate forms for languages like Haskell, OCaml,
 Standard ML, etc. The variation we will discuss first is known as **untyped
 lambda calculus**, by contrast later we will discuss the **typed lambda
 calculus** which is an extension thereof.
-
-A lambda abstraction is said to bind its variable.
-For example the lambda here binds $x$.
-
-$$
-\lambda x. e
-$$
 
 There are several syntactical conventions that we will adopt when writing lambda
 expressions. Application of multiple expressions associates to the left.
@@ -149,8 +158,8 @@ This fact is a useful sanity check when testing an implementation of the lambda 
 
 **Omega Combinator**
 
-An important degenerate case that we'll test is the omega combinator which applies a single argument to
-itself.
+An important degenerate case that we'll test is the omega combinator which
+applies a single argument to itself.
 
 $$
 \omega = \lambda x. x x \\
@@ -446,6 +455,13 @@ $$
 \end{aligned}
 $$
 
+$$
+n! = n (n-1)!
+$$
+
+$$
+\textbf{fac}\ n = \textbf{R}(\textbf{fac}) = \textbf{R}(\textbf{R}(\textbf{fac}))
+$$
 
 For fun one can prove that the Y-combinator can be expressed in terms of the S
 and K combinators.

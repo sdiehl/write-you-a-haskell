@@ -35,8 +35,8 @@ Likewise for the product there are two function ``fst`` and ``snd`` which are
 *projections* which de construct products.
 
 ```haskell
-fst :: (a,b) -> a
-snd :: (a,b) -> b
+fst :: a * b -> a
+snd :: a * b -> b
 ```
 
 Once a language is endowed with the capacity to write a single product or a
