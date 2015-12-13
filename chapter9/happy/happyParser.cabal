@@ -1,7 +1,6 @@
 name:                happyParser
 version:             0.1.0.0
 license:             MIT
-license-file:        LICENSE
 author:              Stephen Diehl
 maintainer:          stephen.m.diehl@gmail.com
 build-type:          Simple

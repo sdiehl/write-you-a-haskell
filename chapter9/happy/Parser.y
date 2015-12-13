@@ -73,11 +73,11 @@ parseError (l:ls) = throwError (show l)
 parseError [] = throwError "Unexpected end of Input"
 
 parseExpr :: String -> Either String Expr
-parseExpr input = 
-  let tokenStream = scanTokens input in
-  runExcept (expr tokenStream)
+parseExpr input = runExcept $ do
+  tokenStream <- scanTokens input
+  expr tokenStream
 
-parseTokens :: String -> [Token]
-parseTokens = scanTokens
+parseTokens :: String -> Either String [Token]
+parseTokens = runExcept . scanTokens
     
 }

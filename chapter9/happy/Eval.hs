@@ -34,13 +34,14 @@ eval env expr = case expr of
   Op op a b -> do
     x <- eval env a
     y <- eval env b
-    return $ binop op x y
+    binop op x y
 
-binop :: Binop -> Value -> Value -> Value
-binop Add (VInt a) (VInt b) = VInt (a+b)
-binop Sub (VInt a) (VInt b) = VInt (a-b)
-binop Mul (VInt a) (VInt b) = VInt (a*b)
-binop Eql (VInt a) (VInt b) = VBool (a==b)
+binop :: Binop -> Value -> Value -> Eval Value
+binop Add (VInt a) (VInt b) = return $ VInt (a+b)
+binop Sub (VInt a) (VInt b) = return $ VInt (a-b)
+binop Mul (VInt a) (VInt b) = return $ VInt (a*b)
+binop Eql (VInt a) (VInt b) = return $ VBool (a==b)
+binop _ _ _ = throwError "Tried to do arithmetic operation over non-number"
 
 extend :: Scope -> String -> Value -> Scope
 extend env v t = Map.insert v t env

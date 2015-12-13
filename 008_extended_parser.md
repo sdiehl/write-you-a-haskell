@@ -193,7 +193,11 @@ tokens :-
 Happy
 -----
 
-We'll parse into a small untyped lambda calculus for our frontend language. 
+Using Happy and our previosly defind lexer we'll write down the production rules
+for our simple untyped lambda calculus. 
+
+We start by defining a ``Syntax`` module where we define the AST we'll generate
+from running over the token stream to produce the program graph structure.
 
 ```haskell
 module Syntax where
@@ -243,7 +247,9 @@ production rules.
 ```
 
 The parser itself will live inside of a custom monad of our choosing. In this
-simple case we'll just add error handling with the ``Except`` monad.
+case we'll add error handling with the ``Except`` monad that will break out of
+the parsing process if an invalid production or token is found and return a
+``Left`` value which we'll handle inside of our toplevel logic.
 
 ```haskell
 -- Parser monad
@@ -252,8 +258,15 @@ simple case we'll just add error handling with the ``Except`` monad.
 ```
 
 And finally our production rules, the toplevel entry point for our parser will
-be the ``expr`` rule.  Notice how naturally we can write a left recursive
-grammar for our infix operators.
+be the ``expr`` rule. The left hand side of the production is a Happy production
+rule which can be mutually recursive, while the right hand side is a Haskell
+expression with several metavariable indicated by the dollar sign variables that
+map to the nth expression on the left hand side.
+
+```
+$0  $1  $2  $3   $4 $5
+let VAR '=' Expr in Expr    { App (Lam $2 $6) $4 }
+```
 
 ```haskell
 -- Entry point
@@ -282,6 +295,9 @@ Atom : '(' Expr ')'                { $2 }
      | true                        { Lit (LBool True) }
      | false                       { Lit (LBool False) }
 ```
+
+Notice how naturally we can write a left recursive grammar for our binary infix
+operators.
 
 Syntax Errors
 -------------
@@ -324,7 +340,7 @@ Type Error Provenance
 
 Before our type inference engine would generate somewhat typical type inference
 error messages. If two terms couldn't be unified it simply told us this and some
-information about the toplevel declaration where it occurred, leaving us with a
+information about the top-level declaration where it occurred, leaving us with a
 bit of a riddle about how exactly this error came to be.
 
 ```haskell
@@ -337,14 +353,13 @@ in the definition of 'foo'
 
 Effective error reporting in the presence of type inference is a difficult task,
 effectively our typechecker takes our frontend AST and transforms it into a
-large constraint problem, destroying position
-information in the process. Even if the position information were tracked, the
-nature of unification is that a cascade of several unifications can lead to
-unsolvability and the immediate two syntactic constructs that gave rise to a
-unification failure are not necessarily the two that map back to human intuition
-about how the type error arose. Very little research has done on this topic and
-it remains an open topic with very immediate and applicable results to
-programming. 
+large constraint problem, destroying position information in the process. Even 
+if the position information were tracked, the nature of unification is that 
+a cascade of several unifications can lead to unsolvability and the immediate 
+two syntactic constructs that gave rise to a unification failure are not 
+necessarily the two that map back to human intuition about how the type error 
+arose. Very little research has done on this topic and it remains an open 
+topic with very immediate and applicable results to programming. 
 
 To do simple provenance tracking we will use a technique of tracking the "flow"
 of type information through our typechecker and associate position information
@@ -473,10 +488,10 @@ with
           let f x y = x y
 ```
 
-This is of course the simplest implementation of the tracking method and
-could be further extended by giving a weighted ordering to the constraints
-based on their likelihood of importance and proximity and then choosing which
-location to report based on this information. This remains an open area of work.
+This is of course the simplest implementation of the tracking method and could
+be further extended by giving a weighted ordering to the constraints based on
+their likelihood of importance and proximity and then choosing which location to
+report based on this information. This remains an open area of work.
 
 Indentation
 -----------
