@@ -31,6 +31,18 @@ class GEq a where
   default geq :: (Generic a, GEq' (Rep a)) => a -> a -> Bool
   geq x y = geq' (from x) (from y)
 
-instance GEq Char   where geq = (==)
-instance GEq Int    where geq = (==)
-instance GEq Float  where geq = (==)
+-- Base equalities
+instance GEq Char where geq = (==)
+instance GEq Int where geq = (==)
+instance GEq Float where geq = (==)
+
+-- Equalities derived from structure of (:+:) and (:*:)
+instance GEq a => GEq (Maybe a)
+instance (GEq a, GEq b) => GEq (a,b)
+
+main :: IO ()
+main = do
+  print $ geq 2 (3 :: Int)
+  print $ geq 'a' 'b'
+  print $ geq (Just 'a') (Just 'a')
+  print $ geq ('a','b') ('a', 'b')
