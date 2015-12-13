@@ -923,8 +923,8 @@ Resources
 ---------
 
 If any of these concepts are unfamiliar, there are some external resources that
-will try to explain them. The most thorough is probably the Stanford course
-lecture notes.
+will try to explain them. The most thorough is the Stanford course lecture
+notes.
 
 * [Stanford CS240h](http://www.scs.stanford.edu/14sp-cs240h/) by Bryan O'Sullivan, David Terei
 * [Real World Haskell](http://www.amazon.com/Real-World-Haskell-Bryan-OSullivan/dp/05965149800) by Bryan O'Sullivan, Don Stewart, and John Goerzen

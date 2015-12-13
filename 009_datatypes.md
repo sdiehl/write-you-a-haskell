@@ -95,7 +95,6 @@ In Haskell the convention for the sum and product notation is as follows:
 Recursive Types
 ---------------
 
-
 ```haskell
 roll :: Rec f -> f (Rec f)
 roll (Rec f) = f
@@ -158,7 +157,7 @@ int main()
 {
     Prod x = { .a = 1, .b = 2.0 };
     Sum sum1 = { .a = 1 };
-    Sum sum2 = { .b = 1 }; 
+    Sum sum2 = { .b = 2.0 }; 
 }
 ```
 

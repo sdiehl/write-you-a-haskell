@@ -11,10 +11,10 @@ Extended Parser
 Up until now we've been using parser combinators to build our parsers. Parser
 combinators build top-down parsers that formally belong to the $\mathtt{LL}(k)$
 family of parsers. The parser proceeds top-down, with a sequence of $k$
-characters used to dispatch on the leftmost production rule.
-Combined with backtracking (i.e. the ``try``
-combinator) this is simultaneously both an extremely powerful and simple model
-to implement as we saw before with our simple 100 line parser library.
+characters used to dispatch on the leftmost production rule.  Combined with
+backtracking (i.e. the ``try`` combinator) this is simultaneously both an
+extremely powerful and simple model to implement as we saw before with our
+simple 100 line parser library.
 
 However there is a family of grammars that include left-recursion that
 $\mathtt{LL}(k)$ can be inefficient and often incapable of parsing.
@@ -49,15 +49,14 @@ tools.
 Toolchain
 ---------
 
-Our parser logic will be spread across two different modules.
+Our parser and lexer logic will be spread across two different modules.
 
 * Lexer.x
 * Parser.y
 
 The code in each of these modules is a hybrid of the specific Alex/Happy grammar
 syntax and arbitrary Haskell logic that is spliced in. Code delineated by braces
-(``{}``) is regular Haskell, while code outside is parser/lexer logic. 
-
+(``{}``) is regular Haskell, while code outside is parsera  and lexer logic. 
 
 ```haskell
 -- **Begin Haskell Syntax**
@@ -253,8 +252,8 @@ simple case we'll just add error handling with the ``Except`` monad.
 ```
 
 And finally our production rules, the toplevel entry point for our parser will
-be the ``expr`` rule.  Notice how naturally we can write a left recursive grammar
-for our infix operators.
+be the ``expr`` rule.  Notice how naturally we can write a left recursive
+grammar for our infix operators.
 
 ```haskell
 -- Entry point
