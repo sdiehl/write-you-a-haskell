@@ -1,7 +1,10 @@
-module Eval where
+module Eval (
+  runEval,
+) where
+
 import Syntax
 
-import Control.Monad.Identity
+import Control.Monad.Except
 import qualified Data.Map as Map
 
 data Value
@@ -14,10 +17,11 @@ instance Show Value where
   show (VBool x) = show x
   show VClosure{} = "<<closure>>"
 
-type Evaluate t = Identity t
+type Eval t = Except String t
+
 type Scope = Map.Map String Value
 
-eval :: Eval.Scope -> Expr -> Identity Value
+eval :: Eval.Scope -> Expr -> Eval Value
 eval env expr = case expr of
   Lit (LInt x) -> return $ VInt (fromIntegral x)
   Lit (LBool x) -> return $ VBool x
@@ -41,12 +45,12 @@ binop Eql (VInt a) (VInt b) = VBool (a==b)
 extend :: Scope -> String -> Value -> Scope
 extend env v t = Map.insert v t env
 
-apply :: Value -> Value -> Evaluate Value
+apply :: Value -> Value -> Eval Value
 apply (VClosure v t0 e) t1 = eval (extend e v t1) t0
-apply _ _  = error "Tried to apply closure"
+apply _ _  = throwError "Tried to apply closure"
 
 emptyScope :: Scope
 emptyScope = Map.empty
 
-runEval :: Expr -> Value
-runEval x = runIdentity (eval emptyScope x)
+runEval :: Expr -> Either String Value
+runEval x = runExcept (eval emptyScope x)

@@ -5,6 +5,9 @@ module Lexer (
 ) where
 
 import Syntax
+
+import Control.Monad.Except
+
 }
 
 %wrapper "basic"
@@ -58,6 +61,7 @@ data Token
   | TokenEOF
   deriving (Eq,Show)
 
+scanTokens :: String -> [Token]
 scanTokens = alexScanTokens
 
 }

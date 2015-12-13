@@ -13,16 +13,14 @@ Usage:
 
 ```ocaml
 Happy> 42
-[TokenNum 42]
+Tokens: [TokenNum 42]
+Syntax: Right (Lit (LInt 42))
 42
 
 Happy> (\x -> x) 1
-[TokenLParen,TokenLambda,TokenSym "x",TokenArrow,TokenSym "x",TokenRParen,TokenNum 1]
+Tokens: [TokenLParen,TokenLambda,TokenSym "x",TokenArrow,TokenSym "x",TokenRParen,TokenNum 1]
+Syntax: Right (App (Lam "x" (Var "x")) (Lit (LInt 1)))
 1
-
-Happy> \x -> x*x*x*x*x - x + 1
-[TokenLambda,TokenSym "x",TokenArrow,TokenSym "x",TokenMul,TokenSym "x",TokenMul,TokenSym "x",TokenMul,TokenSym "x",TokenMul,TokenSym "x",TokenSub,TokenSym "x",TokenAdd,TokenNum 1]
-<<closure>>
 ```
 
 License

@@ -1,4 +1,5 @@
-import Eval
+import Syntax (Expr)
+import Eval (runEval)
 import Parser (parseExpr, parseTokens)
 
 import Control.Monad.Trans
@@ -7,13 +8,23 @@ import System.Console.Haskeline
 process :: String -> IO ()
 process input = do
   let tokens = parseTokens input
-  print tokens
+  putStrLn ("Tokens: " ++ show tokens)
   let ast = parseExpr input
+  putStrLn ("Syntax: " ++ show ast)
   case ast of
     Left err -> do
-      putStrLn "Parser Error:"
+      putStrLn "Parse Error:"
       print err
-    Right ast -> print $ runEval ast
+    Right ast -> exec ast
+
+exec :: Expr -> IO ()
+exec ast = do
+  let result = runEval ast
+  case result of
+    Left err -> do
+      putStrLn "Runtime Error:"
+      putStrLn err
+    Right res -> print res
 
 main :: IO ()
 main = runInputT defaultSettings loop
