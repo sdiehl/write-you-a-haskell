@@ -156,34 +156,6 @@ $$
 
 This fact is a useful sanity check when testing an implementation of the lambda calculus.
 
-**Omega Combinator**
-
-An important degenerate case that we'll test is the omega combinator which
-applies a single argument to itself.
-
-$$
-\omega = \lambda x. x x \\
-$$
-
-When we apply the $\omega$ combinator to itself we find that this results in an
-infinitely long repeating chain of reductions. A sequence of reductions that has
-no normal form ( i.e. it reduces indefinitely ) is said to *diverge*.
-
-$$
-(\lambda x. x x) (\lambda x. x x) \to \\
-  \quad (\lambda x. x x)(\lambda x. x x) \to  \\
-  \quad \quad (\lambda x. x x)(\lambda x. x x) \ldots
-$$
-
-We'll call this expression the $\Omega$ combinator. It is the canonical looping
-term in the lambda calculus. Quite a few of our type systems which are
-statically typed will reject this term from being well-formed, so it is quite a
-useful tool for testing.
-
-$$
-\Omega = \omega \omega = (\lambda x. x x) (\lambda x. x x)\\
-$$
-
 Implementation
 --------------
 
@@ -383,10 +355,9 @@ let a = e in b
 ```
 
 Toplevel expressions will be written as ``let`` statements without a body to
-indicate that they are added to the global scope. The Haskell language does
-not use this convention but OCaml, StandardML and the interactive mode of the
-Haskell compiler GHC do. In Haskell the preceding let is simply
-omitted.
+indicate that they are added to the global scope. The Haskell language does not
+use this convention but OCaml, StandardML use this convention.  In Haskell the
+preceding let is simply omitted for toplevel declarations.
 
 ```haskell
 let S f g x = f x (g x);
@@ -433,18 +404,14 @@ Probably the most famous combinator is Curry's Y combinator. Within an untyped
 lambda calculus, Y can be used to allow an expression to contain a reference to
 itself and reduce on itself permitting recursion and looping logic.
 
-$$
-f = \textbf{YR}
-$$
-
 The $\textbf{Y}$ combinator is one of many so called fixed point combinators.
 
 $$
 \textbf{Y} = \lambda R.(\lambda x.(R (x x)) \lambda x.(R (x x)))
 $$
 
-The combinator Y is called the fixed point combinator. Given R It returns the
-fixed point of R.
+$\textbf{Y}$ is quite special in that given $\textbf{R}$ It returns the fixed
+point of $\textbf{R}$.
 
 $$
 \begin{aligned}
@@ -455,12 +422,18 @@ $$
 \end{aligned}
 $$
 
+For example the factorial function can be defined recursively in terms of
+repeated applications of itself to fixpoint until the base case of $0!$.
+
 $$
 n! = n (n-1)!
 $$
 
 $$
-\textbf{fac}\ n = \textbf{R}(\textbf{fac}) = \textbf{R}(\textbf{R}(\textbf{fac}))
+\begin{aligned}
+\textbf{fac}\ 0 &= 1 \\
+\textbf{fac}\ n &= \textbf{R}(\textbf{fac}) = \textbf{R}(\textbf{R}(\textbf{fac})) ...
+\end{aligned}
 $$
 
 For fun one can prove that the Y-combinator can be expressed in terms of the S
@@ -520,6 +493,34 @@ let rec fib n =
   then 1
   else ((fib (n-1)) + (fib (n-2)));
 ```
+
+**Omega Combinator**
+
+An important degenerate case that we'll test is the omega combinator which
+applies a single argument to itself.
+
+$$
+\omega = \lambda x. x x \\
+$$
+
+When we apply the $\omega$ combinator to itself we find that this results in an
+infinitely long repeating chain of reductions. A sequence of reductions that has
+no normal form ( i.e. it reduces indefinitely ) is said to *diverge*.
+
+$$
+(\lambda x. x x) (\lambda x. x x) \to \\
+  \quad (\lambda x. x x)(\lambda x. x x) \to  \\
+  \quad \quad (\lambda x. x x)(\lambda x. x x) \ldots
+$$
+
+We'll call this expression the $\Omega$ combinator. It is the canonical looping
+term in the lambda calculus. Quite a few of our type systems which are
+statically typed will reject this term from being well-formed, so it is quite a
+useful tool for testing.
+
+$$
+\Omega = \omega \omega = (\lambda x. x x) (\lambda x. x x)\\
+$$
 
 Pretty Printing
 ---------------
