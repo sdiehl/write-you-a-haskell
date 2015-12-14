@@ -250,9 +250,9 @@ type scheme.
 
 ```haskell
 runInfer :: Infer (Subst, Type) -> Either TypeError Scheme
-runInfer m = case evalState (runExceptT m) initUnique of
-  Left err  -> Left err
-  Right res -> Right $ closeOver res
+runInfer m = do
+  res <- evalState (runExceptT m) initUnique
+  return (closeOver res)
 ```
 
 Substitution

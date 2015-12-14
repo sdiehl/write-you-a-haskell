@@ -100,21 +100,18 @@ runInfer env m = runExcept $ evalRWST m env initInfer
 
 -- | Solve for the toplevel type of an expression in a given environment
 inferExpr :: Env -> Expr -> Either TypeError Scheme
-inferExpr env ex = case runInfer env (infer ex) of
-  Left err -> Left err
-  Right (ty, cs) -> case runSolve cs of
-    Left err -> Left err
-    Right subst -> Right $ closeOver $ apply subst ty
+inferExpr env ex = do
+  (ty, cs) <- runInfer env (infer ex)
+  subst <- runSolve cs
+  return (closeOver (apply subst ty))
 
 -- | Return the internal constraints used in solving for the type of an expression
 constraintsExpr :: Env -> Expr -> Either TypeError ([Constraint], Subst, Type, Scheme)
-constraintsExpr env ex = case runInfer env (infer ex) of
-  Left err -> Left err
-  Right (ty, cs) -> case runSolve cs of
-    Left err -> Left err
-    Right subst -> Right $ (cs, subst, ty, sc)
-      where
-        sc = closeOver $ apply subst ty
+constraintsExpr env ex = do
+  (ty, cs) <- runInfer env (infer ex)
+  subst <- runSolve cs
+  let sc = closeOver $ apply subst ty
+  return (cs, subst, ty, sc)
 
 -- | Canonicalize and return the polymorphic toplevel type.
 closeOver :: Type -> Scheme
@@ -217,9 +214,9 @@ infer expr = case expr of
 
 inferTop :: Env -> [(String, Expr)] -> Either TypeError Env
 inferTop env [] = Right env
-inferTop env ((name, ex):xs) = case (inferExpr env ex) of
-  Left err -> Left err
-  Right ty -> inferTop (extend env (name, ty)) xs
+inferTop env ((name, ex):xs) = do
+  ty <- (inferExpr env ex)
+  inferTop (extend env (name, ty)) xs
 
 normalize :: Scheme -> Scheme
 normalize (Forall _ body) = Forall (map snd ord) (normtype body)
