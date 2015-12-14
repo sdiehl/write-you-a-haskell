@@ -31,9 +31,9 @@ data TypeError
   | GenericTypeError
 
 runInfer :: Infer (Subst, Type) -> Either TypeError Scheme
-runInfer m = case evalState (runExceptT m) initUnique of
-  Left err  -> Left err
-  Right res -> Right $ closeOver res
+runInfer m = do
+  res <- evalState (runExceptT m) initUnique
+  return (closeOver res)
 
 closeOver :: (Map.Map TVar Type, Type) -> Scheme
 closeOver (sub, ty) = normalize sc
@@ -190,9 +190,9 @@ inferExpr env = runInfer . infer env
 
 inferTop :: TypeEnv -> [(String, Expr)] -> Either TypeError TypeEnv
 inferTop env [] = Right env
-inferTop env ((name, ex):xs) = case (inferExpr env ex) of
-  Left err -> Left err
-  Right ty -> inferTop (extend env (name, ty)) xs
+inferTop env ((name, ex):xs) = do
+  ty <- (inferExpr env ex)
+  inferTop (extend env (name, ty)) xs
 
 normalize :: Scheme -> Scheme
 normalize (Forall ts body) = Forall (fmap snd ord) (normtype body)
