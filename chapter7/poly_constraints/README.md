@@ -8,6 +8,7 @@ To compile and run:
 
 ```shell
 $ cabal run
+$ stack exec poly
 ```
 
 Usage:
