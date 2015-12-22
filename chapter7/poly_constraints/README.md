@@ -58,7 +58,8 @@ Is semantically equivelant to:
 let add = \x -> \y -> x + y;
 ```
 
-Top level Let-rec declarations are syntatic sugar for use of the ``fix`` operator. For example:
+Top level Let-rec declarations are syntatic sugar for use of the ``fix``
+operator. For example:
 
 ```ocaml
 let rec factorial n = if (n == 0) then 1 else (n * (factorial (n-1)));
