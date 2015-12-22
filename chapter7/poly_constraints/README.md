@@ -8,7 +8,6 @@ To compile and run:
 
 ```shell
 $ cabal run
-$ stack exec poly
 ```
 
 Usage:
@@ -47,25 +46,25 @@ Poly> let rec factorial n =
 Notes
 =====
 
-Top level let declarations are syntatic sugar for nested lambda. For example: 
+Top level let declarations are syntactic sugar for nested lambda. For example: 
 
 ```ocaml
 let add x y = x + y;
 ```
 
-Is semantically equivelant to:
+Is semantically equivalent to:
 
 ```ocaml
 let add = \x -> \y -> x + y;
 ```
 
-Top level Let-rec declarations are syntatic sugar for use of the ``fix``
+Top level Let-rec declarations are syntactic sugar for use of the ``fix``
 operator. For example:
 
 ```ocaml
 let rec factorial n = if (n == 0) then 1 else (n * (factorial (n-1)));
 ```
-Is semantically equivelant to:
+Is semantically equivalent to:
 
 ```ocaml
 let factorial = fix (\factorial n -> if (n == 0) then 1 else (n * (factorial (n-1))));
