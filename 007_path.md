@@ -745,7 +745,15 @@ Frontend
 ========
 
 The Frontend language for ProtoHaskell is a fairly large language, consisting of
-many different types. Let's walk through the different constructions.
+many different types. Let's walk through the different constructions. The
+frontend syntax is split across several datatypes.
+
+* ``Decls`` - Declarations syntax
+* ``Expr``  - Expressions syntax
+* ``Lit``   - Literal syntax
+* ``Pat``   - Pattern syntax
+* ``Types`` - Type syntax
+* ``Binds`` - Binders
 
 At the top is the named *Module* and all toplevel declarations contained
 therein. The first revision of the compiler has a very simple module structure,

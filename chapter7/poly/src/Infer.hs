@@ -18,17 +18,18 @@ import Data.Foldable (foldr)
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 
-newtype TypeEnv = TypeEnv (Map.Map Var Scheme) deriving Monoid
+newtype TypeEnv = TypeEnv (Map.Map Var Scheme)
+  deriving Monoid
 
 data Unique = Unique { count :: Int }
-type Infer a = ExceptT TypeError (State Unique) a
+
+type Infer = ExceptT TypeError (State Unique)
 type Subst = Map.Map TVar Type
 
 data TypeError
   = UnificationFail Type Type
   | InfiniteType TVar Type
   | UnboundVariable String
-  | GenericTypeError
 
 runInfer :: Infer (Subst, Type) -> Either TypeError Scheme
 runInfer m = case evalState (runExceptT m) initUnique of
@@ -86,9 +87,9 @@ s1 `compose` s2 = Map.map (apply s1) s2 `Map.union` s1
 
 unify ::  Type -> Type -> Infer Subst
 unify (l `TArr` r) (l' `TArr` r')  = do
-    s1 <- unify l l'
-    s2 <- unify (apply s1 r) (apply s1 r')
-    return (s2 `compose` s1)
+  s1 <- unify l l'
+  s2 <- unify (apply s1 r) (apply s1 r')
+  return (s2 `compose` s1)
 
 unify (TVar a) t = bind a t
 unify t (TVar a) = bind a t
@@ -96,9 +97,10 @@ unify (TCon a) (TCon b) | a == b = return nullSubst
 unify t1 t2 = throwError $ UnificationFail t1 t2
 
 bind ::  TVar -> Type -> Infer Subst
-bind a t | t == TVar a     = return nullSubst
-         | occursCheck a t = throwError $ InfiniteType a t
-         | otherwise       = return $ Map.singleton a t
+bind a t
+  | t == TVar a     = return nullSubst
+  | occursCheck a t = throwError $ InfiniteType a t
+  | otherwise       = return $ Map.singleton a t
 
 occursCheck ::  Substitutable a => TVar -> a -> Bool
 occursCheck a t = a `Set.member` ftv t
@@ -120,7 +122,7 @@ instantiate (Forall as t) = do
 
 generalize :: TypeEnv -> Type -> Scheme
 generalize env t  = Forall as t
-    where as = Set.toList $ ftv t `Set.difference` ftv env
+  where as = Set.toList $ ftv t `Set.difference` ftv env
 
 ops :: Binop -> Type
 ops Add = typeInt `TArr` typeInt `TArr` typeInt
@@ -129,7 +131,7 @@ ops Sub = typeInt `TArr` typeInt `TArr` typeInt
 ops Eql = typeInt `TArr` typeInt `TArr` typeBool
 
 lookupEnv :: TypeEnv -> Var -> Infer (Subst, Type)
-lookupEnv (TypeEnv env) x = do
+lookupEnv (TypeEnv env) x =
   case Map.lookup x env of
     Nothing -> throwError $ UnboundVariable (show x)
     Just s  -> do t <- instantiate s
@@ -180,17 +182,17 @@ inferPrim env l t = do
   (s1, tf) <- foldM inferStep (nullSubst, id) l
   s2 <- unify (apply s1 (tf tv)) t
   return (s2 `compose` s1, apply s2 tv)
-
-  where inferStep (s, tf) exp = do 
-          (s', t) <- infer (apply s env) exp
-          return (s' `compose` s, tf . (TArr t))
+  where
+  inferStep (s, tf) exp = do
+    (s', t) <- infer (apply s env) exp
+    return (s' `compose` s, tf . (TArr t))
 
 inferExpr :: TypeEnv -> Expr -> Either TypeError Scheme
 inferExpr env = runInfer . infer env
 
 inferTop :: TypeEnv -> [(String, Expr)] -> Either TypeError TypeEnv
 inferTop env [] = Right env
-inferTop env ((name, ex):xs) = case (inferExpr env ex) of
+inferTop env ((name, ex):xs) = case inferExpr env ex of
   Left err -> Left err
   Right ty -> inferTop (extend env (name, ty)) xs
 
