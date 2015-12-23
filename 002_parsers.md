@@ -30,6 +30,7 @@ So now let's build our own toy parser combinator library which we'll call
 **NanoParsec** just to get the feel of how these things are built.
 
 ~~~~ {.haskell slice="chapter3/parsec.hs" lower=0 upper=7}
+import Control.Applicative hiding (many, some)
 ~~~~
 
 Structurally a parser is a function which takes an input stream of characters
@@ -49,6 +50,13 @@ failures for error reporting.
 
 ~~~~ {.haskell slice="chapter3/parsec.hs" lower=10 upper=16}
 ~~~~
+
+You might be surprised that running ``parse`` provides a list of tuples,
+while now during pattern matching we only consider a list of one element.
+Using a list structure makes it easier to deal with alternative parse
+cases: we can combine multiple parsers, of which unsuccesful ones produce an
+empty list, and then concatenate the results. We could have used ``Maybe``
+instead, but this is easier to write.
 
 Recall that in Haskell the String type is defined to be a list of
 ``Char`` values, so the following are equivalent forms of the same data.
@@ -105,14 +113,14 @@ itself if there is not at least a single match.
 
 ```haskell
 -- | One or more.
-some :: f a -> f [a]
+some :: Alternative f => f a -> f [a]
 some v = some_v
   where
     many_v = some_v <|> pure []
     some_v = (:) <$> v <*> many_v
 
 -- | Zero or more.
-many :: f a -> f [a]
+many :: Alternative f => f a -> f [a]
 many v = many_v
   where
     many_v = some_v <|> pure []
@@ -126,12 +134,12 @@ letter, a specific word, etc).
 ~~~~ {.haskell slice="chapter3/parsec.hs" lower=60 upper=65}
 ~~~~
 
-Essentially this 50 lines code encodes the entire core of the parser combinator
+Essentially these 50 lines of code encode the entire core of the parser combinator
 machinery. All higher order behavior can be written on top of just this logic.
 Now we can write down several higher level functions which operate over sections
 of the stream.
 
-``chainl1`` parses one or more occurrences of ``p``, separated by ``op`` and
+``chainl1`` parses one or more occurrences of ``p``, combines them with ``op`` and
 returns a value obtained by a recursing until failure on the left hand side of
 the stream. This can be used to parse left-recursive grammar.
 
@@ -213,7 +221,7 @@ Combinator    Description
 ``many``      Consumes an arbitrary number of patterns matching the given 
               pattern and returns them as a list.
 ``many1``     Like many but requires at least one match.
-``sepBy``     Match a arbitrary length sequence of patterns, delimited by 
+``sepBy``     Match an arbitrary length sequence of patterns, delimited by 
               a given pattern. 
 ``optional``  Optionally parses a given pattern returning its value as a 
               Maybe.
@@ -263,7 +271,7 @@ datatype.
 
 **Parser**
 
-Much like before our parser is simply written in monadic blocks, each mapping a
+Much like before, our parser is simply written in monadic blocks, each mapping a
 set of patterns to a construct in our ``Expr`` type. The toplevel entry point
 to our parser is the ``expr`` function which we can parse with by using the
 Parsec function ``parse``.
