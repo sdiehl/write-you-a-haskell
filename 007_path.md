@@ -269,7 +269,7 @@ executable, you will see a similar interactive shell.
 |_| |_|\__,_|___/_|\_\   | Type :help for help
 
 Compiling module: prelude.fun
-λ> id (1+2)
+> id (1+2)
 3
 > :type (>>=)
 (>>=) :: Monad m => m a -> (a -> m b) -> m b

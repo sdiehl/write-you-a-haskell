@@ -39,12 +39,34 @@ pre code {
   height: 36px;
 }
 
-table th {
-   border-right: 1em solid transparent;
+table{
+    background:#fff;
+    border:1px solid #ccc;
+    border-width:2px;
+    border-collapse:collapse;
+    margin:5px 0 10px;
+
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
-table td {
-   border-right: 1em solid transparent;
+th, td{
+    border:1px solid #ccc;
+    padding:3px 10px;
+    text-align:left;
+    vertical-align:top;
+}
+
+tr.even td{
+    background:#f7f7f7;
+}
+
+th{
+    background:#edeff0;
+}
+
+td code {
+  border: 0px;
 }
 
 img {
@@ -108,7 +130,7 @@ p a {
   text-decoration: underline;
 }
 
-li code, p code, table code {
+li code, p code {
   font-size: 12px;
   border: 1px solid #ccc;
   margin-left: 3px;
@@ -117,62 +139,6 @@ li code, p code, table code {
   padding-right: 5px;
   -moz-border-radius: 8px;
   border-radius: 8px;
-}
-
-/* Language Extensions Table */
-
-.table-striped .verical {
-  -webkit-transform: rotate(-90deg);
-  -moz-transform: rotate(-90deg);
-  -ms-transform: rotate(-90deg);
-  -o-transform: rotate(-90deg);
-  transform: rotate(-90deg);
-}
-
-.table-striped .striped-header td {
-  /*border-bottom: 1px solid black;*/
-}
-
-.table-striped .striped-header td {
-  padding-left: 10px; 
-  padding-right: 10px; 
-  font-weight: bold;
-  font-size: 8pt;
-}
-
-.table-striped {
-  text-align: center;
-  border-spacing: 0px;
-  padding: 0px;
-}
-
-.table-striped td:first-child {
-  text-align: left;
-}
-
-.table-striped td:nth-child(5) {
-  text-align: left;
-  padding-right: 10px;
-}
-
-.table-striped td:nth-child(6) {
-  text-align: left;
-  padding-right: 10px;
-}
-
-
-.table-striped a {
-  text-decoration: underline;
-}
-
-.table-striped
-
-.table-striped tr:nth-child(even) {
-  background-color: white;
-}
-
-.table-striped tr:nth-child(odd) {
-  background-color: #eeeeee;
 }
 
 /*  */

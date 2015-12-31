@@ -85,12 +85,14 @@ none a = Inr a
 
 In Haskell the convention for the sum and product notation is as follows:
 
-* ``a * b`` : ``(a,b)``
-* ``a + b`` : ``Either a b``
-* ``Inl``   : ``Left``
-* ``Inr``   : ``Right``
-* ``Empty`` : ``Void``
-* ``Unit`` : ``()``
+Notation    Haskell Type
+---------   ------------
+``a * b``   ``(a,b)``
+``a + b``   ``Either a b``
+``Inl``     ``Left``
+``Inr``     ``Right``
+``Empty``   ``Void``
+``Unit``    ``()``
 
 Recursive Types
 ---------------

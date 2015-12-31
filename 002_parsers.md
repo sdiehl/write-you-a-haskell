@@ -207,18 +207,12 @@ Combinator    Description
 -----------   ------------
 ``char``      Match the given character.
 ``string``    Match the given string.
-``<|>``       The choice operator tries to parse the first argument before 
-              proceeding to the second. Can be chained sequentially to
-              generate a sequence of options.
-``many``      Consumes an arbitrary number of patterns matching the given 
-              pattern and returns them as a list.
+``<|>``       The choice operator tries to parse the first argument before proceeding to the second. Can be chained sequentially to generate a sequence of options.
+``many``      Consumes an arbitrary number of patterns matching the given pattern and returns them as a list.
 ``many1``     Like many but requires at least one match.
-``sepBy``     Match a arbitrary length sequence of patterns, delimited by 
-              a given pattern. 
-``optional``  Optionally parses a given pattern returning its value as a 
-              Maybe.
-``try``       Backtracking operator will let us parse ambiguous matching 
-              expressions and restart with a different pattern.
+``sepBy``     Match a arbitrary length sequence of patterns, delimited by a given pattern. 
+``optional``  Optionally parses a given pattern returning its value as a Maybe.
+``try``       Backtracking operator will let us parse ambiguous matching expressions and restart with a different pattern.
 ``parens``    Parses the given pattern surrounded by parentheses.
 
 **Tokens**
