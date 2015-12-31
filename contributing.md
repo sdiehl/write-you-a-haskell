@@ -158,9 +158,3 @@ Reference Code
 
 The subject of this text is largely build around the mini Haskell compiler.
 Several other files are included for earlier chapters.
-
-Translations
-------------
-
-I am also very keen to the idea of having multiple language translations, if you
-would like to translate the text into your native language please get in touch.
