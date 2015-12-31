@@ -28,6 +28,8 @@ Read Online:
 Releases
 --------
 
+This is a work in progress.
+
 * [Chapter 1: Introduction](http://dev.stephendiehl.com/fun/000_introduction.html)
 * [Chapter 2: Haskell Basics](http://dev.stephendiehl.com/fun/001_basics.html)
 * [Chapter 3: Parsing](http://dev.stephendiehl.com/fun/002_parsers.html)
@@ -38,7 +40,7 @@ Releases
 * [Chapter 8: Design of ProtoHaskell](http://dev.stephendiehl.com/fun/007_path.html)
 * [Chapter 9: Extended Parser](http://dev.stephendiehl.com/fun/008_extended_parser.html)
 * [Chapter 10: Custom Datatypes](http://dev.stephendiehl.com/fun/009_datatypes.html)
-* Chapter 11: Renamer
+* [Chapter 11: Renamer] (http://dev.stephendiehl.com/fun/010_renamer.html)
 * Chapter 12: Pattern Matching & Desugaring
 * Chapter 13: System-F
 * Chapter 14: Type Classes

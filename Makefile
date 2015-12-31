@@ -19,10 +19,10 @@ SRC = 000_introduction.md \
       007_path.md \
       008_extended_parser.md \
       009_datatypes.md \
-      #010_renamer.md \
+      010_renamer.md \
+      026_llvm.md
       #011_pattern_matching.md \
       #012_systemf.md
-      #026_llvm.md
 OBJ = $(SRC:.md=.html)
 
 all: $(OBJ) top
