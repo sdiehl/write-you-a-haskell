@@ -64,32 +64,36 @@ Haskell](http://dev.stephendiehl.com/hask/).
 
 In particular we will use:
 
-* ``containers``
-* ``unordered-containers``
-* ``text``
-* ``mtl``
-* ``filepath``
-* ``directory``
-* ``process``
-* ``parsec``
-* ``pretty``
-* ``wl-pprint``
-* ``graphscc``
-* ``haskeline``
-* ``repline``
-* ``cereal``
-* ``deepseq``
-* ``uniqueid``
-* ``pretty-show``
-* ``uniplate``
-* ``optparse-applicative``
-* ``language-c-quote``
-* ``bytestring``
-* ``hoopl``
-* ``fgl``
-* ``llvm-general``
-* ``smtLib``
-* ``sbv``
+Library                       Description
+-------------------------     ------------------------------
+``containers``                Core data structures
+``unordered-containers``      Core data structures
+``text``                      Text datastructure
+``bytestring``                Text datastructure
+``transformers``
+``mtl``
+``filepath``
+``directory``
+``process``
+``parsec``                    Parser combinators
+``happy``                     Parser generator
+``alex``                      Lexer generator
+``pretty``                    Pretty print combinators
+``ansi-wl-pprint``            Pretty print combinators
+``pretty-show``               Haskell pretty printer
+``graphscc``                  Topological sorting
+``haskeline``                 GNU Readline integration
+``repline``                   Interactive shell builder
+``cereal``
+``deepseq``
+``uniqueid``
+``uniplate``
+``optparse-applicative``      Commandline argument
+``hoopl``
+``fgl``
+``llvm-general``              LLVM Codegen
+``smtLib``
+``sbv``
 
 In later chapters some experience with C, LLVM and x86 Assembly will be very
 useful, although not strictly required.
@@ -111,8 +115,8 @@ if $a= f(x)$ then for an expression $g(f(x), f(x))$, this is always equivalent
 to $g(a, a)$. In other words, the values computed by functions can always be
 substituted freely at all occurrences.
 
-The central idea of *functional programming* is to structure our programs in
-such a way that we can reason about them as a system of equations just like
+The central idea of *pure functional programming* is to structure our programs
+in such a way that we can reason about them as a system of equations just like
 we can in mathematics. The evaluation of a pure function is one in which *side
 effects* are prohibited; a function may only return a result without altering
 the world in any *observable* way.
@@ -144,9 +148,6 @@ The behavior of a pure function is independent of where and when it is
 evaluated, whereas the behavior of an impure function is intrinsically tied to
 its execution order.
 
-**Functional programming** is defined simply as programming strictly with pure
-referentially transparent functions.
-
 Static Typing
 -------------
 
@@ -169,9 +170,8 @@ TypeError: unsupported operand type(s) for &: 'bool' and 'str'
 ```
 
 By comparison Haskell will do quite a bit of work to try to ensure that the
-program is well-defined before running it. The language that we use to
-predescribe and analyze static semantics of the program is that of *static
-types*.
+program is well-defined before running it. The language that we use to prescribe
+and analyze static semantics of the program is that of *static types*.
 
 ```bash
 Prelude> True && "false"
@@ -222,13 +222,15 @@ transformations composed to transform the input program.
 
 ![](img/pipeline1.png)
 
-* **Source**            - The frontend textual source language.
-* **Parsing**           - Source is parsed into an abstract syntax tree.
-* **Desugar**           - Redundant structure from the frontend language is removed and canonicalized.
-* **Type Checking**     - The program is type-checked and/or type-inferred yielding an explicitly typed form.
-* **Transformation**    - The core language is transformed to prepare for compilation.
-* **Compilation**       - The core language is lowered into a form to be compiled or interpreted.
-* **(Code Generation)** - Platform specific code is generated, linked into a binary.
+Phase
+------------------    ------------------------------------
+**Source**            The frontend textual source language.
+**Parsing**           Source is parsed into an abstract syntax tree.
+**Desugar**           Redundant structure from the frontend language is removed and canonicalized.
+**Type Checking**     The program is type-checked and/or type-inferred yielding an explicitly typed form.
+**Transformation**    The core language is transformed to prepare for compilation.
+**Compilation**       The core language is lowered into a form to be compiled or interpreted.
+**(Code Generation)** Platform specific code is generated, linked into a binary.
 
 A *pass* may transform the input program from one form into another or alter the
 internal state of the compiler context. The high level description of the forms
