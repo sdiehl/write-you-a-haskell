@@ -233,7 +233,7 @@ composition operator to form the composite pipeline for compiling modules.
 ```
 
 And that's basically the entire structure of the compiler. It's just a pipeline
-of monadic actions for each pass rolled up inside of CompilerM.
+of monadic actions for each pass rolled up inside of ``CompilerM``.
 
 ```haskell
 modl :: FilePath -> L.Text -> CompilerM ()
@@ -253,12 +253,12 @@ Engineering Overview
 REPL
 ----
 
-It is extremely important to have an interactive shell to be able to
-interactively explore the compilation steps and intermediate forms for arbitrary
-expressions. GHCi does this very well, and nearly every intermediate form is
-inspectable. We will endeavor to recreate this experience with our toy language.
+It is important to have an interactive shell to be able to interactively explore
+the compilation steps and intermediate forms for arbitrary expressions. GHCi
+does this very well, and nearly every intermediate form is inspectable. We will
+endeavor to recreate this experience with our toy language.
 
-If the ProtoHaskell compiler is invoked either in GHCi or as standable
+If the ProtoHaskell compiler is invoked either in GHCi or as standalone
 executable, you will see a similar interactive shell.
 
 ```haskell
@@ -296,7 +296,6 @@ Command           Action
 ``:kind``         Show the kind of an expression
 ``:set <flag>``   Set a flag
 ``:unset <flag>`` Unset a flag
-``:ekg <flag>``   Start the EKG profiler as a background process
 ``:constraints``  Dump the typing constraints for an expression
 ``:quit``         Exit interpreter
 
@@ -415,8 +414,7 @@ Pattern matching is an extremely important part of a modern functional
 programming language, but the implementation of the pattern desugaring is remarkably
 subtle. The frontend syntax allows the expression of nested pattern matches and
 incomplete patterns, both can generate very complex *splitting trees* of case
-expressions that need to be expanded out recursively. We will use the algorithm
-devised by Phil Wadler to perform this transformation.
+expressions that need to be expanded out recursively.
 
 **Multiple Equations**
 
@@ -1274,7 +1272,6 @@ t =  a `composeM` b `composeM` c
 Later we utilize both ``GHC.Generics`` and ``Uniplate`` to generalize this
 technique even more.
 
-<!--
 
 Misc Infrastructure
 ===================
@@ -1290,8 +1287,6 @@ GraphSCC
 
 Optparse Applicative
 --------------------
-
--->
 
 Full Source
 -----------
