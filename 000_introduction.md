@@ -367,29 +367,18 @@ evaluation explicit directly in the AST.
 Code Generation
 ---------------
 
-After translating an expression to the core language we will either evaluate
-it with a high-level interpreter written in Haskell itself, or translate it
-to another intermediate language (such as LLVM IR or GHC's Cmm) which can be
-compiled into native code. This intermediate language abstracts over the
-process of assigning values to, and moving values between CPU registers and
-main memory.
+After translating an expression to the core language we will either evaluate it
+with a high-level interpreter written in Haskell itself, or translate it to
+another intermediate language (such as LLVM IR or GHC's Cmm) which can be
+compiled into native code. This intermediate language abstracts over the process
+of assigning values to, and moving values between CPU registers and main memory.
 
-As an example, the statement
+As an example, the `let` statement below would be compiled into some
+intermediate representation, like LLVM  IR.
 
 ```haskell
 let f x = x + 1
 ```
-
-which corresponds to the following assembly instructions:
-
-```haskell
-f:
-  mov res, arg
-  add res, 1
-  ret
-```
-
-looks like this in LLVM IR (note the absence of mov instructions):
 
 ```haskell
 define i32 @f(i32 %x) {
@@ -399,9 +388,9 @@ entry:
 }
 ```
 
-From the intermediate representation the code can be compiled into the
-system's assembly language. Any additional code that is required for
-evaluation is *linked* into the resulting module.
+From the intermediate representation the code can be compiled into the system's
+assembly language. Any additional code that is required for evaluation is
+*linked* into the resulting module.
 
 ```perl
 f:
@@ -413,8 +402,8 @@ f:
 
 ```
 
-And ultimately this code will be assembled into platform specific instructions by
-the *native code generator*, encoded as a predefined sequence of CPU
+And ultimately this code will be assembled into platform specific instructions
+by the *native code generator*, encoded as a predefined sequence of CPU
 instructions defined by the processor specification.
 
 ```perl
