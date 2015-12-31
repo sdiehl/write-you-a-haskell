@@ -66,7 +66,7 @@ will refine over time.
 * [Chapter 7: Hindley-Milner Inference](006_hindley_milner.html)
 * [Chapter 8: Design of ProtoHaskell](007_path.html)
 * [Chapter 9: Extended Parser](http://dev.stephendiehl.com/fun/008_extended_parser.html)
-* Chapter 10: Custom Datatypes
+* [Chapter 10: Custom Datatypes](http://dev.stephendiehl.com/fun/009_datatypes.html)
 * Chapter 11: Renamer
 * Chapter 12: Pattern Matching & Desugaring
 * Chapter 13: System-F
