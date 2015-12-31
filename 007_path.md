@@ -271,10 +271,10 @@ executable, you will see a similar interactive shell.
 Compiling module: prelude.fun
 λ> id (1+2)
 3
-λ> :type (>>=)
+> :type (>>=)
 (>>=) :: Monad m => m a -> (a -> m b) -> m b
-λ> :set -ddump-rn
-λ> :load test.fun
+> :set -ddump-rn
+> :load test.fun
 ```
 
 Command line conventions will follow GHCi's naming conventions.  There
@@ -307,14 +307,14 @@ walk you through the type checker's reasoning about how it derived the type
 it did for a given expression.
 
 ```haskell
-ProtoHaskell> :type plus
+> :type plus
 plus :: forall a. Num a => a -> a -> a
 
-ProtoHaskell> :core id
+> :core id
 id :: forall a. a -> a
 id = \(ds1 : a) -> a
 
-ProtoHaskell> :core compose
+> :core compose
 compose :: forall c d e. (d -> e) -> (c -> d) -> c -> e
 compose = \(ds1 : d -> e)
            (ds2 : c -> d)
@@ -529,11 +529,11 @@ C# : Char# -> Char
 ```
 
 ```haskell
-ProtoHaskell> :core 1
+> :core 1
 I# 1#
-ProtoHaskell> :core 1 + 2
+> :core 1 + 2
 plus (I# 1#) (I# 2#)
-ProtoHaskell> :core "snazzleberry"
+> :core "snazzleberry"
 unpackCString# "snazzleberry"#
 ```
 
@@ -1317,7 +1317,7 @@ Resources
 
 See:
 
-* [The Architecture of Open Source Applications: GHC](http://aosabook.org/en/ghc.html)
 * [GHC Commentary](https://ghc.haskell.org/trac/ghc/wiki/Commentary)
+* [The Architecture of Open Source Applications: GHC](http://aosabook.org/en/ghc.html)
 
 \pagebreak
