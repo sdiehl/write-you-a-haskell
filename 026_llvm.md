@@ -41,14 +41,14 @@ was first developed for the Intel 8086 CPU family. The base types which hardware
 operates over are integers and floating point types. Let us just consider the
 integral types for now, these come in four major varieties:
 
-<img src="/images/bits.png"></img>
+![](img/bits.png)
 
 On the Intel architecture numbers are represented *little endian* meaning lower
 significant bytes are stored in lower memory addresses. The whole memory
 representation for a value is partitioned into *high bits* and *low bits*. For
 example the hexadecimal number ``0xc0ffee`` as a  DWORD is stored in memory as:
 
-<img src="/images/coffee.png"></img>
+![](img/coffee.png)
 
 In Haskell unboxed integral machine types are provided by the ``Data.Word``
 [module](https://hackage.haskell.org/package/base-4.8.1.0/docs/Data-Word.html).
@@ -109,7 +109,7 @@ Each of these registers can be addressed as a smaller register containing a
 subset of the lower bits. The 32-bit register of ``rax`` is ``eax``. These are
 shown in the table below.
 
-<img src="/images/registers.png"></img>
+![](img/registers.png)
 
 These smaller registers are given specific names with modified prefixes.
 
@@ -614,7 +614,7 @@ prefix  opcode  data          assembly                 meaning
 Ok, let's look at the full structure of an instruction. It consists of several
 parts.
 
-<img src="/images/opcode.png" width=100%></img>
+![](img/opcode.png)
 
 <!--
 - Prefix
@@ -648,7 +648,7 @@ Prefix     Opcode     Mod R/M  Scale Index Base    Displacement Immediate
 
 **Prefix**
 
-<img src="/images/Prefix.png"></img>
+![](img/Prefix.png)
 
 The header fixes the first four bits to be constant ``0b0100`` while the next
 four bits indicate the pretense of W/R/X/B extensions. 
@@ -673,7 +673,7 @@ The W bit modifies the operation width. The R, X and B fields extend the registe
 
 **ModR/M byte**
 
-<img src="/images/ModRM.png"></img>
+![](img/ModRM.png)
 
 The Mod-Reg-R/M byte determines the instruction's operands and the addressing
 modes. These are several variants of addressing modes.
@@ -744,7 +744,7 @@ ModRM = 0b11000011
 ModRM = 0xc3
 ```
 
-<img src="/images/ModRM_example.png"></img>
+![](img/ModRM_example.png)
 
 <hr/>
 
