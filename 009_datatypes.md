@@ -94,8 +94,12 @@ Notation    Haskell Type
 ``Empty``   ``Void``
 ``Unit``    ``()``
 
-Recursive Types
----------------
+Isorecursive Types
+-------------------
+
+$$
+\mathtt{Nat} = \mu \alpha. 1 + \alpha
+$$
 
 ```haskell
 roll :: Rec f -> f (Rec f)
@@ -104,10 +108,6 @@ roll (Rec f) = f
 unroll :: f (Rec f) -> Rec f
 unroll f = Rec f
 ```
-
-$$
-\mathtt{Nat} = \mu \alpha. 1 + \alpha
-$$
 
 Peano numbers:
 
@@ -342,6 +342,31 @@ main = do
 ```
 
 * [Generics](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter10/generics.hs)
+
+Wadler's Algorithm
+------------------
+
+Consider the task of expanding
+
+```haskell
+f :: Just (Either a b) -> Int
+f (Just (Left x))  = 1
+f (Just (Right x)) = 2
+f Nothing          = 3
+```
+
+
+```haskell
+f :: Maybe (Either a b) -> Int
+f = case ds of _ {
+      Nothing -> I# 3;
+      Just ds1 ->
+        case ds1 of _ {
+          Left x -> I# 1;
+          Right x -> I# 2
+        }
+    }
+```
 
 Full Source
 -----------
