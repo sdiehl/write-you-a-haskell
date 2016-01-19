@@ -92,7 +92,6 @@ Addendum
 --------
 
 * [Contributing](contributing.html)
-* [Credits](credits.html)
 
 License
 -------
