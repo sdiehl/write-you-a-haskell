@@ -212,7 +212,7 @@ $if(title)$
 \noindent
 {\huge \textsf{Stephen Diehl}}
 \\
-\textsf{December 2015 (Draft)}
+\textsf{January 2016 (Draft)}
 
 \end{titlepage}
 \pagecolor{white}
@@ -247,7 +247,7 @@ $if(title)$
 by Stephen Diehl
 
 \par
-Copyright \copyright\ 2013-2015. \\
+Copyright \copyright\ 2014-2016. \\
 \href{http://www.stephendiehl.com}{www.stephendiehl.com}
 
 \par
@@ -257,7 +257,7 @@ reproduce and edit this work with attribution for all non-commercial purposes.
 \par
 The included source is released under the terms of the MIT License.
 \par
-Git commit: 23a5afe76a51032ecfd08ac8c69932364520906c
+Git commit: 4e913157bb4ffb7900cd25ef88445acff642ece2
 \end{textsf}
 \end{minipage}
 \vspace*{2\baselineskip}
