@@ -11,7 +11,7 @@ cabal-version:       >=1.10
 executable write-you-a-haskell
   main-is:             Main.hs
   build-depends:       
-    base         >= 4.7 && <4.8,
+    base         >= 4.7 && <4.9,
     pretty       >= 1.1 && <1.2,
     containers   >= 0.5 && <0.6,
     transformers >= 0.3 && <0.5,
