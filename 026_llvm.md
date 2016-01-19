@@ -750,7 +750,7 @@ ModRM = 0xc3
 
 **Scale Index Base**
 
-<img src="/images/Scale.png"></img>
+<img src="img/Scale.png"></img>
 
 Scale is the factor by which index is multipled before being added to base to
 specify the address of the operand. Scale can have value of 1, 2, 4, or
