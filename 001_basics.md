@@ -227,7 +227,7 @@ invoked in the *tail position* the resulting logic is compiled identically to
 ``call``.
 
 ```haskell
-sum :: [Int] -> [Int]
+sum :: [Int] -> Int
 sum ys = go ys 0
   where
     go (x:xs) i = go xs (i+x)
