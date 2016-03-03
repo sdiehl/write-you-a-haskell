@@ -349,7 +349,7 @@ Wadler's Algorithm
 Consider the task of expanding
 
 ```haskell
-f :: Just (Either a b) -> Int
+f :: Maybe (Either a b) -> Int
 f (Just (Left x))  = 1
 f (Just (Right x)) = 2
 f Nothing          = 3
