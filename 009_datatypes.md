@@ -343,9 +343,10 @@ main = do
 
 * [Generics](https://github.com/sdiehl/write-you-a-haskell/tree/master/chapter10/generics.hs)
 
-Wadler's Algorithm
+Pattern Expansion
 ------------------
 
+<!--
 Consider the task of expanding
 
 ```haskell
@@ -367,6 +368,7 @@ f = case ds of _ {
         }
     }
 ```
+-->
 
 Full Source
 -----------
