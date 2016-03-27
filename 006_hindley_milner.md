@@ -238,7 +238,7 @@ Inference Monad
 ---------------
 
 All our logic for type inference will live inside of the ``Infer`` monad. It
-is a monad transformer stack of ``ExcpetT`` + ``State``, allowing various error
+is a monad transformer stack of ``ExceptT`` + ``State``, allowing various error
 reporting and statefully holding the fresh name supply.
 
 ```haskell
