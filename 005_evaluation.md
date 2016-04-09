@@ -14,7 +14,7 @@ Evaluation
 
 While the lambda calculus is exceedingly simple, there is a great deal of
 variety in ways to evaluate and implement the reduction of lambda expressions.
-The different models for evaluation are *evaluation stratgies*.
+The different models for evaluation are *evaluation strategies*.
 
 There is a bifurcation between two points in the design space: *strict* and
 *non-strict* evaluation. An evaluation strategy is strict if the arguments to a
