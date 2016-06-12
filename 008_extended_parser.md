@@ -264,7 +264,7 @@ expression with several metavariable indicated by the dollar sign variables that
 map to the nth expression on the left hand side.
 
 ```
-$0  $1  $2  $3   $4 $5
+$1  $2  $3  $4   $5 $6
 let VAR '=' Expr in Expr    { App (Lam $2 $6) $4 }
 ```
 
