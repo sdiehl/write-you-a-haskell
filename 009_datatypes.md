@@ -204,9 +204,9 @@ data T
 eval :: T -> Int
 eval x = case x of
   Add a b -> eval a + eval b
-  Mul a b -> eval a + eval b
-  Div a b -> eval a + eval b
-  Sub a b -> eval a + eval b
+  Mul a b -> eval a * eval b
+  Div a b -> eval a / eval b
+  Sub a b -> eval a - eval b
   Num a   -> a
 ```
 
