@@ -404,7 +404,7 @@ typeof expr = case expr of
     then throwError $ TypeMismatch ta TBool
     else
       if tb /= tc
-      then throwError $ TypeMismatch ta tb
+      then throwError $ TypeMismatch tb tc
       else return tc
 
   Tr   -> return TBool
@@ -484,7 +484,7 @@ We can consider a very simple type system for our language that will consist of
 $$
 \begin{aligned}
 \tau :=\ & \t{Int} \\
-         & \t{Bool} \\ 
+         & \t{Bool} \\
          & \tau \rightarrow \tau \\
 \end{aligned}
 $$
