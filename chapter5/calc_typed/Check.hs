@@ -48,7 +48,7 @@ typeof expr = case expr of
     then throwError $ TypeMismatch ta TBool
     else
       if tb /= tc
-      then throwError $ TypeMismatch ta tb
+      then throwError $ TypeMismatch tb tc
       else return tc
 
 check :: Expr -> Either TypeError Type
