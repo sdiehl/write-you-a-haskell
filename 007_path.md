@@ -311,7 +311,7 @@ plus :: forall a. Num a => a -> a -> a
 
 > :core id
 id :: forall a. a -> a
-id = \(ds1 : a) -> a
+id = \(ds1 : a) -> ds1
 
 > :core compose
 compose :: forall c d e. (d -> e) -> (c -> d) -> c -> e
