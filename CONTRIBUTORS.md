@@ -15,3 +15,4 @@ Contributors
 * Christian Sievers
 * Franklin Chen
 * Jake Taylor
+* Vitor Coimbra

@@ -47,7 +47,7 @@ let sub m n = (n pred) m;
 
 let unbool n = n True False;
 let unchurch n = n (\i -> i + 1) 0;
-let rec church n = 
+let rec church n =
   if (n == 0)
   then zero
   else \f x -> f (church (n-1) f x);
@@ -77,10 +77,10 @@ let indx xs n = head (n tail xs);
 
 let fact = fix (\fact -> \n -> if (n == 0) then 1 else (n * (fact (n-1))));
 
-let rec fib n = 
-  if (n == 0) 
+let rec fib n =
+  if (n == 0)
   then 0
-  else if (n==1) 
+  else if (n==1)
   then 1
   else ((fib (n-1)) + (fib (n-2)));
 
@@ -97,6 +97,14 @@ let self = (\x -> x) (\x -> x);
 let innerlet = \x -> (let y = \z -> z in y);
 let innerletrec = \x -> (let rec y = \z -> z in y);
 
+-- Issue #72
+let f = let add = \a b -> a + b in add;
+
+-- Issue #82
+let y = \y -> (let f = \x -> if x then True else False in const (f y) y);
+let id x = x;
+let foo x = let y = id x in y + 1;
+
 -- Fresh variables
 let wtf = \a b c d e e' f g h i j k l m n o o' o'' o''' p q r r' s t u u' v w x y z ->
     q u i c k b r o w n f o' x j u' m p s o'' v e r' t h e' l a z y d o''' g;
@@ -105,7 +113,7 @@ let wtf = \a b c d e e' f g h i j k l m n o o' o'' o''' p q r r' s t u u' v w x 
 let notbool x = if x then False else True;
 let eqzero x = if (x == 0) then True else False;
 
-let rec until p f x = 
+let rec until p f x =
   if (p x)
   then x
   else (until p f (f x));
