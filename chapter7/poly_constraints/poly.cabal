@@ -9,7 +9,7 @@ extra-source-files:  README.md
 cabal-version:       >=1.10
 
 executable poly
-  build-depends:       
+  build-depends:
       base          >= 4.6   && <4.9
     , pretty        >= 1.1   && <1.2
     , parsec        >= 3.1   && <3.2
@@ -20,6 +20,7 @@ executable poly
     , repline       >= 0.1.2.0
 
   other-modules:
+    Env
     Eval
     Infer
     Lexer
