@@ -36,7 +36,7 @@ bool = (reserved "True" >> return (Lit (LBool True)))
 fix :: Parser Expr
 fix = do
   reservedOp "fix"
-  x <- aexp
+  x <- expr
   return (Fix x)
 
 lambda :: Parser Expr
@@ -71,11 +71,11 @@ letrecin = do
 ifthen :: Parser Expr
 ifthen = do
   reserved "if"
-  cond <- aexp
+  cond <- expr
   reservedOp "then"
-  tr <- aexp
+  tr <- expr
   reserved "else"
-  fl <- aexp
+  fl <- expr
   return (If cond tr fl)
 
 aexp :: Parser Expr
@@ -91,7 +91,9 @@ aexp =
   <|> variable
 
 term :: Parser Expr
-term = Ex.buildExpressionParser table aexp
+term = aexp >>= \x ->
+                (many1 aexp >>= \xs -> return (foldl App x xs))
+                <|> return x
 
 infixOp :: String -> (a -> a -> a) -> Ex.Assoc -> Op a
 infixOp x f = Ex.Infix (reservedOp x >> return f)
@@ -111,9 +113,7 @@ table = [
   ]
 
 expr :: Parser Expr
-expr = do
-  es <- many1 term
-  return (foldl1 App es)
+expr = Ex.buildExpressionParser table term
 
 type Binding = (String, Expr)
 
