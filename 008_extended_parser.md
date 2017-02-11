@@ -193,7 +193,7 @@ tokens :-
 Happy
 -----
 
-Using Happy and our previosly defind lexer we'll write down the production rules
+Using Happy and our previously defined lexer we'll write down the production rules
 for our simple untyped lambda calculus. 
 
 We start by defining a ``Syntax`` module where we define the AST we'll generate

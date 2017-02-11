@@ -1348,7 +1348,7 @@ The omega combinator will not pass the occurs check.
 
 ```haskell
 Poly> \x -> x x
-Cannot construct the the infinite type: a = a -> b
+Cannot construct the infinite type: a = a -> b
 ```
 
 The file ``test.ml`` provides a variety of tests of the little interpreter. For

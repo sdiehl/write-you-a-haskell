@@ -62,7 +62,7 @@ instance Show TypeError where
     ]
   show (InfiniteType (TV a) la b) =
     concat [
-      "Cannot construct the the infinite type: "
+      "Cannot construct the infinite type: "
       , a
       , " = "
       , pptype b
