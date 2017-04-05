@@ -208,11 +208,11 @@ Context
 
 The typing context or environment is the central container around which all
 information during the inference process is stored and queried.  In Haskell our
-implementation will simply be a newtype wrapper around a Map of ``Var`` to
+implementation will simply be a newtype wrapper around a Map of ``Name`` to
 ``Scheme`` types.
 
 ```haskell
-newtype TypeEnv = TypeEnv (Map.Map Var Scheme)
+newtype TypeEnv = TypeEnv (Map.Map Name Scheme)
 ```
 
 The two primary operations are *extension*  and *restriction* which introduce or
@@ -230,7 +230,7 @@ Operations over the context are simply the usual Set operations on the
 underlying map.
 
 ```haskell
-extend :: TypeEnv -> (Var, Scheme) -> TypeEnv
+extend :: TypeEnv -> (Name, Scheme) -> TypeEnv
 extend (TypeEnv env) (x, s) = TypeEnv $ Map.insert x s env
 ```
 
@@ -652,7 +652,7 @@ The function ``lookupVar`` looks up the local variable reference in typing
 environment and if found it instantiates a fresh copy.
 
 ```haskell
-lookupEnv :: TypeEnv -> Var -> Infer (Subst, Type)
+lookupEnv :: TypeEnv -> Name -> Infer (Subst, Type)
 lookupEnv (TypeEnv env) x = do
   case Map.lookup x env of
     Nothing -> throwError $ UnboundVariable (show x)
