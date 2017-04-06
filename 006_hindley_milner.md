@@ -648,7 +648,7 @@ context.
   Var x -> lookupEnv env x
 ```
 
-The function ``lookupVar`` looks up the local variable reference in typing
+The function ``lookupEnv`` looks up the local variable reference in typing
 environment and if found it instantiates a fresh copy.
 
 ```haskell
