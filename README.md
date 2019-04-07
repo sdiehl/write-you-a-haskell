@@ -40,7 +40,7 @@ This is a work in progress.
 * [Chapter 8: Design of ProtoHaskell](http://dev.stephendiehl.com/fun/007_path.html)
 * [Chapter 9: Extended Parser](http://dev.stephendiehl.com/fun/008_extended_parser.html)
 * [Chapter 10: Custom Datatypes](http://dev.stephendiehl.com/fun/009_datatypes.html)
-* [Chapter 11: Renamer] (http://dev.stephendiehl.com/fun/010_renamer.html)
+* [Chapter 11: Renamer](http://dev.stephendiehl.com/fun/010_renamer.html)
 * Chapter 12: Pattern Matching & Desugaring
 * Chapter 13: System-F
 * Chapter 14: Type Classes
