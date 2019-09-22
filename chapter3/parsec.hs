@@ -92,7 +92,7 @@ string [] = return []
 string (c:cs) = do { char c; string cs; return (c:cs)}
 
 token :: Parser a -> Parser a
-token p = do { a <- p; spaces ; return a}
+token p = do { spaces; a <- p; spaces; return a}
 
 reserved :: String -> Parser String
 reserved s = token (string s)
