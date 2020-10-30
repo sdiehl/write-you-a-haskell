@@ -51,7 +51,7 @@ type Unifier = (Subst, [Constraint])
 type Solve a = ExceptT TypeError Identity a
 
 newtype Subst = Subst (Map.Map TVar Type)
-  deriving (Eq, Ord, Show, Monoid)
+  deriving (Eq, Ord, Show, Semigroup, Monoid)
 
 class Substitutable a where
   apply :: Subst -> a -> a
