@@ -31,15 +31,23 @@ eval env expr = case expr of
     return v
 
   Op op a b -> do
-    VInt a' <- eval env a
-    VInt b' <- eval env b
+    let unwrap comp = do v <- eval env comp
+                         case v of
+                           VInt x -> pure x
+                           _ -> error "eval: type error: non-VInt"
+    a' <- unwrap a
+    b' <- unwrap b
     return $ (binop op) a' b'
 
   Lam x body ->
     return (VClosure x body env)
 
   App fun arg -> do
-    VClosure x body clo <- eval env fun
+    let unwrap comp = do v <- eval env comp
+                         case v of
+                           VClosure x y z -> pure (x, y, z)
+                           _ -> error "eval: type error: non-VClosure"
+    (x, body, clo) <- unwrap fun
     argv <- eval env arg
     let nenv = Map.insert x argv clo
     eval nenv body
@@ -50,7 +58,11 @@ eval env expr = case expr of
     eval nenv body
 
   If cond tr fl -> do
-    VBool br <- eval env cond
+    let unwrap comp = do v <- eval env comp
+                         case v of
+                           VBool x -> pure x
+                           _ -> error "eval: type error: non-VBool"
+    br <- unwrap cond
     if br == True
     then eval env tr
     else eval env fl

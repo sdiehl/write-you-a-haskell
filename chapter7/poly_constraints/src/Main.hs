@@ -91,22 +91,21 @@ cmd source = exec True (L.pack source)
 -------------------------------------------------------------------------------
 
 -- :browse command
-browse :: [String] -> Repl ()
+browse :: String -> Repl ()
 browse _ = do
   st <- get
   liftIO $ mapM_ putStrLn $ ppenv (tyctx st)
 
 -- :load command
-load :: [String] -> Repl ()
+load :: String -> Repl ()
 load args = do
-  contents <- liftIO $ L.readFile (unwords args)
+  contents <- liftIO $ L.readFile args
   exec True contents
 
 -- :type command
-typeof :: [String] -> Repl ()
-typeof args = do
+typeof :: String -> Repl ()
+typeof arg = do
   st <- get
-  let arg = unwords args
   case Env.lookup arg (tyctx st) of
     Just val -> liftIO $ putStrLn $ ppsignature (arg, val)
     Nothing -> exec False (L.pack arg)
@@ -134,8 +133,8 @@ comp n = do
   let defs = Map.keys ctx
   return $ filter (isPrefixOf n) (cmds ++ defs)
 
-options :: [(String, [String] -> Repl ())]
-options = [
+opts :: [(String, String -> Repl ())]
+opts = [
     ("load"   , load)
   , ("browse" , browse)
   , ("quit"   , quit)
@@ -149,9 +148,19 @@ options = [
 completer :: CompleterStyle (StateT IState IO)
 completer = Prefix (wordCompleter comp) defaultMatcher
 
-shell :: Repl a -> IO ()
-shell pre = flip evalStateT initState
-     $ evalRepl "Poly> " cmd options completer pre
+shell :: Repl () -> IO ()
+shell pre = flip evalStateT initState $
+  evalReplOpts $ ReplOpts
+    { banner           = const (pure "Poly> ")
+    , command          = cmd
+    , options          = opts
+    , prefix           = Just ':'
+    , multilineCommand = Nothing
+    , tabComplete      = completer
+    , initialiser      = pre
+    , finaliser        = pure Exit
+    }
+
 
 -------------------------------------------------------------------------------
 -- Toplevel
@@ -162,6 +171,6 @@ main = do
   args <- getArgs
   case args of
     []      -> shell (return ())
-    [fname] -> shell (load [fname])
-    ["test", fname] -> shell (load [fname] >> browse [] >> quit ())
+    [fname] -> shell (load fname)
+    ["test", fname] -> shell (load fname >> browse "" >> quit ())
     _ -> putStrLn "invalid arguments"

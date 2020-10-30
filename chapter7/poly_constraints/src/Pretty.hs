@@ -18,7 +18,7 @@ import Type
 import Syntax
 import Infer
 
-import Text.PrettyPrint
+import Text.PrettyPrint hiding ((<>))
 import qualified Data.Map as Map
 
 parensIf ::  Bool -> Doc -> Doc
@@ -45,7 +45,7 @@ instance Pretty Type where
 
 instance Pretty Scheme where
   ppr p (Forall [] t) = ppr p t
-  ppr p (Forall ts t) = text "forall" <+> hcat (punctuate space (map (ppr p) ts)) <> text "." <+> ppr p t
+  ppr p (Forall ts t) = text "forall" <+> (hcat (punctuate space (map (ppr p) ts)) <> (text "." <+> ppr p t))
 
 instance Pretty Binop where
   ppr _ Add = text "+"
@@ -56,15 +56,16 @@ instance Pretty Binop where
 instance Pretty Expr where
   ppr p (Var a) = ppr p a
   ppr p (App a b) = parensIf (p > 0) $ ppr (p+1) a <+> ppr p b
-  ppr p (Lam a b) = text "\\" <> ppr p a <+> text  "->" <+> ppr p b
-  ppr p (Let a b c) = text "let" <> ppr p a <+> text  "=" <+> ppr p b <+> text "in" <+> ppr p c
+  ppr p (Lam a b) = text "\\" <> (ppr p a <+> text  "->" <+> ppr p b)
+  ppr p (Let a b c) = text "let" <> (ppr p a <+> text  "=" <+> ppr p b <+> text "in" <+> ppr p c)
   ppr p (Lit a) = ppr p a
   ppr p (Op o a b) = parensIf (p>0) $ ppr p a <+> ppr p o <+> ppr p b
   ppr p (Fix a) = parensIf (p>0) $ text "fix" <> ppr p a
   ppr p (If a b c) =
-    text "if" <> ppr p a <+>
-    text "then" <+> ppr p b <+>
-    text "else" <+> ppr p c
+    text "if" <>
+      (ppr p a <+>
+       text "then" <+> ppr p b <+>
+       text "else" <+> ppr p c)
 
 instance Pretty Lit where
   ppr _ (LInt i) = integer i
