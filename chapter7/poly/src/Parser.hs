@@ -17,7 +17,7 @@ import Lexer
 import Syntax
 
 integer :: Parser Integer
-integer = Tok.integer lexer
+integer = Tok.natural lexer
 
 variable :: Parser Expr
 variable = do
