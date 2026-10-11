@@ -1,0 +1,33 @@
+.content { max-width: 850px; }
+blockquote { border-left: 3px solid #648294; padding: .35em 1em; }
+pre { border-radius: 3px; }
+
+/* Author-date references: readable entries, hanging indents, and real links. */
+.csl-bib-body {
+  max-width: 75ch;
+  margin: 1.75em 0 3em;
+  line-height: 1.65;
+}
+.csl-bib-body .csl-entry {
+  margin: 0 0 1.25em;
+  padding-left: 1.5em;
+  text-indent: -1.5em;
+  overflow-wrap: anywhere;
+  scroll-margin-top: 5em;
+}
+.csl-bib-body .csl-entry:target {
+  background: var(--quote-bg);
+  border-radius: 3px;
+  outline: 0.5em solid var(--quote-bg);
+}
+.csl-bib-body .bib-source {
+  display: inline-block;
+  max-width: 100%;
+  text-indent: 0;
+  font-size: 0.9em;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+@media (max-width: 600px) {
+  .csl-bib-body .csl-entry { padding-left: 1em; text-indent: -1em; }
+}

@@ -1,0 +1,16 @@
+---
+source: crates/ch14_classes/tests/kinds.rs
+expression: "format!(\"{kinds}\\n{groups}\")"
+---
+Bool :: *
+Ordering :: *
+Maybe :: * -> *
+Either :: * -> * -> *
+[] :: * -> *
+() :: *
+(,) :: * -> * -> *
+(,,) :: * -> * -> * -> *
+Wrap :: (* -> *) -> * -> *
+(->) :: * -> * -> *
+nonrec { un#552 : forall t124. forall t125. Wrap t124 t125 -> t124 (t125) = (type-lambda t124 (type-lambda t125 (lambda $match#598 : Wrap t124 t125 (let nonrec { $scrut#1189 : Wrap t124 t125 = $match#598; } in (match $scrut#1189 [ (Wrap x#554) -> x#554 ]))))); }
+nonrec { main#553 : Maybe Int = (app (type-app (type-app @un#552 Maybe) Int) (app (lambda $field#1190 : Maybe Int (con Wrap [Maybe] [Int] $field#1190)) (app (lambda $field#1191 : Int (con Just [Int] $field#1191)) 42))); }

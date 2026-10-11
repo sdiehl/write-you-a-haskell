@@ -1,0 +1,7 @@
+---
+source: crates/ch20_runtime/tests/anf.rs
+expression: text
+---
+main = let id#952 = lambda (x#953) { return x#953 };
+let $a#7730 = call id#952(id#952);
+tail $a#7730(42)

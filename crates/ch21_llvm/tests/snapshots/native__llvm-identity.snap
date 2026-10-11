@@ -1,0 +1,56 @@
+---
+source: crates/ch21_llvm/tests/native.rs
+expression: text
+---
+; ModuleID = 'Fun'
+source_filename = "Fun"
+
+@fun.g0 = internal global i64 0
+
+define internal tailcc i64 @fun.f0(i64 %0, i64 %1) {
+entry:
+  ret i64 %1
+}
+
+define internal i64 @fun.f0.slow(i64 %0, ptr %1) {
+entry:
+  %slot = getelementptr i64, ptr %1, i64 0
+  %argument = load i64, ptr %slot, align 8
+  %known = notail call tailcc i64 @fun.f0(i64 %0, i64 %argument)
+  ret i64 %known
+}
+
+define internal void @fun_init() {
+entry:
+  %alloc = call ptr @rt_alloc(i64 3)
+  %word = ptrtoint ptr %alloc to i64
+  %ptr = inttoptr i64 %word to ptr
+  %slot = getelementptr i64, ptr %ptr, i64 0
+  store i64 8589934593, ptr %slot, align 8
+  %ptr1 = inttoptr i64 %word to ptr
+  %slot2 = getelementptr i64, ptr %ptr1, i64 1
+  store i64 ptrtoint (ptr @fun.f0.slow to i64), ptr %slot2, align 8
+  %ptr3 = inttoptr i64 %word to ptr
+  %slot4 = getelementptr i64, ptr %ptr3, i64 2
+  store i64 1, ptr %slot4, align 8
+  store i64 %word, ptr @fun.g0, align 8
+  ret void
+}
+
+declare ptr @rt_alloc(i64)
+
+define i32 @main(i32 %0, ptr %1) {
+entry:
+  call void @rt_init()
+  call void @fun_init()
+  %main = load i64, ptr @fun.g0, align 8
+  %call = notail call i64 @rt_apply1(i64 %main, i64 1)
+  call void @rt_exit(i32 0)
+  unreachable
+}
+
+declare void @rt_init()
+
+declare i64 @rt_apply1(i64, i64)
+
+declare void @rt_exit(i32)

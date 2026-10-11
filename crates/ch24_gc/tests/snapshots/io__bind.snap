@@ -1,0 +1,5 @@
+---
+source: crates/ch23_optimize/tests/io.rs
+expression: "support::dump(&source, &program)"
+---
+nonrec { main#955 : () -> () = (app (app (app (type-app (type-app (type-app @>>=#72 Int) (->) ()) ()) @$fMonad_45#1203) (app (app (type-app (type-app @pure#70 Int) (->) ()) @$fApplicative_44#1202) 41)) (lambda x#956 : Int (let nonrec { y#957 : Int = (app (app (app (type-app @+#60 Int) @$fNum_3#1161) x#956) 1); } in (app (app (type-app @print#106 Int) @$fShow_2#1160) y#957)))); }

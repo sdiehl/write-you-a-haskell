@@ -1,0 +1,8 @@
+---
+source: crates/ch14_classes/tests/data.rs
+expression: dump
+---
+nonrec { $pattern0#552 : forall t122. forall t123. (t122 -> t122,(t123 -> t123,())) = (type-lambda t122 (type-lambda t123 (let nonrec { $scrut#1195 : (t122 -> t122,t123 -> t123) = (app (app (lambda $field#1196 : t122 -> t122 (lambda $field#1197 : t123 -> t123 (con (,) [t122 -> t122] [t123 -> t123] $field#1196 $field#1197))) (lambda x#556 : t122 x#556)) (lambda y#557 : t123 y#557)); } in (match $scrut#1195 [ ((,) f#558 g#559) -> (app (app (lambda $field#1198 : t122 -> t122 (lambda $field#1199 : (t123 -> t123,()) (con (,) [t122 -> t122] [(t123 -> t123,())] $field#1198 $field#1199))) f#558) (app (app (lambda $field#1200 : t123 -> t123 (lambda $field#1201 : () (con (,) [t123 -> t123] [()] $field#1200 $field#1201))) g#559) (con ()))) ])))); }
+nonrec { f#553 : forall t124. t124 -> t124 = (type-lambda t124 (let nonrec { $scrut#1202 : (t124 -> t124,(Int -> Int,())) = (type-app (type-app @$pattern0#552 t124) Int); } in (match $scrut#1202 [ ((,) $selected#560 ((,) _ (()))) -> $selected#560 ]))); }
+nonrec { g#554 : forall t125. t125 -> t125 = (type-lambda t125 (let nonrec { $scrut#1203 : (Int -> Int,(t125 -> t125,())) = (type-app (type-app @$pattern0#552 Int) t125); } in (match $scrut#1203 [ ((,) _ ((,) $selected#561 (()))) -> $selected#561 ]))); }
+nonrec { main#555 : (Int,Bool,Char) = (app (app (app (lambda $field#1204 : Int (lambda $field#1205 : Bool (lambda $field#1206 : Char (con (,,) [Int] [Bool] [Char] $field#1204 $field#1205 $field#1206)))) (app (type-app @f#553 Int) 1)) (app (type-app @f#553 Bool) (con True))) (app (type-app @g#554 Char) 'x')); }

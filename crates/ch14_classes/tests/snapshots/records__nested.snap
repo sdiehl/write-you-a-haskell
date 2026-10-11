@@ -1,0 +1,5 @@
+---
+source: crates/ch14_classes/tests/records.rs
+expression: dump
+---
+nonrec { main#552 : (Int,Outer) = (let nonrec { p#553 : Outer = (app (lambda $field#1187 : P (con Outer $field#1187)) (app (app (lambda $field#1188 : Int (lambda $field#1189 : Int (con P $field#1188 $field#1189))) 3) 4)); } in (app (app (lambda $field#1190 : Int (lambda $field#1191 : Outer (con (,) [Int] [Outer] $field#1190 $field#1191))) (let nonrec { $record#1192 : P = (let nonrec { $record#1195 : Outer = p#553; } in (match $record#1195 [ (Outer $field#1196) -> $field#1196 ])); } in (match $record#1192 [ (P $field#1193 $field#1194) -> $field#1193 ]))) (let nonrec { $record#1197 : Outer = p#553; } in (match $record#1197 [ (Outer $field#1198) nonrec { $update#1199 : P = (let nonrec { $record#1200 : P = (let nonrec { $record#1204 : Outer = p#553; } in (match $record#1204 [ (Outer $field#1205) -> $field#1205 ])); } in (match $record#1200 [ (P $field#1201 $field#1202) nonrec { $update#1203 : Int = 10; } -> (con P $update#1203 $field#1202) ])); } -> (con Outer $update#1199) ])))); }

@@ -1,0 +1,5 @@
+---
+source: crates/ch11_data/tests/data.rs
+expression: dump
+---
+nonrec { main#9 : (Bool,Bool,Bool) = (app (app (app (lambda $field#30 : Bool (lambda $field#31 : Bool (lambda $field#32 : Bool (con (,,) [Bool] [Bool] [Bool] $field#30 $field#31 $field#32)))) (let nonrec { $scrut#33 : Bool = (con False); } in (match $scrut#33 [ (True) -> (prim == (app (app @div#0 1) 0) 0) ] [ (False) -> (con False) ]))) (let nonrec { $scrut#34 : Bool = (con True); } in (match $scrut#34 [ (True) -> (con True) ] [ (False) -> (prim == (app (app @div#0 1) 0) 0) ]))) (app (app (lambda $section0#10 : Bool (lambda $section1#11 : Bool (let nonrec { $scrut#35 : Bool = $section0#10; } in (match $scrut#35 [ (True) -> $section1#11 ] [ (False) -> (con False) ])))) (con True)) (con False))); }

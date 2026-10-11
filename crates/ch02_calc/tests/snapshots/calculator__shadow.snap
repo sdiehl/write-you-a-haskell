@@ -1,0 +1,5 @@
+---
+source: crates/ch02_calc/tests/calculator.rs
+expression: parse(source).unwrap().to_string()
+---
+(let x 1 (let x (+ x 1) x))

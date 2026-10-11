@@ -1,0 +1,16 @@
+---
+source: crates/ch23_optimize/tests/anf.rs
+expression: text
+---
+main#955 = let $a#7751 = call f60[](@$fNum_3#1160);
+let $a#7753 = apply $a#7751(1);
+join $beta#7812($scrut#1950) = { join $cont#7756($a#7755 : Int) = { tail-apply $a#7753($a#7755) };
+join $rhs#3532(n#956 : Int) = { jump $cont#7756(n#956) };
+join $rhs#3531() = { jump $cont#7756(0) };
+case $scrut#1950 {
+Nothing() -> { jump $rhs#3531() }
+Just($case#3535 : Int) -> { jump $rhs#3532($case#3535) }
+_() -> { fail Span { file: FileId(0), start: 12, end: 57 } }
+} };
+let $a#7761 = Just(41);
+jump $beta#7812($a#7761)

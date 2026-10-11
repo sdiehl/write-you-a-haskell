@@ -1,0 +1,9 @@
+---
+source: crates/ch14_classes/tests/classes.rs
+expression: "format!(\"{declarations}\\n{groups}\")"
+---
+$MkDRun (forall t2. t1 (t2) -> t2) -> $DRun t1
+nonrec { run#0 : forall t4. forall t5. $DRun t5 -> t5 (t4) -> t4 = (type-lambda t4 (type-lambda t5 (lambda $given#6 : $DRun t5 (type-app (let nonrec { $dictionary#7 : $DRun t5 = $given#6; } in (match $dictionary#7 [ ($MkDRun $slot0#8) -> $slot0#8 ])) t4)))); }
+nonrec { $i0_run#2 : forall t3. Box t3 -> t3 = (type-lambda t3 (lambda $match#4 : Box t3 (let nonrec { $scrut#10 : Box t3 = $match#4; } in (match $scrut#10 [ (Box x#3) -> x#3 ])))); }
+nonrec { $fRun_0#5 : $DRun Box = (con $MkDRun [Box] (type-lambda t6 (type-app @$i0_run#2 t6))); }
+nonrec { main#1 : Int = (app (app (type-app (type-app @run#0 Int) Box) @$fRun_0#5) (app (lambda $field#9 : Int (con Box [Int] $field#9)) 42)); }

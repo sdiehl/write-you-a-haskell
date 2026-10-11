@@ -1,0 +1,8 @@
+---
+source: crates/ch14_classes/tests/classes.rs
+expression: "format!(\"{declarations}\\n{groups}\")"
+---
+
+nonrec { first#0 : forall t2. forall t3. t2 -> t3 -> t2 = (type-lambda t2 (type-lambda t3 (lambda x#4 : t2 (lambda y#5 : t3 x#4)))); }
+rec { f#1 : forall t4. t4 -> t4 = (type-lambda t4 (lambda x#6 : t4 (app (app (type-app (type-app @first#0 t4) Int -> (Int,Bool)) x#6) @g#2))); g#2 : Int -> (Int,Bool) = (lambda y#7 : Int (app (app (lambda $field#8 : Int (lambda $field#9 : Bool (con (,) [Int] [Bool] $field#8 $field#9))) (app (type-app @f#1 Int) 1)) (app (type-app @f#1 Bool) (con True)))); }
+nonrec { main#3 : Int = 42; }

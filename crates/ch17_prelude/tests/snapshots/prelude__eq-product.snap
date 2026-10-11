@@ -1,0 +1,5 @@
+---
+source: crates/ch17_prelude/tests/prelude.rs
+expression: "expanded.instances.iter().map(ToString::to_string).collect::<Vec<_>>().join(\"\\n\")"
+---
+instance (Eq a) => Eq ((T a)) where { == = equations { (T x0 x1) (T y0 y1) -> if == x0 y0 then if == x1 y1 then True else False else False; }; }

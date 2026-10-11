@@ -1,0 +1,9 @@
+x = 42
+bad = 1 + True
+x
+x = 99
+x
+:t x
+:reset
+:k IO
+:quit

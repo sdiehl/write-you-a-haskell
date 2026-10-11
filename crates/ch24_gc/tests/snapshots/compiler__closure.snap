@@ -1,0 +1,8 @@
+---
+source: crates/ch23_optimize/tests/compiler.rs
+expression: dump
+---
+main : Int
+nonrec { x#955 : Int = 1; }
+nonrec { f#956 : Int -> Int = (lambda y#958 : Int (app (app (app (type-app @+#60 Int) @$fNum_3#1162) @x#955) y#958)); }
+nonrec { main#957 : Int = (app @f#956 2); }

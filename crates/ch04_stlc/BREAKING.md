@@ -1,0 +1,8 @@
+- tests/programs/closure.fun: added mandatory lambda parameter annotations; expected output unchanged. (ch04: STLC)
+- tests/programs/church.fun: added mandatory lambda parameter annotations; expected output unchanged. (ch04: STLC)
+- tests/programs/strict-argument.fun: added mandatory lambda parameter annotations; expected output unchanged. (ch04: STLC)
+- tests/programs/identity.fun: added mandatory lambda parameter annotations; expected output unchanged. (ch04: STLC)
+- tests/programs/higher-order.fun: added mandatory lambda parameter annotations; expected output unchanged. (ch04: STLC)
+- tests/programs/wrong-bool.fun: expected E0201 before execution, replacing the dynamic type error. (ch04: STLC)
+- tests/programs/wrong-int.fun: expected E0201 before execution, replacing the dynamic type error. (ch04: STLC)
+- tests/programs/not-function.fun: expected E0201 before execution, replacing the dynamic type error. (ch04: STLC)

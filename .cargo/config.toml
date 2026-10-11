@@ -1,0 +1,6 @@
+[alias]
+xtask = "run --quiet --package xtask --"
+
+[env]
+# Test worker stacks also compile the complete source Prelude in debug builds.
+RUST_MIN_STACK = "16777216"

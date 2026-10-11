@@ -1,0 +1,6 @@
+---
+source: crates/ch15_io/tests/compiler.rs
+expression: dump
+---
+main : Char
+nonrec { main#675 : Char = 'λ'; }

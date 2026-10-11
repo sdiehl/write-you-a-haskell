@@ -1,12 +1,12 @@
 <p align="center">
-  <a href="http://dev.stephendiehl.com/fun/">
-    <img src="https://github.com/sdiehl/write-you-a-haskell/raw/master/img/Haskell-Logo.png"/>
+  <a href="https://sdiehl.github.io/write-you-a-haskell/">
+    <img src="https://github.com/sdiehl/write-you-a-haskell/raw/main/img/Haskell-Logo.png"/>
   </a>
 </p>
 
 <p align="center">
-  <a href="http://dev.stephendiehl.com/fun/">
-    <img src="https://github.com/sdiehl/write-you-a-haskell/raw/master/img/cover.png"/>
+  <a href="https://sdiehl.github.io/write-you-a-haskell/">
+    <img src="https://github.com/sdiehl/write-you-a-haskell/raw/main/img/cover.png"/>
   </a>
   <br/>
   <em>Building a modern functional compiler from first principles.</em>
@@ -16,85 +16,59 @@
   <a href="https://twitter.com/smdiehl">Stephen Diehl</a>
 </p>
 
-[![Build Status](https://travis-ci.org/sdiehl/write-you-a-haskell.svg)](https://travis-ci.org/sdiehl/write-you-a-haskell)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sdiehl/write-you-a-haskell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
-[![MIT License](http://img.shields.io/badge/license-mit-blue.svg)](https://github.com/sdiehl/write-you-a-haskell/blob/master/LICENSE)
+[![Build Status](https://github.com/sdiehl/write-you-a-haskell/actions/workflows/ci.yml/badge.svg)](https://github.com/sdiehl/write-you-a-haskell/actions/workflows/ci.yml)
+[![MIT License](http://img.shields.io/badge/license-mit-blue.svg)](https://github.com/sdiehl/write-you-a-haskell/blob/main/LICENSE)
 
 Read Online:
 
-* [**HTML**](http://dev.stephendiehl.com/fun/)
-* [**PDF**](http://dev.stephendiehl.com/fun/WYAH.pdf)
+* [**HTML**](https://sdiehl.github.io/write-you-a-haskell/)
+* [**PDF**](https://sdiehl.github.io/write-you-a-haskell/write-you-a-haskell.pdf)
 
 Releases
 --------
 
-This is a work in progress.
-
-* [Chapter 1: Introduction](http://dev.stephendiehl.com/fun/000_introduction.html)
-* [Chapter 2: Haskell Basics](http://dev.stephendiehl.com/fun/001_basics.html)
-* [Chapter 3: Parsing](http://dev.stephendiehl.com/fun/002_parsers.html)
-* [Chapter 4: Lambda Calculus](http://dev.stephendiehl.com/fun/003_lambda_calculus.html)
-* [Chapter 5: Type Systems](http://dev.stephendiehl.com/fun/004_type_systems.html)
-* [Chapter 6: Evaluation](http://dev.stephendiehl.com/fun/005_evaluation.html)
-* [Chapter 7: Hindley-Milner Inference](http://dev.stephendiehl.com/fun/006_hindley_milner.html)
-* [Chapter 8: Design of ProtoHaskell](http://dev.stephendiehl.com/fun/007_path.html)
-* [Chapter 9: Extended Parser](http://dev.stephendiehl.com/fun/008_extended_parser.html)
-* [Chapter 10: Custom Datatypes](http://dev.stephendiehl.com/fun/009_datatypes.html)
-* [Chapter 11: Renamer] (http://dev.stephendiehl.com/fun/010_renamer.html)
-* Chapter 12: Pattern Matching & Desugaring
-* Chapter 13: System-F
-* Chapter 14: Type Classes
-* Chapter 15: Core Language
-* Chapter 16: Kinds
-* Chapter 17: Haskell Type Checker
-* Chapter 18: Core Interpreter
-* Chapter 19: Prelude
-* Chapter 20: Design of Lazy Evaluation
-* Chapter 21: STG
-* Chapter 22: Compilation
-* Chapter 23: Design of the Runtime
-* Chapter 24: Imp
-* Chapter 25: Code Generation ( C )
-* Chapter 26: Code Generation ( LLVM )
-* Chapter 27: Row Polymorphism & Effect Typing
-* Chapter 28: Future Work
+* [Chapter 1: Introduction](https://sdiehl.github.io/write-you-a-haskell/ch01-introduction.html)
+* [Chapter 2: Parsing](https://sdiehl.github.io/write-you-a-haskell/ch02-parsing.html)
+* [Chapter 3: Lambda Calculus](https://sdiehl.github.io/write-you-a-haskell/ch03-lambda.html)
+* [Chapter 4: Simply Typed Lambda Calculus](https://sdiehl.github.io/write-you-a-haskell/ch04-stlc.html)
+* [Chapter 5: Evaluation](https://sdiehl.github.io/write-you-a-haskell/ch05-evaluation.html)
+* [Chapter 6: Hindley-Milner Inference](https://sdiehl.github.io/write-you-a-haskell/ch06-hindley-milner.html)
+* [Chapter 7: Design of Fun](https://sdiehl.github.io/write-you-a-haskell/ch07-fun.html)
+* [Chapter 8: Layout and the Extended Parser](https://sdiehl.github.io/write-you-a-haskell/ch08-layout.html)
+* [Chapter 9: The Renamer](https://sdiehl.github.io/write-you-a-haskell/ch09-renamer.html)
+* [Chapter 10: Typed Core and Core Lint](https://sdiehl.github.io/write-you-a-haskell/ch10-typed-core.html)
+* [Chapter 11: Datatypes and Pattern Matching](https://sdiehl.github.io/write-you-a-haskell/ch11-datatypes.html)
+* [Chapter 12: Records](https://sdiehl.github.io/write-you-a-haskell/ch12-records.html)
+* [Chapter 13: Kinds and Type Constructors](https://sdiehl.github.io/write-you-a-haskell/ch13-kinds.html)
+* [Chapter 14: Type Classes](https://sdiehl.github.io/write-you-a-haskell/ch14-type-classes.html)
+* [Chapter 15: Monads, Do Notation and IO](https://sdiehl.github.io/write-you-a-haskell/ch15-io.html)
+* [Chapter 16: Pattern-Match Compilation](https://sdiehl.github.io/write-you-a-haskell/ch16-pattern-compilation.html)
+* [Chapter 17: The Prelude and Deriving](https://sdiehl.github.io/write-you-a-haskell/ch17-prelude.html)
+* [Chapter 18: A-Normal Form and Join Points](https://sdiehl.github.io/write-you-a-haskell/ch18-anf.html)
+* [Chapter 19: Closure Conversion](https://sdiehl.github.io/write-you-a-haskell/ch19-closures.html)
+* [Chapter 20: Data Representation and the Runtime](https://sdiehl.github.io/write-you-a-haskell/ch20-runtime.html)
+* [Chapter 21: LLVM Code Generation](https://sdiehl.github.io/write-you-a-haskell/ch21-llvm.html)
+* [Chapter 22: JIT and the REPL](https://sdiehl.github.io/write-you-a-haskell/ch22-jit.html)
+* [Chapter 23: Optimization](https://sdiehl.github.io/write-you-a-haskell/ch23-optimization.html)
+* [Chapter 24: A Precise Garbage Collector](https://sdiehl.github.io/write-you-a-haskell/ch24-garbage-collection.html)
+* [Chapter 25: Future Work](https://sdiehl.github.io/write-you-a-haskell/ch25-future-work.html)
 
 Building
 --------
 
-To generate the build scripts provision a cabal sandbox with pandoc in it. This
-is done by the ``write-you-a-haskell.cabal`` and  ``stack.yaml`` files.
-
-**Stack**
+To build the chapters and the book, install Rust, `just`, Boehm GC and LLVM 22.
+The pinned book tools are installed locally by `just bootstrap`.
 
 ```bash
-$ stack exec make
+$ just bootstrap
+$ just build
+$ just book
 ```
 
-To generate the pdf, the LaTeX packages must be installed on the
-system.
+To generate the pdf:
 
 ```bash
-$ sudo apt-get install texlive-xetex texlive-latex-extra
-$ sudo apt-get install xzdec
-$ sudo tlmgr install zapfding
-$ stack exec make pdf
-```
-
-Generation of the epub is also supported.
-
-```bash
-$ stack exec make epub
-```
-
-
-**Cabal**
-
-```bash
-$ cabal sandbox init
-$ cabal install --only-dependencies
-$ cabal exec bash
-$ make
+$ just pdf
 ```
 
 Contributing
@@ -104,16 +78,16 @@ Any and all contributions are always welcome.  As always, I rely on the
 perpetual kindness and goodwill of Haskellers (like you!) to help correct
 grammar, clarify, and fix errors.
 
-* [Contributing](http://dev.stephendiehl.com/fun/contributing.html)
+* [Contributing](https://github.com/sdiehl/write-you-a-haskell/blob/main/.github/CONTRIBUTING.md)
 
 License
 -------
 
-<img src="http://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-sa.png" width="140" alt="Artwork CC BY NC SA" />
+<img src="http://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-sa.png" width="140" alt="Artwork CC BY SA" />
 
 This written work is licensed under a <a rel="license"
-href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons
-Attribution-NonCommercial-ShareAlike 4.0 International License</a>. You may
-reproduce and edit this work with attribution for all non-commercial purposes.
+href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons
+Attribution-ShareAlike 4.0 International License</a>. You may
+reproduce and edit this work with attribution.
 
 The included source is released under the terms of the [MIT License](http://opensource.org/licenses/MIT).

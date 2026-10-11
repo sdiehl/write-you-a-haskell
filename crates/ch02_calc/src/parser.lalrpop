@@ -1,0 +1,50 @@
+// adapted from sdiehl/compiler-crates/lalrpop/src/expression_logos.lalrpop
+use crate::ast::{Expr, Kind, Op};
+use crate::lexer::Token;
+use crate::diagnostic::Diagnostic;
+use lalrpop_util::ErrorRecovery;
+
+grammar(errors: &mut Vec<ErrorRecovery<usize, Token, Diagnostic>>);
+
+pub Expr: Expr = {
+    <l:@L> "let" <name:"identifier"> "=" <value:Expr> "in" <body:Expr> <r:@R>
+        => Expr::new(Kind::Let(name, Box::new(value), Box::new(body)), l, r),
+    Sum,
+};
+// ANCHOR: precedence
+Sum: Expr = {
+    <a:Sum> "+" <b:Product> => Expr::binary(Op::Add, a, b),
+    <a:Sum> "-" <b:Product> => Expr::binary(Op::Sub, a, b),
+    Product,
+};
+Product: Expr = {
+    <a:Product> "*" <b:Unary> => Expr::binary(Op::Mul, a, b),
+    <a:Product> "/" <b:Unary> => Expr::binary(Op::Div, a, b),
+    Unary,
+};
+// ANCHOR_END: precedence
+Unary: Expr = {
+    <l:@L> "-" <value:Unary> <r:@R> => Expr::new(Kind::Neg(Box::new(value)), l, r),
+    Atom,
+};
+Atom: Expr = {
+    <l:@L> <n:"integer"> <r:@R> => Expr::new(Kind::Int(n), l, r),
+    <l:@L> <name:"identifier"> <r:@R> => Expr::new(Kind::Var(name), l, r),
+    <l:@L> "(" <mut value:Expr> ")" <r:@R> => { value.span = l..r; value },
+    <l:@L> <error:!> <r:@R> => {
+        errors.push(error);
+        Expr::new(Kind::Error, l, r)
+    },
+};
+extern {
+    type Location = usize;
+    type Error = Diagnostic;
+    enum Token {
+        "let" => Token::Let, "in" => Token::In,
+        "+" => Token::Plus, "-" => Token::Minus,
+        "*" => Token::Star, "/" => Token::Slash,
+        "=" => Token::Equals, "(" => Token::Left, ")" => Token::Right,
+        "integer" => Token::Int(<i64>),
+        "identifier" => Token::Ident(<String>),
+    }
+}

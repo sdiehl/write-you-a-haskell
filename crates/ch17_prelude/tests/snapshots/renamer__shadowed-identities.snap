@@ -1,0 +1,7 @@
+---
+source: crates/ch17_prelude/tests/renamer.rs
+expression: dump
+---
+nonrec { x#951 = (equations [ -> 1 ]); }
+nonrec { f#952 = (equations [ x#954 -> (let nonrec { x#955 = (equations [ -> 2 ]); } in x#955) ]); }
+nonrec { main#953 = (equations [ -> (app f#952 x#951) ]); }

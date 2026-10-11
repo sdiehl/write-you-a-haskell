@@ -1,0 +1,6 @@
+---
+source: crates/ch15_io/tests/data.rs
+expression: dump
+---
+nonrec { _old#675 : (Bool,Bool,Bool) = (app (app (app (lambda $field#1452 : Bool (lambda $field#1453 : Bool (lambda $field#1454 : Bool (con (,,) [Bool] [Bool] [Bool] $field#1452 $field#1453 $field#1454)))) (let nonrec { $scrut#1455 : Bool = (con False); } in (match $scrut#1455 [ (True) -> (app (app (app (type-app @==#48 Int) @$fEq_0#824) (app (app @div#76 1) 0)) 0) ] [ (False) -> (con False) ]))) (let nonrec { $scrut#1456 : Bool = (con True); } in (match $scrut#1456 [ (True) -> (con True) ] [ (False) -> (app (app (app (type-app @==#48 Int) @$fEq_0#824) (app (app @div#76 1) 0)) 0) ]))) (app (app (lambda $section0#677 : Bool (lambda $section1#678 : Bool (let nonrec { $scrut#1457 : Bool = $section0#677; } in (match $scrut#1457 [ (True) -> $section1#678 ] [ (False) -> (con False) ])))) (con True)) (con False))); }
+nonrec { main#676 : () -> () = (app (app (type-app @print#103 (Bool,Bool,Bool)) (app (app (app (type-app (type-app (type-app @$fShow_42#866 Bool) Bool) Bool) @$fShow_19#843) @$fShow_19#843) @$fShow_19#843)) @_old#675); }

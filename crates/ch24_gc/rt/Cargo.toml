@@ -1,0 +1,23 @@
+[package]
+name = "fun-rt-24"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[lib]
+crate-type = ["staticlib", "rlib"]
+
+[[test]]
+name = "abi"
+harness = false
+
+[lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+
+[[test]]
+name = "copying"
+harness = false
+
+[features]
+copying-only = []

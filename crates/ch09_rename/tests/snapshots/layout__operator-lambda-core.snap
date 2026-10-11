@@ -1,0 +1,15 @@
+---
+source: crates/ch09_rename/tests/layout.rs
+expression: "String::from_utf8(output.stdout).unwrap()"
+---
+nonrec { div#0 = (lambda $a#15 (lambda $b#16 (prim div $a#15 $b#16))); }
+nonrec { mod#1 = (lambda $a#17 (lambda $b#18 (prim mod $a#17 $b#18))); }
+nonrec { +#2 = (lambda $a#19 (lambda $b#20 (prim + $a#19 $b#20))); }
+nonrec { -#3 = (lambda $a#21 (lambda $b#22 (prim - $a#21 $b#22))); }
+nonrec { *#4 = (lambda $a#23 (lambda $b#24 (prim * $a#23 $b#24))); }
+nonrec { ++#5 = (lambda $a#25 (lambda $b#26 (prim ++ $a#25 $b#26))); }
+nonrec { ==#6 = (lambda $a#27 (lambda $b#28 (prim == $a#27 $b#28))); }
+nonrec { <#7 = (lambda $a#29 (lambda $b#30 (prim < $a#29 $b#30))); }
+nonrec { <=#8 = (lambda $a#31 (lambda $b#32 (prim <= $a#31 $b#32))); }
+nonrec { $#9 = (lambda f#11 (lambda x#12 (app f#11 x#12))); }
+nonrec { main#10 = (app (app $#9 (lambda f#13 (app f#13 42))) (lambda x#14 x#14)); }

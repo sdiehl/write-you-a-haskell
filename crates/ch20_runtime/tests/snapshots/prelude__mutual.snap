@@ -1,0 +1,8 @@
+---
+source: crates/ch17_prelude/tests/prelude.rs
+expression: "expanded.instances.iter().map(ToString::to_string).collect::<Vec<_>>().join(\"\\n\")"
+---
+instance Eq (A) where { == = equations { (A x0) (A y0) -> if == x0 y0 then True else False; }; }
+instance Show (A) where { show = equations { value -> _showsPrec 0 value; }; _showsPrec = equations { p (A x0) -> _showParen (> p 10) (<> (<> "A" " ") (_showsPrec 11 x0)); }; }
+instance Eq (B) where { == = equations { (B x0) (B y0) -> if == x0 y0 then True else False; }; }
+instance Show (B) where { show = equations { value -> _showsPrec 0 value; }; _showsPrec = equations { p (B x0) -> _showParen (> p 10) (<> (<> "B" " ") (_showsPrec 11 x0)); }; }

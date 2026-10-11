@@ -1,0 +1,7 @@
+---
+source: crates/ch09_rename/tests/renamer.rs
+expression: dump
+---
+nonrec { x#9 = 1; }
+nonrec { f#10 = (lambda x#12 (let nonrec { x#13 = 2; } in x#13)); }
+nonrec { main#11 = (app f#10 x#9); }

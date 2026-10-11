@@ -1,0 +1,7 @@
+---
+source: crates/ch24_gc/tests/anf.rs
+expression: text
+---
+main#955 = let $a#7743 = call f60[](@$fNum_3#1160);
+let $a#7745 = apply $a#7743(21);
+tail-apply $a#7745(21)

@@ -1,0 +1,19 @@
+---
+source: crates/ch15_io/tests/kinds.rs
+expression: "format!(\"{kinds}\\n{groups}\")"
+---
+IO :: * -> *
+Bool :: *
+Ordering :: *
+Maybe :: * -> *
+Either :: * -> * -> *
+[] :: * -> *
+() :: *
+(,) :: * -> * -> *
+(,,) :: * -> * -> * -> *
+Fix :: (* -> *) -> *
+TreeF :: * -> *
+(->) :: * -> * -> *
+rec { size#675 : Fix TreeF -> Int = (lambda $match#755 : Fix TreeF (let nonrec { $scrut#1455 : Fix TreeF = $match#755; } in (match $scrut#1455 [ (Fix (Leaf n#678)) -> n#678 ] [ (Fix (Branch a#679 b#680)) -> (app (app (app (type-app @+#58 Int) @$fNum_3#830) (app @size#675 a#679)) (app @size#675 b#680)) ]))); }
+nonrec { _old#676 : Int = (app @size#675 (app (lambda $field#1456 : TreeF (Fix TreeF) (con Fix [TreeF] $field#1456)) (app (app (lambda $field#1457 : Fix TreeF (lambda $field#1458 : Fix TreeF (con Branch [Fix TreeF] $field#1457 $field#1458))) (app (lambda $field#1459 : TreeF (Fix TreeF) (con Fix [TreeF] $field#1459)) (app (lambda $field#1460 : Int (con Leaf [Fix TreeF] $field#1460)) 2))) (app (lambda $field#1461 : TreeF (Fix TreeF) (con Fix [TreeF] $field#1461)) (app (lambda $field#1462 : Int (con Leaf [Fix TreeF] $field#1462)) 3))))); }
+nonrec { main#677 : () -> () = (app (app (type-app @print#103 Int) @$fShow_2#829) @_old#676); }

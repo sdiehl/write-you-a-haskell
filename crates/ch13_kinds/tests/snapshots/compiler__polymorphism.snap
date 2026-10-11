@@ -1,0 +1,17 @@
+---
+source: crates/ch11_data/tests/compiler.rs
+expression: dump
+---
+main : Bool
+nonrec { div#0 : Int -> Int -> Int = (lambda $a#13 : Int (lambda $b#14 : Int (prim div $a#13 $b#14))); }
+nonrec { mod#1 : Int -> Int -> Int = (lambda $a#15 : Int (lambda $b#16 : Int (prim mod $a#15 $b#16))); }
+nonrec { +#2 : Int -> Int -> Int = (lambda $a#17 : Int (lambda $b#18 : Int (prim + $a#17 $b#18))); }
+nonrec { -#3 : Int -> Int -> Int = (lambda $a#19 : Int (lambda $b#20 : Int (prim - $a#19 $b#20))); }
+nonrec { *#4 : Int -> Int -> Int = (lambda $a#21 : Int (lambda $b#22 : Int (prim * $a#21 $b#22))); }
+nonrec { ++#5 : String -> String -> String = (lambda $a#23 : String (lambda $b#24 : String (prim ++ $a#23 $b#24))); }
+nonrec { ==#6 : Int -> Int -> Bool = (lambda $a#25 : Int (lambda $b#26 : Int (prim == $a#25 $b#26))); }
+nonrec { <#7 : Int -> Int -> Bool = (lambda $a#27 : Int (lambda $b#28 : Int (prim < $a#27 $b#28))); }
+nonrec { <=#8 : Int -> Int -> Bool = (lambda $a#29 : Int (lambda $b#30 : Int (prim <= $a#29 $b#30))); }
+nonrec { id#9 : forall t13. t13 -> t13 = (type-lambda t13 (lambda x#12 : t13 x#12)); }
+nonrec { a#10 : Int = (app (type-app @id#9 Int) 1); }
+nonrec { main#11 : Bool = (app (type-app @id#9 Bool) (con True)); }

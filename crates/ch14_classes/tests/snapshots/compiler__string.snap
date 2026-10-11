@@ -1,0 +1,6 @@
+---
+source: crates/ch14_classes/tests/compiler.rs
+expression: dump
+---
+main : String
+nonrec { main#552 : String = (app (app @++#64 "a") "b"); }

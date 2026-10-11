@@ -1,0 +1,6 @@
+---
+source: crates/ch15_io/tests/compiler.rs
+expression: dump
+---
+main : Int
+nonrec { main#675 : Int = 42; }

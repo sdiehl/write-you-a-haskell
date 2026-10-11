@@ -1,0 +1,5 @@
+---
+source: crates/ch23_optimize/tests/io.rs
+expression: "support::dump(&source, &program)"
+---
+nonrec { main#955 : () -> () = (app (app (app (type-app (type-app (type-app @>>=#72 Maybe Int) (->) ()) ()) @$fMonad_45#1204) (app (app (type-app (type-app @pure#70 Maybe Int) (->) ()) @$fApplicative_44#1203) (app (lambda $field#1952 : Int (con Just [Int] $field#1952)) 42))) (lambda $do#956 : Maybe Int (let nonrec { $scrut#1953 : Maybe Int = $do#956; } in (match $scrut#1953 [ whole#957@(Just x#958) -> (app (app (type-app @print#106 (Maybe Int,Int)) (app (app (type-app (type-app @$fShow_39#1198 Maybe Int) Int) (app (type-app @$fShow_33#1192 Int) @$fShow_2#1161)) @$fShow_2#1161)) (app (app (lambda $field#1954 : Maybe Int (lambda $field#1955 : Int (con (,) [Maybe Int] [Int] $field#1954 $field#1955))) whole#957) x#958)) ] [ _ -> (app (type-app @error#97 () -> ()) "pattern match failure in do at io.fun:2:3") ])))); }

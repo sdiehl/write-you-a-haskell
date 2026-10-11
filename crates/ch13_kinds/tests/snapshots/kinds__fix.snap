@@ -1,0 +1,17 @@
+---
+source: crates/ch13_kinds/tests/kinds.rs
+expression: "format!(\"{kinds}\\n{groups}\")"
+---
+Bool :: *
+Ordering :: *
+Maybe :: * -> *
+Either :: * -> * -> *
+[] :: * -> *
+() :: *
+(,) :: * -> * -> *
+(,,) :: * -> * -> * -> *
+Fix :: (* -> *) -> *
+TreeF :: * -> *
+(->) :: * -> * -> *
+rec { size#9 : Fix TreeF -> Int = (lambda $match#14 : Fix TreeF (let nonrec { $scrut#33 : Fix TreeF = $match#14; } in (match $scrut#33 [ (Fix (Leaf n#11)) -> n#11 ] [ (Fix (Branch a#12 b#13)) -> (prim + (app @size#9 a#12) (app @size#9 b#13)) ]))); }
+nonrec { main#10 : Int = (app @size#9 (app (lambda $field#34 : TreeF (Fix TreeF) (con Fix [TreeF] $field#34)) (app (app (lambda $field#35 : Fix TreeF (lambda $field#36 : Fix TreeF (con Branch [Fix TreeF] $field#35 $field#36))) (app (lambda $field#37 : TreeF (Fix TreeF) (con Fix [TreeF] $field#37)) (app (lambda $field#38 : Int (con Leaf [Fix TreeF] $field#38)) 2))) (app (lambda $field#39 : TreeF (Fix TreeF) (con Fix [TreeF] $field#39)) (app (lambda $field#40 : Int (con Leaf [Fix TreeF] $field#40)) 3))))); }

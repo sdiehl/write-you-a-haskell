@@ -1,0 +1,1 @@
+- tests/programs/data/kind-parameter.fun: higher-kinded parameters now accepted; stdout is `1`. (ch13: kinds)

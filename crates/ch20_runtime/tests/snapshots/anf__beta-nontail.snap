@@ -1,0 +1,20 @@
+---
+source: crates/ch20_runtime/tests/anf.rs
+expression: text
+---
+main = let $a#7735 = call @+#59(@$fNum_3#1154);
+let $a#7737 = call $a#7735(1);
+join $beta#7808($a#7739) = { tail $a#7737($a#7739) };
+let $a#7751 = call @>#53(@$fOrd_1#1152);
+let $a#7753 = call $a#7751(40);
+let $scrut#1944 = call $a#7753(0);
+join $rhs#3525() = { jump $beta#7808(0) };
+join $rhs#3524() = { let $a#7743 = call @+#59(@$fNum_3#1154);
+let $a#7745 = call $a#7743(40);
+let $betaResult#7809 = call $a#7745(1);
+jump $beta#7808($betaResult#7809) };
+case $scrut#1944 {
+True() -> { jump $rhs#3524() }
+False() -> { jump $rhs#3525() }
+_() -> { fail Span { file: FileId(0), start: 17, end: 39 } }
+}

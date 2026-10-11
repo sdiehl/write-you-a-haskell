@@ -1,0 +1,9 @@
+---
+source: crates/ch23_optimize/tests/anf.rs
+expression: text
+---
+f = let $a#7753 = \($given#1952, x#957, y#958) -> { let $a#7746 = call @+#60($given#1952);
+let $a#7748 = call $a#7746(x#957);
+tail $a#7748(y#958) };
+return $a#7753
+main = tail @f#955(@$fNum_3#1162, 20, 22)

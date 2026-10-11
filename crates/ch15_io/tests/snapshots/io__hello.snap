@@ -1,0 +1,5 @@
+---
+source: crates/ch15_io/tests/io.rs
+expression: "support::dump(&source, &program)"
+---
+nonrec { main#675 : () -> () = (app @putStrLn#102 "hello"); }

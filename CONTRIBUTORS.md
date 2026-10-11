@@ -1,6 +1,8 @@
 Contributors
 ============
 
+The following people contributed to the Haskell edition, 2014 through 2021.
+
 * Matthew Pickering
 * Nick Sinopoli
 * Nicolas Trangez

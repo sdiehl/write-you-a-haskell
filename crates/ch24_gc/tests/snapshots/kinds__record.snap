@@ -1,0 +1,17 @@
+---
+source: crates/ch24_gc/tests/kinds.rs
+expression: "format!(\"{kinds}\\n{groups}\")"
+---
+IO :: * -> *
+Bool :: *
+Ordering :: *
+Maybe :: * -> *
+Either :: * -> * -> *
+[] :: * -> *
+() :: *
+(,) :: * -> * -> *
+(,,) :: * -> * -> * -> *
+Box :: (* -> *) -> * -> *
+(->) :: * -> * -> *
+nonrec { _old#955 : Box Maybe Int = (let nonrec { $record#1951 : Box Maybe Int = (let nonrec { $field#1955 : Maybe Int = (app (lambda $field#1956 : Int (con Just [Int] $field#1956)) 41); } in (con Box [Maybe] [Int] $field#1955)); } in (match $record#1951 [ (Box $field#1952) nonrec { $update#1953 : Maybe Int = (app (lambda $field#1954 : Int (con Just [Int] $field#1954)) 42); } -> (con Box [Maybe] [Int] $update#1953) ])); }
+nonrec { main#956 : () -> () = (app @putStrLn#105 (let nonrec { $scrut#1957 : Box Maybe Int = @_old#955; } in (match $scrut#1957 [ (Box x#957) -> (app (app (app (type-app @<>#67 String) @$fSemigroup_15#1173) "Box {value = ") (app (app (app (type-app @<>#67 String) @$fSemigroup_15#1173) (app (app (type-app @show#58 Maybe Int) (app (type-app @$fShow_33#1191 Int) @$fShow_2#1160)) x#957)) "}")) ]))); }

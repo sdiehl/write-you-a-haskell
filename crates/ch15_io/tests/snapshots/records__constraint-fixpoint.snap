@@ -1,0 +1,7 @@
+---
+source: crates/ch15_io/tests/records.rs
+expression: dump
+---
+nonrec { get#675 : P -> (Int,Int) = (lambda p#678 : P (app (app (lambda $field#1452 : Int (lambda $field#1453 : Int (con (,) [Int] [Int] $field#1452 $field#1453))) (let nonrec { $record#1454 : P = p#678; } in (match $record#1454 [ (P $field#1455 $field#1456) -> $field#1455 ]))) (let nonrec { $record#1457 : P = p#678; } in (match $record#1457 [ (P $field#1458 $field#1459) -> $field#1459 ])))); }
+nonrec { _old#676 : (Int,Int) = (app @get#675 (app (app (lambda $field#1460 : Int (lambda $field#1461 : Int (con P $field#1460 $field#1461))) 3) 4)); }
+nonrec { main#677 : () -> () = (app (app (type-app @print#103 (Int,Int)) (app (app (type-app (type-app @$fShow_39#863 Int) Int) @$fShow_2#826) @$fShow_2#826)) @_old#676); }

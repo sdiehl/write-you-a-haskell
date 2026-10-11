@@ -1,0 +1,6 @@
+---
+source: crates/ch16_match/tests/matches.rs
+expression: "support::dump(source, &after)"
+---
+nonrec { f#675 : String -> Int = (lambda $match#752 : String (let nonrec { $scrut#1452 : String = $match#752; } in (join $rhs#2571 ( s#677 : String) = 3 in (join $rhs#2570 () = 2 in (join $rhs#2569 () = 1 in (case (prim prim_strEq $scrut#1452 "λ") as $case#2576 : Bool -> Int [ Con(ConId { index: 1, name: "True" }) -> (jump $rhs#2569 : Int) ] [ Default -> (case (prim prim_strEq $scrut#1452 "hello") as $case#2575 : Bool -> Int [ Con(ConId { index: 1, name: "True" }) -> (jump $rhs#2570 : Int) ] [ Default -> (jump $rhs#2571 : Int $scrut#1452) ]) ])))))); }
+nonrec { main#676 : (Int,Int) = (app (app (lambda $field#1453 : Int (lambda $field#1454 : Int (con (,) [Int] [Int] $field#1453 $field#1454))) (app @f#675 "λ")) (app @f#675 "other")); }

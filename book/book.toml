@@ -1,0 +1,36 @@
+[book]
+title = "Write You a Haskell"
+authors = ["Stephen Diehl"]
+language = "en"
+src = "src"
+
+[build]
+build-dir = "build"
+
+[preprocessor.include-rs]
+command = "python3 ../scripts/include-rs.py"
+
+[preprocessor.fun-spacing]
+command = "python3 ../scripts/fun-spacing.py"
+after = ["include-rs", "links"]
+
+[preprocessor.katex]
+renderers = ["html"]
+
+[preprocessor.bib]
+bibliography = "../refs.bib"
+citation-syntax = "pandoc"
+backend = "csl"
+csl-style = "chicago-author-date"
+renderers = ["html"]
+
+[preprocessor.bibliography]
+command = "python3 ../scripts/bibliography.py"
+after = ["bib"]
+renderers = ["html"]
+
+[output.html]
+additional-js = ["theme/fun-highlight.js"]
+additional-css = ["theme/book.css"]
+
+[output.markdown]

@@ -1,0 +1,6 @@
+---
+source: crates/ch11_data/tests/data.rs
+expression: dump
+---
+rec { map#9 : forall t13. forall t14. (t14 -> t13) -> [t14] -> [t13] = (type-lambda t13 (type-lambda t14 (lambda $match#16 : t14 -> t13 (lambda $match#17 : [t14] (let nonrec { $scrut#36 : t14 -> t13 = $match#16; } in (let nonrec { $scrut#37 : [t14] = $match#17; } in (match $scrut#36 $scrut#37 [ f#11 ([]) -> (con [] [t13]) ] [ f#12 (: x#13 xs#14) -> (app (app (lambda $field#38 : t13 (lambda $field#39 : [t13] (con : [t13] $field#38 $field#39))) (app f#12 x#13)) (app (app (type-app (type-app @map#9 t13) t14) f#12) xs#14)) ]))))))); }
+nonrec { main#10 : [Int] = (app (app (type-app (type-app @map#9 Int) Int) (lambda x#15 : Int (prim + x#15 1))) (app (app (lambda $field#40 : Int (lambda $field#41 : [Int] (con : [Int] $field#40 $field#41))) 1) (app (app (lambda $field#42 : Int (lambda $field#43 : [Int] (con : [Int] $field#42 $field#43))) 2) (app (app (lambda $field#44 : Int (lambda $field#45 : [Int] (con : [Int] $field#44 $field#45))) 3) (con [] [Int]))))); }

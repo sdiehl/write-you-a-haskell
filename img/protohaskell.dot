@@ -1,6 +1,0 @@
-digraph G {
-  graph [ dpi = 300 ]; 
-  rankdir=LR
-  node [shape=box]
-  Source -> Frontend -> Core -> PHOAS
-}

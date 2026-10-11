@@ -1,0 +1,8 @@
+---
+source: crates/ch14_classes/tests/layout.rs
+expression: "String::from_utf8(output.stdout).unwrap()"
+---
+{
+  $ = equations { f x -> f x; };
+  main = equations { -> $ \f -> f 42 \x -> x; };
+}

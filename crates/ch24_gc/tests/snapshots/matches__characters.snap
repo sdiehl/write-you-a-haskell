@@ -1,0 +1,6 @@
+---
+source: crates/ch24_gc/tests/matches.rs
+expression: "support::dump(source, &after)"
+---
+nonrec { f#955 : Char -> Int = (lambda $match#1085 : Char (let nonrec { $scrut#1952 : Char = $match#1085; } in (join $rhs#3534 ( c#957 : Char) = 3 in (join $rhs#3533 () = 2 in (join $rhs#3532 () = 1 in (case $scrut#1952 as $case#3538 : Char -> Int [ Lit(Char('λ')) -> (jump $rhs#3532 : Int) ] [ Lit(Char('a')) -> (jump $rhs#3533 : Int) ] [ Default -> (jump $rhs#3534 : Int $scrut#1952) ])))))); }
+nonrec { main#956 : Int = (app @f#955 'λ'); }

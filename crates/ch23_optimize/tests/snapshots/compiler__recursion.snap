@@ -1,0 +1,7 @@
+---
+source: crates/ch23_optimize/tests/compiler.rs
+expression: dump
+---
+main : Int
+rec { f#955 : Int -> Int = (lambda n#957 : Int (let nonrec { $scrut#1951 : Bool = (app (app (app (type-app @==#49 Int) @$fEq_0#1158) n#957) 0); } in (match $scrut#1951 [ (True) -> 0 ] [ (False) -> (app @f#955 (app (app (app (type-app @-#61 Int) @$fNum_3#1161) n#957) 1)) ]))); }
+nonrec { main#956 : Int = (app @f#955 3); }

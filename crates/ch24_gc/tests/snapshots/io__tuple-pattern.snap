@@ -1,0 +1,5 @@
+---
+source: crates/ch23_optimize/tests/io.rs
+expression: "support::dump(&source, &program)"
+---
+nonrec { main#955 : () -> () = (app (app (app (type-app (type-app (type-app @>>=#72 (Int,Int)) (->) ()) ()) @$fMonad_45#1204) (app (app (type-app (type-app @pure#70 (Int,Int)) (->) ()) @$fApplicative_44#1203) (app (app (lambda $field#1952 : Int (lambda $field#1953 : Int (con (,) [Int] [Int] $field#1952 $field#1953))) 20) 22))) (lambda $do#956 : (Int,Int) (let nonrec { $scrut#1954 : (Int,Int) = $do#956; } in (match $scrut#1954 [ ((,) x#957 y#958) -> (app (app (type-app @print#106 Int) @$fShow_2#1161) (app (app (app (type-app @+#60 Int) @$fNum_3#1162) x#957) y#958)) ] [ _ -> (app (type-app @error#97 () -> ()) "pattern match failure in do at io.fun:2:3") ])))); }

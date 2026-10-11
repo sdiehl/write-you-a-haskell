@@ -1,0 +1,9 @@
+---
+source: crates/ch20_runtime/tests/anf.rs
+expression: text
+---
+f = let $a#7739 = lambda ($given#1946, x#953, y#954) { let $a#7732 = call @+#59($given#1946);
+let $a#7734 = call $a#7732(x#953);
+tail $a#7734(y#954) };
+return $a#7739
+main = tail @f#951(@$fNum_3#1156, 20, 22)

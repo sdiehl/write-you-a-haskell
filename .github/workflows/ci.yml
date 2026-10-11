@@ -1,0 +1,122 @@
+name: Chapters and book
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pre-commit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - run: rustup show
+      - run: curl -fsSL https://dprint.dev/install.sh | sh -s 0.54.0
+      - run: echo "$HOME/.dprint/bin" >> "$GITHUB_PATH"
+      - uses: ./.github/actions/native-dependencies
+      - run: pipx install pre-commit==4.6.0
+      - run: pre-commit run --all-files --show-diff-on-failure
+  rust:
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+    runs-on: ${{ matrix.os }}
+    env:
+      CARGO_INCREMENTAL: 0
+    steps:
+      - uses: actions/checkout@v7
+      - name: Free runner disk for the chapter builds
+        if: runner.os == 'Linux'
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup \
+            /opt/hostedtoolcache/CodeQL /usr/local/share/powershell /usr/share/swift
+          sudo docker image prune --all --force > /dev/null
+          df -h /
+      - run: rustup show
+      - uses: ./.github/actions/native-dependencies
+      - run: python3 scripts/check_runtime_abi.py
+      - run: cargo test --locked -p testkit -p xtask -p fun-rt-20 -p fun-rt-21 -p fun-rt-22 -p fun-rt-23 -p fun-rt-24
+      - name: Check inherited corpora
+        shell: bash
+        run: |
+          for dir in crates/ch*; do
+            [ -d "$dir" ] || continue
+            chapter="${dir#crates/ch}"
+            cargo xtask check-inherit "${chapter%%_*}"
+          done
+      - name: Check deep inputs without compiler optimizations
+        run: python3 scripts/check_deep_pipeline.py
+  book:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - run: rustup show
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just@1.51.0
+      - uses: actions/cache@v6
+        with:
+          path: .tools
+          key: book-tools-${{ runner.os }}-${{ hashFiles('scripts/bootstrap.py', 'scripts/locks/**', 'rust-toolchain.toml') }}
+      - run: python3 scripts/bootstrap.py
+      - run: just pdf
+      - name: Publish the PDF beside the HTML
+        run: cp build/write-you-a-haskell.pdf book/build/html/write-you-a-haskell.pdf
+      - uses: actions/upload-artifact@v7
+        with:
+          name: write-you-a-haskell
+          path: build/write-you-a-haskell.pdf
+      - if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: book/build/html
+  pages:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: [pre-commit, book]
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v5
+  release:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    needs: [pre-commit, book]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    concurrency:
+      group: release
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: write-you-a-haskell
+          path: build
+      - name: Publish the PDF as a release asset
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            tag="$GITHUB_REF_NAME"
+            title="Write You a Haskell $tag"
+            flags=()
+          else
+            tag=latest
+            title="Write You a Haskell, latest build"
+            flags=(--prerelease)
+            gh release delete "$tag" --cleanup-tag --yes || true
+          fi
+          notes="PDF built from $GITHUB_SHA on $(date -u +%Y-%m-%d). The HTML edition is at ${{ vars.BOOK_URL || 'https://sdiehl.github.io/write-you-a-haskell/' }}."
+          gh release create "$tag" build/write-you-a-haskell.pdf \
+            --target "$GITHUB_SHA" --title "$title" --notes "$notes" "${flags[@]}"

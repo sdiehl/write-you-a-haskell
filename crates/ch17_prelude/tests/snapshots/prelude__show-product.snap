@@ -1,0 +1,5 @@
+---
+source: crates/ch17_prelude/tests/prelude.rs
+expression: "expanded.instances.iter().map(ToString::to_string).collect::<Vec<_>>().join(\"\\n\")"
+---
+instance (Show a) => Show ((T a)) where { show = equations { value -> _showsPrec 0 value; }; _showsPrec = equations { p (T x0 x1) -> _showParen (> p 10) (<> (<> (<> (<> "T" " ") (_showsPrec 11 x0)) " ") (_showsPrec 11 x1)); }; }

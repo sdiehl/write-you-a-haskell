@@ -1,0 +1,7 @@
+42
+saved : Int -> Int
+Maybe : * -> *
+Maybe Int : *
+Box 43
+55
+jit

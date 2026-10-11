@@ -1,0 +1,9 @@
+---
+source: crates/ch15_io/tests/layout.rs
+expression: "String::from_utf8(output.stdout).unwrap()"
+---
+{
+  %% = equations { a b -> + (* a 10) b; };
+  _old = equations { -> %% 1 (%% 2 3); };
+  main = equations { -> print _old; };
+}

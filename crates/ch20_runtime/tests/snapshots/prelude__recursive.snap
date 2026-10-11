@@ -1,0 +1,7 @@
+---
+source: crates/ch17_prelude/tests/prelude.rs
+expression: "expanded.instances.iter().map(ToString::to_string).collect::<Vec<_>>().join(\"\\n\")"
+---
+instance (Eq a) => Eq ((T a)) where { == = equations { (Leaf x0) (Leaf y0) -> if == x0 y0 then True else False; (Leaf x0) (Fork y0 y1) -> False; (Fork x0 x1) (Leaf y0) -> False; (Fork x0 x1) (Fork y0 y1) -> if == x0 y0 then if == x1 y1 then True else False else False; }; }
+instance (Ord a) => Ord ((T a)) where { compare = equations { (Leaf x0) (Leaf y0) -> case compare x0 y0 of { (EQ) -> EQ; order -> order; }; (Leaf x0) (Fork y0 y1) -> LT; (Fork x0 x1) (Leaf y0) -> GT; (Fork x0 x1) (Fork y0 y1) -> case compare x0 y0 of { (EQ) -> case compare x1 y1 of { (EQ) -> EQ; order -> order; }; order -> order; }; }; }
+instance (Show a) => Show ((T a)) where { show = equations { value -> _showsPrec 0 value; }; _showsPrec = equations { p (Leaf x0) -> _showParen (> p 10) (<> (<> "Leaf" " ") (_showsPrec 11 x0)); p (Fork x0 x1) -> _showParen (> p 10) (<> (<> (<> (<> "Fork" " ") (_showsPrec 11 x0)) " ") (_showsPrec 11 x1)); }; }

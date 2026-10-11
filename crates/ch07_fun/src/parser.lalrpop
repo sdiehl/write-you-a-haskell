@@ -1,0 +1,46 @@
+// adapted from sdiehl/compiler-crates/lalrpop/src/expression_logos.lalrpop
+use crate::ast::{Expr,Kind,Op,Binding,Program};
+use crate::source::{FileId,Span};
+use crate::diagnostics::Diagnostic;
+use crate::lexer::Token;
+grammar(file:FileId);
+pub Program:Program = <l:@L> "{" <bindings:Bindings> "}" <r:@R> => Program {bindings,span:Span::new(file,l,r)};
+Bindings:Vec<Binding> = { => vec![], <b:Binding> <tail:(";" <Binding>)*> ";"? => {let mut out=vec![b];out.extend(tail);out} };
+Binding:Binding = <l:@L> <name:"identifier"> <params:"identifier"*> "=" <rhs:Expr> <r:@R> =>? crate::parse::binding(file,l,r,name,params,rhs).map_err(|error|lalrpop_util::ParseError::User {error});
+pub Expr:Expr = {
+    <l:@L> "let" "{" <b:Binding> ";"? "}" "in" <body:Expr> <r:@R> => Expr::new(Kind::Let(b.name,Box::new(b.rhs),Box::new(body)),file,l,r),
+    <l:@L> "\\" <params:"identifier"+> "->" <body:Expr> <r:@R> =>? crate::parse::lambda(file,l,r,params,body).map_err(|error|lalrpop_util::ParseError::User {error}),
+    <l:@L> "if" <c:Expr> "then" <a:Expr> "else" <b:Expr> <r:@R> => Expr::new(Kind::If(Box::new(c),Box::new(a),Box::new(b)),file,l,r),
+    Comparison,
+};
+Comparison:Expr = {<a:Append> <op:Compare> <b:Append>=>Expr::binary(op,a,b),Append};
+Compare:Op = {"=="=>Op::Eq,"<"=>Op::Lt,"<="=>Op::Le};
+Append:Expr = {<a:Sum> "++" <b:Append>=>Expr::binary(Op::Append,a,b),Sum};
+Sum:Expr = {<a:Sum> "+" <b:Product>=>Expr::binary(Op::Add,a,b),<a:Sum> "-" <b:Product>=>Expr::binary(Op::Sub,a,b),Product};
+Product:Expr = {<a:Product> "*" <b:Unary>=>Expr::binary(Op::Mul,a,b),Unary};
+Unary:Expr = {<l:@L> "-" <a:Unary> <r:@R>=>Expr::new(Kind::Neg(Box::new(a)),file,l,r),Application};
+Application:Expr = {
+    <a:Application> <b:Atom>=>{let (l,r)=(a.span.start as usize,b.span.end as usize);Expr::new(Kind::App(Box::new(a),Box::new(b)),file,l,r)},Atom
+};
+Atom:Expr = {
+    <l:@L> <n:"integer"> <r:@R>=>Expr::new(Kind::Int(n),file,l,r),
+    <l:@L> <n:"string"> <r:@R>=>Expr::new(Kind::String(n),file,l,r),
+    <l:@L> <n:"char"> <r:@R>=>Expr::new(Kind::Char(n),file,l,r),
+    <l:@L> <n:"identifier"> <r:@R>=>Expr::new(Kind::Var(n),file,l,r),
+    <l:@L> <n:"constructor"> <r:@R>=>Expr::new(Kind::Var(n),file,l,r),
+    <l:@L> "True" <r:@R>=>Expr::new(Kind::Bool(true),file,l,r),
+    <l:@L> "False" <r:@R>=>Expr::new(Kind::Bool(false),file,l,r),
+    <l:@L> "(" <mut a:Expr> ")" <r:@R>=>{a.span=Span::new(file,l,r);a},
+};
+extern {
+ type Location=usize;type Error=Diagnostic;
+ enum Token {
+ "let"=>Token::Let,"in"=>Token::In,"if"=>Token::If,"then"=>Token::Then,"else"=>Token::Else,
+ "\\"=>Token::Lambda,"->"=>Token::Arrow,"True"=>Token::True,"False"=>Token::False,
+ "+"=>Token::Plus,"-"=>Token::Minus,"*"=>Token::Star,"++"=>Token::Append,
+ "=="=>Token::Eq,"<"=>Token::Lt,"<="=>Token::Le,"="=>Token::Equals,
+ "("=>Token::Left,")"=>Token::Right,"{"=>Token::Open,"}"=>Token::Close,";"=>Token::Semi,
+ "integer"=>Token::Int(<i64>),"string"=>Token::String(<String>),"char"=>Token::Char(<char>),
+ "identifier"=>Token::Ident(<String>),"constructor"=>Token::Constructor(<String>),
+ }
+}

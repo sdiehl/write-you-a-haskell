@@ -1,0 +1,5 @@
+---
+source: crates/ch02_calc/tests/calculator.rs
+expression: parse(source).unwrap().to_string()
+---
+(* (+ 1 2) 3)

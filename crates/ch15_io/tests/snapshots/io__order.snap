@@ -1,0 +1,5 @@
+---
+source: crates/ch15_io/tests/io.rs
+expression: "support::dump(&source, &program)"
+---
+nonrec { main#675 : () -> () = (app (app (app (type-app (type-app (type-app @>>#71 ()) (->) ()) ()) @$fMonad_45#866) (app @putStr#98 "a")) (app (app (app (type-app (type-app (type-app @>>#71 ()) (->) ()) ()) @$fMonad_45#866) (app @putStr#98 "b")) (app @putStrLn#102 "c"))); }

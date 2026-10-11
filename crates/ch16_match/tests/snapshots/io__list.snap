@@ -1,0 +1,5 @@
+---
+source: crates/ch15_io/tests/io.rs
+expression: "support::dump(&source, &program)"
+---
+nonrec { main#675 : () -> () = (app (app (type-app @print#103 [Int]) (app (type-app @$fShow_28#851 Int) @$fShow_2#825)) (app (app (app (type-app (type-app (type-app @>>=#70 Int) []) Int) @$fMonad_54#877) (app (app (lambda $field#1451 : Int (lambda $field#1452 : [Int] (con : [Int] $field#1451 $field#1452))) 1) (app (app (lambda $field#1453 : Int (lambda $field#1454 : [Int] (con : [Int] $field#1453 $field#1454))) 2) (con [] [Int])))) (lambda x#676 : Int (app (app (app (type-app (type-app (type-app @>>=#70 Int) []) Int) @$fMonad_54#877) (app (app (lambda $field#1455 : Int (lambda $field#1456 : [Int] (con : [Int] $field#1455 $field#1456))) 10) (app (app (lambda $field#1457 : Int (lambda $field#1458 : [Int] (con : [Int] $field#1457 $field#1458))) 20) (con [] [Int])))) (lambda y#677 : Int (app (app (type-app (type-app @pure#68 Int) []) @$fApplicative_53#876) (app (app (app (type-app @+#58 Int) @$fNum_3#826) x#676) y#677))))))); }

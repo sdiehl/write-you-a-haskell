@@ -1,0 +1,18 @@
+---
+source: crates/ch15_io/tests/kinds.rs
+expression: "format!(\"{kinds}\\n{groups}\")"
+---
+IO :: * -> *
+Bool :: *
+Ordering :: *
+Maybe :: * -> *
+Either :: * -> * -> *
+[] :: * -> *
+() :: *
+(,) :: * -> * -> *
+(,,) :: * -> * -> * -> *
+Wrap :: (* -> *) -> * -> *
+(->) :: * -> * -> *
+nonrec { f#675 : Wrap (Either String) Int -> Int = (lambda $match#753 : Wrap (Either String) Int (let nonrec { $scrut#1453 : Wrap (Either String) Int = $match#753; } in (match $scrut#1453 [ (Wrap (Right x#678)) -> x#678 ]))); }
+nonrec { _old#676 : Int = (app @f#675 (app (lambda $field#1454 : Either String Int (con Wrap [Either String] [Int] $field#1454)) (app (lambda $field#1455 : Int (con Right [String] [Int] $field#1455)) 42))); }
+nonrec { main#677 : () -> () = (app (app (type-app @print#103 Int) @$fShow_2#827) @_old#676); }

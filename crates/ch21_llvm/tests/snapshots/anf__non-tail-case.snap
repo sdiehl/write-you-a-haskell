@@ -1,0 +1,16 @@
+---
+source: crates/ch21_llvm/tests/anf.rs
+expression: text
+---
+main = let $a#7737 = call @+#59(@$fNum_3#1154);
+let $a#7739 = call $a#7737(1);
+join $beta#7798($scrut#1944) = { join $cont#7742($a#7741) = { tail $a#7739($a#7741) };
+join $rhs#3526(n#952) = { jump $cont#7742(n#952) };
+join $rhs#3525() = { jump $cont#7742(0) };
+case $scrut#1944 {
+Nothing() -> { jump $rhs#3525() }
+Just($case#3529) -> { jump $rhs#3526($case#3529) }
+_() -> { fail Span { file: FileId(0), start: 12, end: 57 } }
+} };
+let $a#7747 = Just(41);
+jump $beta#7798($a#7747)

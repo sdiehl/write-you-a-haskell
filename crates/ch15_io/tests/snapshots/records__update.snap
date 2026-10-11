@@ -1,0 +1,7 @@
+---
+source: crates/ch15_io/tests/records.rs
+expression: dump
+---
+nonrec { $i55_show#677 : P -> String = (lambda $match#754 : P (let nonrec { $scrut#1462 : P = $match#754; } in (match $scrut#1462 [ (P x#678 y#679) -> (app (app @++#72 "P {x = ") (app (app @++#72 (app (app (type-app @show#57 Int) @$fShow_2#828) x#678)) (app (app @++#72 ", y = ") (app (app @++#72 (app (app (type-app @show#57 Int) @$fShow_2#828) y#679)) "}")))) ]))); }
+nonrec { _old#675 : P = (let nonrec { $record#1455 : P = (app (app (lambda $field#1460 : Int (lambda $field#1461 : Int (con P $field#1460 $field#1461))) 3) 4); } in (match $record#1455 [ (P $field#1456 $field#1457) nonrec { $update#1458 : Int = 9; } nonrec { $update#1459 : Int = 8; } -> (con P $update#1459 $update#1458) ])); }
+nonrec { main#676 : () -> () = (app (app (type-app @print#103 P) @$fShow_55#881) @_old#675); }

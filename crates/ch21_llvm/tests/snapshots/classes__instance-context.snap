@@ -1,0 +1,11 @@
+---
+source: crates/ch14_classes/tests/classes.rs
+expression: "format!(\"{declarations}\\n{groups}\")"
+---
+$MkDC (t1 -> Int) -> $DC t1
+nonrec { value#0 : forall t3. $DC t3 -> t3 -> Int = (type-lambda t3 (lambda $given#9 : $DC t3 (let nonrec { $dictionary#10 : $DC t3 = $given#9; } in (match $dictionary#10 [ ($MkDC $slot0#11) -> $slot0#11 ])))); }
+nonrec { $i0_value#2 : Int -> Int = (lambda x#4 : Int x#4); }
+nonrec { $fC_0#7 : $DC Int = (con $MkDC [Int] @$i0_value#2); }
+nonrec { $i1_value#3 : forall t2. $DC t2 -> Box t2 -> Int = (type-lambda t2 (lambda $given#14 : $DC t2 (lambda $match#6 : Box t2 (let nonrec { $scrut#15 : Box t2 = $match#6; } in (match $scrut#15 [ (Box x#5) -> (app (app (type-app @value#0 t2) $given#14) x#5) ]))))); }
+nonrec { $fC_1#8 : forall t4. $DC t4 -> $DC (Box t4) = (type-lambda t4 (lambda $context#12 : $DC t4 (con $MkDC [Box t4] (app (type-app @$i1_value#3 t4) $context#12)))); }
+nonrec { main#1 : Int = (app (app (type-app @value#0 Box Int) (app (type-app @$fC_1#8 Int) @$fC_0#7)) (app (lambda $field#13 : Int (con Box [Int] $field#13)) 42)); }

@@ -1,0 +1,22 @@
+---
+source: crates/ch23_optimize/tests/anf.rs
+expression: text
+---
+main#955 = let $a#7749 = closure f403[];
+let $a#7751 = closure f404[];
+let $a#7754 = closure f405[];
+let $a#7757 = closure f406[];
+let $a#7759 = []();
+let $a#7756 = call f406[$a#7757](3, $a#7759);
+let $a#7753 = call f405[$a#7754](2, $a#7756);
+let $a#7750 = call f404[$a#7751](1, $a#7753);
+tail f320[]($a#7749, $a#7750)
+f403 $a#7749 captures=[] = let $a#7770 = call f60[](@$fNum_3#1160);
+let $a#7772 = apply $a#7770($section0#956);
+tail-apply $a#7772(1)
+f404 $a#7751 captures=[] = let $a#7768 = :($field#1950, $field#1951);
+return $a#7768
+f405 $a#7754 captures=[] = let $a#7765 = :($field#1952, $field#1953);
+return $a#7765
+f406 $a#7757 captures=[] = let $a#7762 = :($field#1954, $field#1955);
+return $a#7762

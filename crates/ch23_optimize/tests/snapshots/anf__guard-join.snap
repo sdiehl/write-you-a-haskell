@@ -1,0 +1,22 @@
+---
+source: crates/ch23_optimize/tests/anf.rs
+expression: text
+---
+f = let $a#7770 = \($match#1086 : Int) -> { join $rhs#3534(x#958 : Int) = { return x#958 };
+join $fail#3536() = { jump $rhs#3534($match#1086) };
+join $rhs#3533(x#957 : Int) = { let $a#7762 = call @<#52(@$fOrd_1#1161);
+let $a#7764 = call $a#7762(x#957);
+let $case#3538 = call $a#7764(0);
+case $case#3538 {
+True() -> { return 0 }
+_() -> { let $a#7754 = call @>#54(@$fOrd_1#1161);
+let $a#7756 = call $a#7754(x#957);
+let $case#3537 = call $a#7756(10);
+case $case#3537 {
+True() -> { return 10 }
+_() -> { jump $fail#3536() }
+} }
+} };
+jump $rhs#3533($match#1086) };
+return $a#7770
+main = tail @f#955(3)

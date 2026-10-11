@@ -1,0 +1,6 @@
+---
+source: crates/ch23_optimize/tests/anf.rs
+expression: text
+---
+main#955 = let x#956 : Int = call f292[]("unused");
+return 42

@@ -1,0 +1,15 @@
+# Changes to inherited programs
+
+- tests/programs/fun-string.fun: String append is now `<>`; `++` becomes list append. (ch17: complete Prelude)
+- tests/programs/records/update.fun: String append is now `<>`; `++` becomes list append. (ch17: complete Prelude)
+- tests/programs/records/field-names.fun: String append is now `<>`; `++` becomes list append. (ch17: complete Prelude)
+- tests/programs/records/nested.fun: String append is now `<>`; `++` becomes list append. (ch17: complete Prelude)
+- tests/programs/records/shared-update.fun: String append is now `<>`; `++` becomes list append. (ch17: complete Prelude)
+- tests/programs/records/polymorphic.fun: String append is now `<>`; `++` becomes list append. (ch17: complete Prelude)
+- tests/programs/records/print-nested.fun: String append is now `<>`; `++` becomes list append. (ch17: complete Prelude)
+- tests/programs/records/construct-order.fun: String append is now `<>`; `++` becomes list append. (ch17: complete Prelude)
+- tests/programs/kinds/record.fun: String append is now `<>`; `++` becomes list append. (ch17: complete Prelude)
+- tests/programs/classes/polymorphic-method.fun: String append is now `<>`; `++` becomes list append. (ch17: complete Prelude)
+- tests/programs/classes/prelude-shadow.fun: String append is now `<>`; `++` becomes list append. (ch17: complete Prelude)
+- tests/programs/classes/instance-where.fun: String append is now `<>`; `++` becomes list append. (ch17: complete Prelude)
+- tests/programs/data/recursive-types.fun: String append is now `<>`; `++` becomes list append. (ch17: complete Prelude)

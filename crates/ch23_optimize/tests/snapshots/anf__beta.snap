@@ -1,0 +1,7 @@
+---
+source: crates/ch23_optimize/tests/anf.rs
+expression: text
+---
+main = let $a#7745 = call @+#60(@$fNum_3#1160);
+let $a#7747 = call $a#7745(41);
+tail $a#7747(1)

@@ -1,5 +1,0 @@
-digraph G {
-  rankdir=BT
-  node [shape=box]
-  Values -> Types -> Kinds
-}

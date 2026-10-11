@@ -1,0 +1,5 @@
+---
+source: crates/ch12_records/tests/records.rs
+expression: dump
+---
+nonrec { main#9 : P = (let nonrec { $field#28 : Int = 4; } in (let nonrec { $field#29 : Int = 3; } in (con P $field#29 $field#28))); }

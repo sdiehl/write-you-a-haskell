@@ -1,0 +1,6 @@
+---
+source: crates/ch14_classes/tests/data.rs
+expression: dump
+---
+nonrec { f#552 : Int -> Int = (lambda $match#600 : Int (let nonrec { $scrut#1191 : Int = $match#600; } in (match $scrut#1191 [ x#554 nonrec { y#555 : Int = (app (app (app (type-app @+#55 Int) @$fNum_3#672) x#554) 1); } | (app (app (app (type-app @<#48 Int) @$fOrd_1#670) y#555) 0) -> 0 | (app (app (app (type-app @==#45 Int) @$fEq_0#669) y#555) 5) -> y#555  ] [ x#556 -> x#556 ]))); }
+nonrec { main#553 : (Int,Int) = (app (app (lambda $field#1192 : Int (lambda $field#1193 : Int (con (,) [Int] [Int] $field#1192 $field#1193))) (app @f#552 4)) (app @f#552 7)); }

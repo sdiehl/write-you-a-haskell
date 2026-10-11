@@ -1,0 +1,6 @@
+---
+source: crates/ch17_prelude/tests/prelude.rs
+expression: "expanded.instances.iter().map(ToString::to_string).collect::<Vec<_>>().join(\"\\n\")"
+---
+instance Eq (T) where { == = equations { (A x0) (A y0) -> if == x0 y0 then True else False; (A x0) (B y0) -> False; (B x0) (A y0) -> False; (B x0) (B y0) -> if == x0 y0 then True else False; }; }
+instance Ord (T) where { compare = equations { (A x0) (A y0) -> case compare x0 y0 of { (EQ) -> EQ; order -> order; }; (A x0) (B y0) -> LT; (B x0) (A y0) -> GT; (B x0) (B y0) -> case compare x0 y0 of { (EQ) -> EQ; order -> order; }; }; }

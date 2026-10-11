@@ -1,0 +1,8 @@
+---
+source: crates/ch15_io/tests/layout.rs
+expression: "String::from_utf8(output.stdout).unwrap()"
+---
+{
+  _old = equations { -> + (-* 2 3) 4; };
+  main = equations { -> print _old; };
+}

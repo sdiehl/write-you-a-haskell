@@ -1,0 +1,8 @@
+---
+source: crates/ch07_fun/tests/compiler.rs
+expression: dump
+---
+main : String
+val div = (lambda $a (lambda $b (prim div $a $b)))
+val mod = (lambda $a (lambda $b (prim mod $a $b)))
+val main = (prim ++ "a" "b")

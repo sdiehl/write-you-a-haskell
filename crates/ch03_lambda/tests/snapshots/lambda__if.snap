@@ -1,0 +1,5 @@
+---
+source: crates/ch03_lambda/tests/lambda.rs
+expression: "format!(\"{:?}\", names::debruijn(&parse(source).unwrap(), &mut vec![]))"
+---
+Lam(If(Bound(0), Int(1), Int(2)))

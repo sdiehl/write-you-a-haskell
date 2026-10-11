@@ -1,0 +1,10 @@
+---
+source: crates/ch07_fun/tests/compiler.rs
+expression: dump
+---
+main : Bool
+val div = (lambda $a (lambda $b (prim div $a $b)))
+val mod = (lambda $a (lambda $b (prim mod $a $b)))
+val id = (lambda x x)
+val a = (app id 1)
+val main = (app id True)

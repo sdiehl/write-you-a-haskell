@@ -1,0 +1,1 @@
+{ main = prim_intAdd; }

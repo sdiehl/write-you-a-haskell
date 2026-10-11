@@ -1,0 +1,5 @@
+---
+source: crates/ch05_eval/tests/stlc.rs
+expression: ty(source).to_string()
+---
+Bool -> Int

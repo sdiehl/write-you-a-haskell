@@ -1,0 +1,6 @@
+---
+source: crates/ch11_data/tests/data.rs
+expression: dump
+---
+nonrec { keep#9 : forall t13. Maybe t13 -> Maybe t13 = (type-lambda t13 (lambda x#11 : Maybe t13 x#11)); }
+nonrec { main#10 : (Maybe Int,Maybe Bool) = (app (app (lambda $field#30 : Maybe Int (lambda $field#31 : Maybe Bool (con (,) [Maybe Int] [Maybe Bool] $field#30 $field#31))) (app (type-app @keep#9 Int) (app (lambda $field#32 : Int (con Just [Int] $field#32)) 1))) (app (type-app @keep#9 Bool) (app (lambda $field#33 : Bool (con Just [Bool] $field#33)) (con True)))); }

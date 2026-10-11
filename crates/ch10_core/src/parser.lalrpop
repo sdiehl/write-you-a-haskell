@@ -1,0 +1,67 @@
+// adapted from sdiehl/compiler-crates/lalrpop/src/expression_logos.lalrpop
+use crate::ast::{Expr,Kind,Binding,Program,Declaration,TypeSyntax,Associativity};
+use crate::source::{FileId,Span};
+use crate::diagnostics::Diagnostic;
+use crate::lexer::Token;
+grammar(file:FileId);
+pub Program:Program = <l:@L> "{" <decls:Declarations> "}" <r:@R> =>? crate::parse::program(decls,Span::new(file,l,r)).map_err(|error|lalrpop_util::ParseError::User {error});
+Bindings:Vec<Binding> = <decls:Declarations> =>? crate::parse::declarations(decls).map_err(|error|lalrpop_util::ParseError::User {error});
+Declarations:Vec<Declaration> = { => vec![], <b:Declaration> <tail:(";" <Declaration>)*> ";"? => {let mut out=vec![b];out.extend(tail);out} };
+Declaration:Declaration = {
+    <l:@L> <assoc:Assoc> <prec:"integer"> <first:Operator> <rest:("," <Operator>)*> <r:@R> =>? {let mut ops=vec![first];ops.extend(rest);crate::parse::fixity(assoc,prec,ops,Span::new(file,l,r)).map(Declaration::Fixity).map_err(|error|lalrpop_util::ParseError::User {error})},
+    <b:Binding> => Declaration::Binding(b),
+    <l:@L> <first:Variable> <rest:("," <Variable>)*> "::" <ty:Type> <r:@R> => {let mut names=vec![first];names.extend(rest);Declaration::Signature(names,ty,Span::new(file,l,r))},
+};
+Type:TypeSyntax = { <a:TypeAtom> "->" <b:Type> => TypeSyntax::Arrow(Box::new(a),Box::new(b)), TypeAtom };
+TypeAtom:TypeSyntax = { <n:"identifier"> => TypeSyntax::Name(n), <n:"constructor"> => TypeSyntax::Name(n), "(" <Type> ")" };
+Binding:Binding = {
+    <l:@L> <name:Variable> <params:"identifier"*> "=" <rhs:Expr> <locals:("where" "{" <Bindings> "}")?> <r:@R> =>? crate::parse::binding(file,l,r,name,params,crate::parse::local(locals.unwrap_or_default(),rhs)).map_err(|error|lalrpop_util::ParseError::User {error}),
+    <l:@L> <a:"identifier"> <op:Operator> <b:"identifier"> "=" <rhs:Expr> <locals:("where" "{" <Bindings> "}")?> <r:@R> =>? crate::parse::binding(file,l,r,op,vec![a,b],crate::parse::local(locals.unwrap_or_default(),rhs)).map_err(|error|lalrpop_util::ParseError::User {error}),
+};
+pub Expr:Expr = { Special, Chain };
+Special:Expr = {
+    <l:@L> "let" "{" <bindings:Bindings> "}" "in" <body:Expr> <r:@R> => {let mut e=crate::parse::local(bindings,body);e.span=Span::new(file,l,r);e},
+    <l:@L> "\\" <params:"identifier"+> "->" <body:Expr> <r:@R> =>? crate::parse::lambda(file,l,r,params,body).map_err(|error|lalrpop_util::ParseError::User {error}),
+    <l:@L> "if" <c:Expr> "then" <a:Expr> "else" <b:Expr> <r:@R> => Expr::new(Kind::If(Box::new(c),Box::new(a),Box::new(b)),file,l,r),
+};
+Assoc:Associativity = {"infixl" => Associativity::Left, "infixr" => Associativity::Right, "infix" => Associativity::None};
+Variable:String = { "identifier", "(" <Operator> ")" };
+Operator:String = { "-" => "-".into(), NonMinusOperator };
+NonMinusOperator:String = { "+" => "+".into(), "*" => "*".into(), "++" => "++".into(), "==" => "==".into(), "<" => "<".into(), "<=" => "<=".into(), "operator", "`" <"identifier"> "`" };
+Chain:Expr = <l:@L> <a:Unary> <tail:ChainTail> <r:@R> => Expr::new(Kind::Chain(Box::new(a),tail.0,tail.1),file,l,r);
+ChainTail:(Vec<(String,Expr)>,Option<String>) = {
+    => (vec![],None),
+    <op:Operator> <a:Special> => (vec![(op,a)],None),
+    <op:Operator> <rest:(<Unary> <ChainTail>)?> => match rest {
+        Some((rhs,(mut pairs,last))) => {pairs.insert(0,(op,rhs));(pairs,last)},
+        None => (vec![],Some(op)),
+    }
+};
+Unary:Expr = {<l:@L> "-" <a:Unary> <r:@R>=>Expr::new(Kind::Neg(Box::new(a)),file,l,r),Application};
+Application:Expr = {
+    <a:Application> <b:Atom>=>{let (l,r)=(a.span.start as usize,b.span.end as usize);Expr::new(Kind::App(Box::new(a),Box::new(b)),file,l,r)},Atom
+};
+Atom:Expr = {
+    <l:@L> <n:"integer"> <r:@R>=>Expr::new(Kind::Int(n),file,l,r),
+    <l:@L> <n:"string"> <r:@R>=>Expr::new(Kind::String(n),file,l,r),
+    <l:@L> <n:"char"> <r:@R>=>Expr::new(Kind::Char(n),file,l,r),
+    <l:@L> <n:"identifier"> <r:@R>=>Expr::new(Kind::Var(n),file,l,r),
+    <l:@L> <n:"constructor"> <r:@R>=>Expr::new(Kind::Var(n),file,l,r),
+    <l:@L> "True" <r:@R>=>Expr::new(Kind::Bool(true),file,l,r),
+    <l:@L> "False" <r:@R>=>Expr::new(Kind::Bool(false),file,l,r),
+    <l:@L> "(" <a:Expr> ")" <r:@R> => Expr::new(Kind::Paren(Box::new(a)),file,l,r),
+    <l:@L> "(" <op:Operator> ")" <r:@R> => Expr::new(Kind::Var(op),file,l,r),
+    <l:@L> "(" <op:NonMinusOperator> <a:Expr> ")" <r:@R> => Expr::new(Kind::RightSection(op,Box::new(a)),file,l,r),
+};
+extern {
+ type Location=usize;type Error=Diagnostic;
+ enum Token {
+ "infix"=>Token::Infix,"infixl"=>Token::Infixl,"infixr"=>Token::Infixr,"`"=>Token::Backtick,"operator"=>Token::Operator(<String>),"::"=>Token::ColonColon,","=>Token::Comma,"where"=>Token::Where,"let"=>Token::Let,"in"=>Token::In,"if"=>Token::If,"then"=>Token::Then,"else"=>Token::Else,
+ "\\"=>Token::Lambda,"->"=>Token::Arrow,"True"=>Token::True,"False"=>Token::False,
+ "+"=>Token::Plus,"-"=>Token::Minus,"*"=>Token::Star,"++"=>Token::Append,
+ "=="=>Token::Eq,"<"=>Token::Lt,"<="=>Token::Le,"="=>Token::Equals,
+ "("=>Token::Left,")"=>Token::Right,"{"=>Token::Open,"}"=>Token::Close,";"=>Token::Semi,
+ "integer"=>Token::Int(<i64>),"string"=>Token::String(<String>),"char"=>Token::Char(<char>),
+ "identifier"=>Token::Ident(<String>),"constructor"=>Token::Constructor(<String>),
+ }
+}

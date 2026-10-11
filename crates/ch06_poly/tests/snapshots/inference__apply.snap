@@ -1,0 +1,5 @@
+---
+source: crates/ch06_poly/tests/inference.rs
+expression: agree(source).unwrap().to_string()
+---
+(a -> b) -> a -> b

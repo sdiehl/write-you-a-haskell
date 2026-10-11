@@ -1,0 +1,7 @@
+---
+source: crates/ch14_classes/tests/classes.rs
+expression: "format!(\"{declarations}\\n{groups}\")"
+---
+
+rec { size#0 : forall t4. Nest t4 -> Int = (type-lambda t4 (lambda $match#4 : Nest t4 (let nonrec { $scrut#5 : Nest t4 = $match#4; } in (match $scrut#5 [ (End) -> 42 ] [ (Next x#2 xs#3) -> (app (type-app @size#0 [t4]) xs#3) ])))); }
+nonrec { main#1 : Int = (app (type-app @size#0 Int) (app (app (lambda $field#6 : Int (lambda $field#7 : Nest ([Int]) (con Next [Int] $field#6 $field#7))) 0) (con End [[Int]]))); }

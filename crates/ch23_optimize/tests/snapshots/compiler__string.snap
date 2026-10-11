@@ -1,0 +1,6 @@
+---
+source: crates/ch23_optimize/tests/compiler.rs
+expression: dump
+---
+main : String
+nonrec { main#955 : String = (app (app (app (type-app @<>#67 String) @$fSemigroup_15#1171) "a") "b"); }

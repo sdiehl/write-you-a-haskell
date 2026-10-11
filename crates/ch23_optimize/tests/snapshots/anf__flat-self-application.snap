@@ -1,0 +1,8 @@
+---
+source: crates/ch23_optimize/tests/anf.rs
+expression: text
+---
+main#955 = let id#956 = closure f403[];
+let $a#7744 = apply id#956(id#956);
+tail-apply $a#7744(42)
+f403 id#956 captures=[] = return x#957

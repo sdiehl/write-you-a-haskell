@@ -1,0 +1,6 @@
+---
+source: crates/ch22_jit/tests/matches.rs
+expression: "support::dump(source, &after)"
+---
+nonrec { f#951 : Double -> Int = (lambda $match#1081 : Double (let nonrec { $scrut#1946 : Double = $match#1081; } in (join $rhs#3527 ( x#953 : Double) = 2 in (join $rhs#3526 () = 1 in (case (prim prim_dblEq $scrut#1946 0.0) as $case#3530 : Bool -> Int [ Con(ConId { index: 1, name: "True" }) -> (jump $rhs#3526 : Int) ] [ Default -> (jump $rhs#3527 : Int $scrut#1946) ]))))); }
+nonrec { main#952 : Int = (app @f#951 (app (app (type-app @negate#62 Double) @$fNum_7#1160) 0.0)); }

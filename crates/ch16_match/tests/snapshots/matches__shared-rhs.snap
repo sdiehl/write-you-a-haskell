@@ -1,0 +1,6 @@
+---
+source: crates/ch16_match/tests/matches.rs
+expression: "support::dump(source, &after)"
+---
+nonrec { f#675 : Maybe Int -> Bool -> Int = (lambda $match#754 : Maybe Int (lambda $match#755 : Bool (let nonrec { $scrut#1455 : Maybe Int = $match#754; } in (let nonrec { $scrut#1456 : Bool = $match#755; } in (join $rhs#2573 ( x#678 : Maybe Int b#679 : Bool) = 0 in (join $rhs#2572 ( x#677 : Int) = x#677 in (case $scrut#1455 as $case#2578 : Maybe Int -> Int [ Con(ConId { index: 6, name: "Just" }) $case#2576 : Int -> (case $scrut#1456 as $case#2577 : Bool -> Int [ Con(ConId { index: 1, name: "True" }) -> (jump $rhs#2572 : Int $case#2576) ] [ Default -> (jump $rhs#2573 : Int $scrut#1455 $scrut#1456) ]) ] [ Default -> (jump $rhs#2573 : Int $scrut#1455 $scrut#1456) ]))))))); }
+nonrec { main#676 : Int = (app (app @f#675 (app (lambda $field#1457 : Int (con Just [Int] $field#1457)) 42)) (con False)); }

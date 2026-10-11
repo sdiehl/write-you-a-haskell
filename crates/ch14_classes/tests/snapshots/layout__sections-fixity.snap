@@ -1,0 +1,8 @@
+---
+source: crates/ch14_classes/tests/layout.rs
+expression: "String::from_utf8(output.stdout).unwrap()"
+---
+{
+  apply = equations { f x -> f x; };
+  main = equations { -> + (apply (\$section0 -> + 40 $section0) 2) (apply (\$section1 -> + $section1 2) 40); };
+}

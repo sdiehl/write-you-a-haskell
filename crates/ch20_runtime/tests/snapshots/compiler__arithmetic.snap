@@ -1,0 +1,6 @@
+---
+source: crates/ch17_prelude/tests/compiler.rs
+expression: dump
+---
+main : Int
+nonrec { main#951 : Int = (app (app (app (type-app @+#59 Int) @$fNum_3#1153) 1) (app (app (app (type-app @*#61 Int) @$fNum_3#1153) 2) 3)); }

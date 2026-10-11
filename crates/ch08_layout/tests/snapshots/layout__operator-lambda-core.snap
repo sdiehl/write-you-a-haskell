@@ -1,0 +1,8 @@
+---
+source: crates/ch08_layout/tests/layout.rs
+expression: "String::from_utf8(output.stdout).unwrap()"
+---
+val div = (lambda $a (lambda $b (prim div $a $b)))
+val mod = (lambda $a (lambda $b (prim mod $a $b)))
+val $ = (lambda f (lambda x (app f x)))
+val main = (app (app $ (lambda f (app f 42))) (lambda x x))

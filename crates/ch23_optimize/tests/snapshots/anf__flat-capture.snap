@@ -1,0 +1,9 @@
+---
+source: crates/ch23_optimize/tests/anf.rs
+expression: text
+---
+f#955 = return @f#955
+f403 f#955 captures=[] = let $a#7746 = call f60[]($given#1952);
+let $a#7748 = apply $a#7746(x#957);
+tail-apply $a#7748(y#958)
+main#956 = tail f403[](@$fNum_3#1162, 20, 22)

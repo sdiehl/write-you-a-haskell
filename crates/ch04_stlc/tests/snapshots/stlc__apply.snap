@@ -1,0 +1,5 @@
+---
+source: crates/ch04_stlc/tests/stlc.rs
+expression: ty(source).to_string()
+---
+(Int -> Bool) -> Int -> Bool

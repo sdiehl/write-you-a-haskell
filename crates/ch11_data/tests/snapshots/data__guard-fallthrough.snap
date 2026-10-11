@@ -1,0 +1,6 @@
+---
+source: crates/ch11_data/tests/data.rs
+expression: dump
+---
+nonrec { f#9 : Maybe Int -> Int = (lambda $match#13 : Maybe Int (let nonrec { $scrut#32 : Maybe Int = $match#13; } in (match $scrut#32 [ (Just n#11) | (prim < n#11 0) -> 1 | (prim == n#11 0) -> 2  ] [ (Just n#12) -> n#12 ] [ (Nothing) -> 4 ]))); }
+nonrec { main#10 : (Int,Int,Int) = (app (app (app (lambda $field#33 : Int (lambda $field#34 : Int (lambda $field#35 : Int (con (,,) [Int] [Int] [Int] $field#33 $field#34 $field#35)))) (app @f#9 (app (lambda $field#36 : Int (con Just [Int] $field#36)) 9))) (app @f#9 (app (lambda $field#37 : Int (con Just [Int] $field#37)) 0))) (app @f#9 (con Nothing [Int]))); }

@@ -1,0 +1,15 @@
+---
+source: crates/ch09_rename/tests/compiler.rs
+expression: dump
+---
+main : Char
+nonrec { div#0 = (lambda $a#10 (lambda $b#11 (prim div $a#10 $b#11))); }
+nonrec { mod#1 = (lambda $a#12 (lambda $b#13 (prim mod $a#12 $b#13))); }
+nonrec { +#2 = (lambda $a#14 (lambda $b#15 (prim + $a#14 $b#15))); }
+nonrec { -#3 = (lambda $a#16 (lambda $b#17 (prim - $a#16 $b#17))); }
+nonrec { *#4 = (lambda $a#18 (lambda $b#19 (prim * $a#18 $b#19))); }
+nonrec { ++#5 = (lambda $a#20 (lambda $b#21 (prim ++ $a#20 $b#21))); }
+nonrec { ==#6 = (lambda $a#22 (lambda $b#23 (prim == $a#22 $b#23))); }
+nonrec { <#7 = (lambda $a#24 (lambda $b#25 (prim < $a#24 $b#25))); }
+nonrec { <=#8 = (lambda $a#26 (lambda $b#27 (prim <= $a#26 $b#27))); }
+nonrec { main#9 = 'λ'; }

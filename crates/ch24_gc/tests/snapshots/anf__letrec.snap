@@ -1,0 +1,19 @@
+---
+source: crates/ch24_gc/tests/anf.rs
+expression: text
+---
+main = rec f#956(n#958 : Int) = { let $a#7764 = call @==#49(@$fEq_0#1160);
+let $a#7766 = call $a#7764(n#958);
+let $scrut#1953 = call $a#7766(0);
+join $rhs#3534() = { let $a#7756 = call @-#61(@$fNum_3#1163);
+let $a#7758 = call $a#7756(n#958);
+let $a#7754 : Int = call $a#7758(1);
+tail g#957($a#7754) };
+join $rhs#3533() = { return 7 };
+case $scrut#1953 {
+True() -> { jump $rhs#3533() }
+False() -> { jump $rhs#3534() }
+_() -> { fail Span { file: FileId(0), start: 15, end: 42 } }
+} }
+rec g#957(n#959 : Int) = { tail f#956(n#959) }
+tail f#956(20)

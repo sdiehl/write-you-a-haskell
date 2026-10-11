@@ -1,0 +1,7 @@
+---
+source: crates/ch14_classes/tests/compiler.rs
+expression: dump
+---
+main : Int
+nonrec { x#552 : Int = 1; }
+nonrec { main#553 : Int = (let nonrec { x#554 : Int = 2; } in x#554); }

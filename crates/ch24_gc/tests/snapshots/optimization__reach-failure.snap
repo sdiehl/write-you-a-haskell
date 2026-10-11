@@ -1,0 +1,16 @@
+---
+source: crates/ch23_optimize/tests/optimization.rs
+expression: text
+---
+prim_strAppend <- $i15_<>
+prim_error <- error
+prim_putStr <- putStr
+<> <- putStrLn
+$i15_<> <- $fSemigroup_15
+$fSemigroup_15 <- putStrLn
+error <- unused
+putStr <- putStrLn
+putStrLn <- main
+unused <- root
+main <- root
+kept 11, dropped 401

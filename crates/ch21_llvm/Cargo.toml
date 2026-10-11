@@ -1,0 +1,39 @@
+[package]
+name = "ch21_llvm"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[[bin]]
+name = "fun-ch21"
+path = "src/main.rs"
+
+[dependencies]
+ariadne = "0.6"
+clap = { version = "4.5", features = ["derive"] }
+fun-rt = { package = "fun-rt-21", path = "rt" }
+inkwell = { version = "=0.10.0", default-features = false, features = [
+  "llvm22-1-prefer-dynamic",
+  "target-x86",
+  "target-aarch64",
+] }
+lalrpop-util = "0.23.1"
+logos = "0.16.1"
+marginalia = "0.4.0"
+offsides = "0.2.1"
+rustyline = "18"
+
+[build-dependencies]
+lalrpop = "0.23.1"
+
+[dev-dependencies]
+insta = "1.46"
+tempfile = "3"
+testkit = { path = "../../testkit" }
+
+[lints.rust]
+unsafe_code = "deny"
+
+[lints.clippy]
+all = "warn"

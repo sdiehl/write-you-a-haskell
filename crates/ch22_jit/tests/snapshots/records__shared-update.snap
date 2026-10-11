@@ -1,0 +1,8 @@
+---
+source: crates/ch22_jit/tests/records.rs
+expression: dump
+---
+nonrec { $i55_show#957 : P -> String = (lambda $match#1088 : P (let nonrec { $scrut#1961 : P = $match#1088; } in (match $scrut#1961 [ (P x#959 y#960) -> (app (app (app (type-app @<>#66 String) @$fSemigroup_15#1175) "P {x = ") (app (app (app (type-app @<>#66 String) @$fSemigroup_15#1175) (app (app (type-app @show#57 Int) @$fShow_2#1162) x#959)) (app (app (app (type-app @<>#66 String) @$fSemigroup_15#1175) ", y = ") (app (app (app (type-app @<>#66 String) @$fSemigroup_15#1175) (app (app (type-app @show#57 Int) @$fShow_2#1162) y#960)) "}")))) ]))); }
+nonrec { set#954 : P -> P = (lambda p#958 : P (let nonrec { $record#1955 : P = p#958; } in (match $record#1955 [ (P $field#1956 $field#1957) nonrec { $update#1958 : Int = 10; } -> (con P $update#1958 $field#1957) ]))); }
+nonrec { _old#955 : P = (app @set#954 (app (app (lambda $field#1959 : Int (lambda $field#1960 : Int (con P $field#1959 $field#1960))) 3) 4)); }
+nonrec { main#956 : () -> () = (app (app (type-app @print#104 P) @$fShow_55#1215) @_old#955); }

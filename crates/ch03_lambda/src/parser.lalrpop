@@ -1,0 +1,63 @@
+// adapted from sdiehl/compiler-crates/lalrpop/src/expression_logos.lalrpop
+use crate::ast::{Expr, Kind, Op};
+use crate::lexer::Token;
+use crate::diagnostic::Diagnostic;
+use lalrpop_util::ErrorRecovery;
+grammar(errors: &mut Vec<ErrorRecovery<usize, Token, Diagnostic>>);
+pub Expr: Expr = {
+    <l:@L> "let" <n:"identifier"> "=" <a:Expr> "in" <b:Expr> <r:@R>
+        => Expr::new(Kind::Let(n, Box::new(a), Box::new(b)), l, r),
+    <l:@L> "\\" <n:"identifier"> "->" <b:Expr> <r:@R>
+        => Expr::new(Kind::Lam(n, Box::new(b)), l, r),
+    <l:@L> "if" <c:Expr> "then" <a:Expr> "else" <b:Expr> <r:@R>
+        => Expr::new(Kind::If(Box::new(c), Box::new(a), Box::new(b)), l, r),
+    Comparison,
+};
+Comparison: Expr = {
+    <a:Sum> <op:CompareOp> <b:Sum> => Expr::binary(op, a, b),
+    Sum,
+};
+CompareOp: Op = { "==" => Op::Eq, "<" => Op::Lt, "<=" => Op::Le };
+Sum: Expr = {
+    <a:Sum> "+" <b:Product> => Expr::binary(Op::Add, a, b),
+    <a:Sum> "-" <b:Product> => Expr::binary(Op::Sub, a, b), Product,
+};
+Product: Expr = {
+    <a:Product> "*" <b:Unary> => Expr::binary(Op::Mul, a, b),
+    <a:Product> "/" <b:Unary> => Expr::binary(Op::Div, a, b), Unary,
+};
+Unary: Expr = {
+    <l:@L> "-" <a:Unary> <r:@R> => Expr::new(Kind::Neg(Box::new(a)), l, r),
+    Application,
+};
+// ANCHOR: application
+Application: Expr = {
+    <a:Application> <b:Atom> => {
+        let (start, end) = (a.span.start, b.span.end);
+        Expr::new(Kind::App(Box::new(a), Box::new(b)), start, end)
+    },
+    Atom,
+};
+// ANCHOR_END: application
+Atom: Expr = {
+    <l:@L> <n:"integer"> <r:@R> => Expr::new(Kind::Int(n), l, r),
+    <l:@L> <n:"identifier"> <r:@R> => Expr::new(Kind::Var(n), l, r),
+    <l:@L> "True" <r:@R> => Expr::new(Kind::Bool(true), l, r),
+    <l:@L> "False" <r:@R> => Expr::new(Kind::Bool(false), l, r),
+    <l:@L> "(" <mut a:Expr> ")" <r:@R> => { a.span = l..r; a },
+    <l:@L> <error:!> <r:@R> => { errors.push(error); Expr::new(Kind::Error, l, r) },
+};
+extern {
+    type Location = usize; type Error = Diagnostic;
+    enum Token {
+        "let" => Token::Let, "in" => Token::In,
+        "\\" => Token::Lambda, "->" => Token::Arrow,
+        "if" => Token::If, "then" => Token::Then, "else" => Token::Else,
+        "True" => Token::True, "False" => Token::False,
+        "==" => Token::Eq, "<" => Token::Lt, "<=" => Token::Le,
+        "+" => Token::Plus, "-" => Token::Minus,
+        "*" => Token::Star, "/" => Token::Slash,
+        "=" => Token::Equals, "(" => Token::Left, ")" => Token::Right,
+        "integer" => Token::Int(<i64>), "identifier" => Token::Ident(<String>),
+    }
+}

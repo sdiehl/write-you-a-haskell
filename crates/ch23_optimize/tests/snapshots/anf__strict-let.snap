@@ -1,0 +1,6 @@
+---
+source: crates/ch23_optimize/tests/anf.rs
+expression: text
+---
+main = let x#956 : Int = call @error#97("unused");
+return 42

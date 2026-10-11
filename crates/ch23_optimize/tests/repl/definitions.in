@@ -1,0 +1,14 @@
+id x = x
+base = 40
+make x = \y -> x + y
+saved = make base
+id (saved 2)
+:t saved
+:k Maybe
+:k Maybe Int
+data Box a = Box a deriving (Show)
+Box (saved 3)
+wide a b c d e f g h i j = a + b + c + d + e + f + g + h + i + j
+wide 1 2 3 4 5 6 7 8 9 10
+:engine
+:quit

@@ -1,0 +1,13 @@
+---
+source: crates/ch24_gc/tests/anf.rs
+expression: text
+---
+main#955 = let $a#7744 = closure f403[];
+let $a#7751 = closure f404[];
+let $a#7745 = call f403[$a#7744]($a#7751);
+let $a#7747 = apply $a#7745(10);
+tail-apply $a#7747(3)
+f403 $a#7744 captures=[] = return f#956
+f404 $a#7751 captures=[] = let $a#7753 = call f61[](@$fNum_3#1162);
+let $a#7755 = apply $a#7753(x#957);
+tail-apply $a#7755(y#958)

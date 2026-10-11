@@ -1,0 +1,22 @@
+---
+source: crates/ch23_optimize/tests/anf.rs
+expression: text
+---
+f#955 = return @f#955
+f403 f#955 captures=[] = join $rhs#3534(x#958 : Int) = { return x#958 };
+join $fail#3536() = { jump $rhs#3534($match#1086) };
+join $rhs#3533(x#957 : Int) = { let $a#7762 = call f52[](@$fOrd_1#1161);
+let $a#7764 = apply $a#7762(x#957);
+let $case#3538 = apply $a#7764(0);
+case $case#3538 {
+True() -> { return 0 }
+_() -> { let $a#7754 = call f54[](@$fOrd_1#1161);
+let $a#7756 = apply $a#7754(x#957);
+let $case#3537 = apply $a#7756(10);
+case $case#3537 {
+True() -> { return 10 }
+_() -> { jump $fail#3536() }
+} }
+} };
+jump $rhs#3533($match#1086)
+main#956 = tail f403[](3)

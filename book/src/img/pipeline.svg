@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="740" height="400" viewBox="0 0 740 400">
+<title>Fun compiler pipeline and interpreters</title>
+<defs><marker id="a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#426577"/></marker></defs>
+<rect width="740" height="400" fill="#f8fafb" rx="8"/>
+<g font-family="sans-serif" font-size="15" text-anchor="middle" fill="#203946">
+<text x="370" y="30" font-size="13">THE PLANNED COMPILER · Chapters 7–23</text>
+<g fill="white" stroke="#b8c9d1"><rect x="25" y="55" width="200" height="65" rx="4"/><rect x="270" y="55" width="200" height="65" rx="4"/><rect x="515" y="55" width="200" height="65" rx="4"/><rect x="515" y="170" width="200" height="65" rx="4"/><rect x="270" y="170" width="200" height="65" rx="4"/><rect x="25" y="170" width="200" height="65" rx="4"/><rect x="25" y="285" width="200" height="65" rx="4"/><rect x="270" y="285" width="200" height="65" rx="4"/><rect x="515" y="285" width="200" height="65" rx="4"/></g>
+<text x="125" y="81">Source → tokens</text><text x="125" y="103" font-size="12">logos · dot · trivia · layout</text>
+<text x="370" y="81">Surface AST</text><text x="370" y="103" font-size="12">LALRPOP · fixity · rename</text>
+<text x="615" y="81">Syn → Typed Syn</text><text x="615" y="103" font-size="12">desugar · kinds · typecheck</text>
+<text x="615" y="196">System F Core</text><text x="615" y="218" font-size="12">elaborate · match · lint</text>
+<text x="370" y="196">ANF</text><text x="370" y="218" font-size="12">erase · normalize · simplify</text>
+<text x="125" y="196">Flat IR</text><text x="125" y="218" font-size="12">closure conversion</text>
+<text x="125" y="311">LLVM</text><text x="125" y="333" font-size="12">inkwell · verify · optimize</text>
+<text x="370" y="311">Native executable</text><text x="370" y="333" font-size="12">object · cc · Rust runtime · GC</text>
+<text x="615" y="311">Semantic oracles</text><text x="615" y="333" font-size="12">Core · ANF · Flat · JIT</text>
+</g><g stroke="#426577" fill="none" stroke-width="1.5" marker-end="url(#a)"><path d="M225 87H263"/><path d="M470 87H508"/><path d="M615 120V163"/><path d="M515 202H477"/><path d="M270 202H232"/><path d="M125 235V278"/><path d="M225 317H263"/></g>
+<text x="370" y="383" font-family="sans-serif" font-size="12" text-anchor="middle" fill="#426577">Compare stdout bytes, first stderr line, and exit status across engines.</text>
+</svg>

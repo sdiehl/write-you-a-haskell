@@ -1,0 +1,7 @@
+---
+source: crates/ch15_io/tests/compiler.rs
+expression: dump
+---
+main : Int
+nonrec { id#675 : forall t200. t200 -> t200 = (type-lambda t200 (lambda x#677 : t200 x#677)); }
+nonrec { main#676 : Int = (app (type-app @id#675 Int) 42); }

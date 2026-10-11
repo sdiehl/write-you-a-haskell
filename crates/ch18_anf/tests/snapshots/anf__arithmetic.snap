@@ -1,0 +1,10 @@
+---
+source: crates/ch18_anf/tests/anf.rs
+expression: text
+---
+main = let $a#7728 = call @*#61(@$fNum_3#1153);
+let $a#7735 = call @+#59(@$fNum_3#1153);
+let $a#7737 = call $a#7735(1);
+let $a#7733 = call $a#7737(2);
+let $a#7730 = call $a#7728($a#7733);
+tail $a#7730(3)

@@ -1,0 +1,17 @@
+---
+source: crates/ch23_optimize/tests/kinds.rs
+expression: "format!(\"{kinds}\\n{groups}\")"
+---
+IO :: * -> *
+Bool :: *
+Ordering :: *
+Maybe :: * -> *
+Either :: * -> * -> *
+[] :: * -> *
+() :: *
+(,) :: * -> * -> *
+(,,) :: * -> * -> * -> *
+(->) :: * -> * -> *
+nonrec { sum#955 : (Int,Int) -> Int = (lambda $match#1087 : (Int,Int) (let nonrec { $scrut#1954 : (Int,Int) = $match#1087; } in (match $scrut#1954 [ ((,) x#958 y#959) -> (app (app (app (type-app @+#60 Int) @$fNum_3#1164) x#958) y#959) ]))); }
+nonrec { _old#956 : Int = (app @sum#955 (app (app (lambda $field#1955 : Int (lambda $field#1956 : Int (con (,) [Int] [Int] $field#1955 $field#1956))) 20) 22)); }
+nonrec { main#957 : () -> () = (app (app (type-app @print#106 Int) @$fShow_2#1163) @_old#956); }

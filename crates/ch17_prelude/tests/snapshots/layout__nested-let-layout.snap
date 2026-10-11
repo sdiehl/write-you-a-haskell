@@ -1,0 +1,30 @@
+---
+source: crates/ch15_io/tests/layout.rs
+expression: "String::from_utf8(output.stdout).unwrap()"
+---
+0..0: Open
+0..4: Ident("_old")
+5..6: Equals
+7..10: Let
+11..11: Open
+11..12: Ident("x")
+13..14: Equals
+15..18: Let
+19..19: Open
+19..20: Ident("y")
+21..22: Equals
+23..25: Int(40)
+26..26: Close
+26..28: In
+29..30: Ident("y")
+31..31: Close
+31..33: In
+34..35: Ident("x")
+36..37: Plus
+38..39: Int(2)
+39..39: Semi
+41..45: Ident("main")
+46..47: Equals
+48..53: Ident("print")
+54..58: Ident("_old")
+58..58: Close

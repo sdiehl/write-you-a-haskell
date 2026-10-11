@@ -1,0 +1,6 @@
+---
+source: crates/ch14_classes/tests/records.rs
+expression: dump
+---
+nonrec { get#552 : P -> Int = (lambda p#554 : P (let nonrec { $record#1188 : P = p#554; } in (match $record#1188 [ (P $field#1189 $field#1190) -> $field#1189 ]))); }
+nonrec { main#553 : Int = (app @get#552 (app (app (lambda $field#1191 : Int (lambda $field#1192 : Int (con P $field#1191 $field#1192))) 3) 4)); }

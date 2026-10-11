@@ -1,0 +1,6 @@
+---
+source: crates/ch23_optimize/tests/compiler.rs
+expression: dump
+---
+main : Int
+nonrec { main#955 : Int = (let nonrec { id#956 : forall t381. t381 -> t381 = (type-lambda t381 (lambda x#957 : t381 x#957)); } in (app (type-app id#956 Int) 3)); }

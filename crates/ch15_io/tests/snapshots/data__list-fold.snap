@@ -1,0 +1,7 @@
+---
+source: crates/ch15_io/tests/data.rs
+expression: dump
+---
+rec { foldr#675 : forall t200. forall t201. (t201 -> t200 -> t200) -> t200 -> [t201] -> t200 = (type-lambda t200 (type-lambda t201 (lambda $match#758 : t201 -> t200 -> t200 (lambda $match#759 : t200 (lambda $match#760 : [t201] (let nonrec { $scrut#1460 : t201 -> t200 -> t200 = $match#758; } in (let nonrec { $scrut#1461 : t200 = $match#759; } in (let nonrec { $scrut#1462 : [t201] = $match#760; } in (match $scrut#1460 $scrut#1461 $scrut#1462 [ f#678 z#679 ([]) -> z#679 ] [ f#680 z#681 (: x#682 xs#683) -> (app (app f#680 x#682) (app (app (app (type-app (type-app @foldr#675 t200) t201) f#680) z#681) xs#683)) ]))))))))); }
+nonrec { _old#676 : Int = (app (app (app (type-app (type-app @foldr#675 Int) Int) (app (type-app @+#58 Int) @$fNum_3#835)) 0) (app (app (lambda $field#1463 : Int (lambda $field#1464 : [Int] (con : [Int] $field#1463 $field#1464))) 1) (app (app (lambda $field#1465 : Int (lambda $field#1466 : [Int] (con : [Int] $field#1465 $field#1466))) 2) (app (app (lambda $field#1467 : Int (lambda $field#1468 : [Int] (con : [Int] $field#1467 $field#1468))) 3) (app (app (lambda $field#1469 : Int (lambda $field#1470 : [Int] (con : [Int] $field#1469 $field#1470))) 4) (con [] [Int])))))); }
+nonrec { main#677 : () -> () = (app (app (type-app @print#103 Int) @$fShow_2#834) @_old#676); }

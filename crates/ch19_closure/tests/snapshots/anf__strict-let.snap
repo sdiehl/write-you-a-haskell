@@ -1,0 +1,6 @@
+---
+source: crates/ch18_anf/tests/anf.rs
+expression: text
+---
+main = let x#952 = call @error#96("unused");
+return 42

@@ -1,0 +1,15 @@
+---
+source: crates/ch10_core/tests/compiler.rs
+expression: dump
+---
+main : Int
+nonrec { div#0 : Int -> Int -> Int = (lambda $a#10 : Int (lambda $b#11 : Int (prim div $a#10 $b#11))); }
+nonrec { mod#1 : Int -> Int -> Int = (lambda $a#12 : Int (lambda $b#13 : Int (prim mod $a#12 $b#13))); }
+nonrec { +#2 : Int -> Int -> Int = (lambda $a#14 : Int (lambda $b#15 : Int (prim + $a#14 $b#15))); }
+nonrec { -#3 : Int -> Int -> Int = (lambda $a#16 : Int (lambda $b#17 : Int (prim - $a#16 $b#17))); }
+nonrec { *#4 : Int -> Int -> Int = (lambda $a#18 : Int (lambda $b#19 : Int (prim * $a#18 $b#19))); }
+nonrec { ++#5 : String -> String -> String = (lambda $a#20 : String (lambda $b#21 : String (prim ++ $a#20 $b#21))); }
+nonrec { ==#6 : Int -> Int -> Bool = (lambda $a#22 : Int (lambda $b#23 : Int (prim == $a#22 $b#23))); }
+nonrec { <#7 : Int -> Int -> Bool = (lambda $a#24 : Int (lambda $b#25 : Int (prim < $a#24 $b#25))); }
+nonrec { <=#8 : Int -> Int -> Bool = (lambda $a#26 : Int (lambda $b#27 : Int (prim <= $a#26 $b#27))); }
+nonrec { main#9 : Int = (prim + 1 (prim * 2 3)); }

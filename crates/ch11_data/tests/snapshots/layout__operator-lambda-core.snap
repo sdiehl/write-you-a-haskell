@@ -1,0 +1,15 @@
+---
+source: crates/ch11_data/tests/layout.rs
+expression: "String::from_utf8(output.stdout).unwrap()"
+---
+nonrec { div#0 : Int -> Int -> Int = (lambda $a#15 : Int (lambda $b#16 : Int (prim div $a#15 $b#16))); }
+nonrec { mod#1 : Int -> Int -> Int = (lambda $a#17 : Int (lambda $b#18 : Int (prim mod $a#17 $b#18))); }
+nonrec { +#2 : Int -> Int -> Int = (lambda $a#19 : Int (lambda $b#20 : Int (prim + $a#19 $b#20))); }
+nonrec { -#3 : Int -> Int -> Int = (lambda $a#21 : Int (lambda $b#22 : Int (prim - $a#21 $b#22))); }
+nonrec { *#4 : Int -> Int -> Int = (lambda $a#23 : Int (lambda $b#24 : Int (prim * $a#23 $b#24))); }
+nonrec { ++#5 : String -> String -> String = (lambda $a#25 : String (lambda $b#26 : String (prim ++ $a#25 $b#26))); }
+nonrec { ==#6 : Int -> Int -> Bool = (lambda $a#27 : Int (lambda $b#28 : Int (prim == $a#27 $b#28))); }
+nonrec { <#7 : Int -> Int -> Bool = (lambda $a#29 : Int (lambda $b#30 : Int (prim < $a#29 $b#30))); }
+nonrec { <=#8 : Int -> Int -> Bool = (lambda $a#31 : Int (lambda $b#32 : Int (prim <= $a#31 $b#32))); }
+nonrec { $#9 : forall t13. forall t14. (t13 -> t14) -> t13 -> t14 = (type-lambda t13 (type-lambda t14 (lambda f#11 : t13 -> t14 (lambda x#12 : t13 (app f#11 x#12))))); }
+nonrec { main#10 : Int = (app (app (type-app (type-app @$#9 Int -> Int) Int) (lambda f#13 : Int -> Int (app f#13 42))) (lambda x#14 : Int x#14)); }

@@ -1,0 +1,9 @@
+---
+source: crates/ch14_classes/tests/classes.rs
+expression: "format!(\"{declarations}\\n{groups}\")"
+---
+$MkDC (t0 -> Int) -> $DC t0
+nonrec { value#0 : forall t1. $DC t1 -> t1 -> Int = (type-lambda t1 (lambda $given#5 : $DC t1 (let nonrec { $dictionary#6 : $DC t1 = $given#5; } in (match $dictionary#6 [ ($MkDC $slot0#7) -> $slot0#7 ])))); }
+nonrec { $i0_value#2 : Int -> Int = (lambda x#3 : Int x#3); }
+nonrec { $fC_0#4 : $DC Int = (con $MkDC [Int] @$i0_value#2); }
+nonrec { main#1 : Int = (app (app (type-app @value#0 Int) @$fC_0#4) 42); }

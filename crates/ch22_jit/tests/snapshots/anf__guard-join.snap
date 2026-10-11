@@ -1,0 +1,22 @@
+---
+source: crates/ch22_jit/tests/anf.rs
+expression: text
+---
+f = let $a#7756 = lambda ($match#1082) { join $rhs#3528(x#954) = { return x#954 };
+join $fail#3530() = { jump $rhs#3528($match#1082) };
+join $rhs#3527(x#953) = { let $a#7748 = call @<#51(@$fOrd_1#1155);
+let $a#7750 = call $a#7748(x#953);
+let $case#3532 = call $a#7750(0);
+case $case#3532 {
+True() -> { return 0 }
+_() -> { let $a#7740 = call @>#53(@$fOrd_1#1155);
+let $a#7742 = call $a#7740(x#953);
+let $case#3531 = call $a#7742(10);
+case $case#3531 {
+True() -> { return 10 }
+_() -> { jump $fail#3530() }
+} }
+} };
+jump $rhs#3527($match#1082) };
+return $a#7756
+main = tail @f#951(3)

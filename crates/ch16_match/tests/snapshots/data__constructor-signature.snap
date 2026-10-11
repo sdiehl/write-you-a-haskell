@@ -1,0 +1,7 @@
+---
+source: crates/ch15_io/tests/data.rs
+expression: dump
+---
+nonrec { keep#675 : forall t200. Maybe t200 -> Maybe t200 = (type-lambda t200 (lambda x#678 : Maybe t200 x#678)); }
+nonrec { _old#676 : (Maybe Int,Maybe Bool) = (app (app (lambda $field#1452 : Maybe Int (lambda $field#1453 : Maybe Bool (con (,) [Maybe Int] [Maybe Bool] $field#1452 $field#1453))) (app (type-app @keep#675 Int) (app (lambda $field#1454 : Int (con Just [Int] $field#1454)) 1))) (app (type-app @keep#675 Bool) (app (lambda $field#1455 : Bool (con Just [Bool] $field#1455)) (con True)))); }
+nonrec { main#677 : () -> () = (app (app (type-app @print#103 (Maybe Int,Maybe Bool)) (app (app (type-app (type-app @$fShow_39#863 Maybe Int) Maybe Bool) (app (type-app @$fShow_33#857 Int) @$fShow_2#826)) (app (type-app @$fShow_33#857 Bool) @$fShow_19#843))) @_old#676); }

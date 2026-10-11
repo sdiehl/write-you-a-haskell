@@ -1,0 +1,26 @@
+name: Native compiler dependencies
+description: LLVM 22 and Boehm for the host compiler
+runs:
+  using: composite
+  steps:
+    - name: LLVM and Boehm on Linux
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc > /dev/null
+        echo 'deb https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main' | sudo tee /etc/apt/sources.list.d/llvm22.list
+        sudo apt-get update
+        sudo apt-get install -y llvm-22-dev libgc-dev
+        echo 'LLVM_SYS_221_PREFIX=/usr/lib/llvm-22' >> "$GITHUB_ENV"
+    - name: LLVM and Boehm on macOS
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        brew install llvm@22 bdw-gc
+        echo "LLVM_SYS_221_PREFIX=$(brew --prefix llvm@22)" >> "$GITHUB_ENV"
+    - name: Build the native runtimes and record native link flags
+      shell: bash
+      run: |
+        for chapter in 20 21 22 23 24; do
+          python3 scripts/build_runtime.py "$chapter"
+        done

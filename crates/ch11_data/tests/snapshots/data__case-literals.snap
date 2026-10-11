@@ -1,0 +1,8 @@
+---
+source: crates/ch11_data/tests/data.rs
+expression: dump
+---
+nonrec { f#9 : String -> Int = (lambda $match#13 : String (let nonrec { $scrut#34 : String = $match#13; } in (match $scrut#34 [ "hello" -> 1 ] [ _ -> 2 ]))); }
+nonrec { g#10 : Char -> Int = (lambda $match#14 : Char (let nonrec { $scrut#35 : Char = $match#14; } in (match $scrut#35 [ 'λ' -> 3 ] [ _ -> 4 ]))); }
+nonrec { h#11 : Int -> Int = (lambda $match#15 : Int (let nonrec { $scrut#36 : Int = $match#15; } in (match $scrut#36 [ -2 -> 5 ] [ _ -> 6 ]))); }
+nonrec { main#12 : (Int,Int,Int) = (app (app (app (lambda $field#37 : Int (lambda $field#38 : Int (lambda $field#39 : Int (con (,,) [Int] [Int] [Int] $field#37 $field#38 $field#39)))) (app @f#9 "no")) (app @g#10 'λ')) (app @h#11 (prim - 0 2))); }

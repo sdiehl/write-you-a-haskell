@@ -1,0 +1,6 @@
+---
+source: crates/ch17_prelude/tests/compiler.rs
+expression: dump
+---
+main : String
+nonrec { main#951 : String = (app (app (app (type-app @<>#66 String) @$fSemigroup_15#1165) "a") "b"); }

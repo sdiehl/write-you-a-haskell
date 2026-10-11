@@ -1,0 +1,76 @@
+[workspace]
+members = [
+  "crates/ch02_calc",
+  "crates/ch03_lambda",
+  "crates/ch04_stlc",
+  "crates/ch05_eval",
+  "crates/ch06_poly",
+  "crates/ch07_fun",
+  "crates/ch08_layout",
+  "crates/ch09_rename",
+  "crates/ch10_core",
+  "crates/ch11_data",
+  "crates/ch12_records",
+  "crates/ch13_kinds",
+  "crates/ch14_classes",
+  "crates/ch15_io",
+  "crates/ch16_match",
+  "crates/ch17_prelude",
+  "crates/ch18_anf",
+  "crates/ch19_closure",
+  "crates/ch20_runtime",
+  "crates/ch20_runtime/rt",
+  "crates/ch21_llvm",
+  "crates/ch21_llvm/rt",
+  "crates/ch22_jit",
+  "crates/ch22_jit/rt",
+  "crates/ch23_optimize",
+  "crates/ch23_optimize/rt",
+  "crates/ch24_gc",
+  "crates/ch24_gc/rt",
+  "testkit",
+  "xtask",
+]
+exclude = [".references"]
+resolver = "3"
+
+[workspace.package]
+authors = ["Stephen Diehl"]
+edition = "2024"
+license = "MIT"
+rust-version = "1.99"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+all = "warn"
+
+# Keep the ten-million-step machine regression practical without disabling checks.
+[profile.test.package.ch18_anf]
+opt-level = 1
+
+[profile.test.package.ch19_closure]
+opt-level = 1
+
+[profile.test.package.ch20_runtime]
+opt-level = 1
+
+[profile.test.package.ch21_llvm]
+opt-level = 1
+
+[profile.test.package.ch22_jit]
+opt-level = 1
+
+[profile.test.package.ch23_optimize]
+opt-level = 1
+
+[profile.test.package.ch24_gc]
+opt-level = 1
+
+# Collection-at-every-allocation exercises millions of runtime calls in debug builds.
+[profile.dev.package.fun-rt-24]
+opt-level = 2
+
+[profile.test.package.fun-rt-24]
+opt-level = 2

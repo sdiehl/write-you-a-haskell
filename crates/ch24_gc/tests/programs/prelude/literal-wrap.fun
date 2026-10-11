@@ -1,0 +1,3 @@
+f (-4611686018427387904) = True
+f _ = False
+main = print (4611686018427387904, f 4611686018427387904, 0x7fffffffffffffff)

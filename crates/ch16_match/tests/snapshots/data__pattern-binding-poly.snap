@@ -1,0 +1,9 @@
+---
+source: crates/ch15_io/tests/data.rs
+expression: dump
+---
+nonrec { $pattern0#675 : forall t200. forall t201. (t200 -> t200,(t201 -> t201,())) = (type-lambda t200 (type-lambda t201 (let nonrec { $scrut#1459 : (t200 -> t200,t201 -> t201) = (app (app (lambda $field#1460 : t200 -> t200 (lambda $field#1461 : t201 -> t201 (con (,) [t200 -> t200] [t201 -> t201] $field#1460 $field#1461))) (lambda x#680 : t200 x#680)) (lambda y#681 : t201 y#681)); } in (match $scrut#1459 [ ((,) f#682 g#683) -> (app (app (lambda $field#1462 : t200 -> t200 (lambda $field#1463 : (t201 -> t201,()) (con (,) [t200 -> t200] [(t201 -> t201,())] $field#1462 $field#1463))) f#682) (app (app (lambda $field#1464 : t201 -> t201 (lambda $field#1465 : () (con (,) [t201 -> t201] [()] $field#1464 $field#1465))) g#683) (con ()))) ])))); }
+nonrec { f#676 : forall t202. t202 -> t202 = (type-lambda t202 (let nonrec { $scrut#1466 : (t202 -> t202,(Int -> Int,())) = (type-app (type-app @$pattern0#675 t202) Int); } in (match $scrut#1466 [ ((,) $selected#684 ((,) _ (()))) -> $selected#684 ]))); }
+nonrec { g#677 : forall t203. t203 -> t203 = (type-lambda t203 (let nonrec { $scrut#1467 : (Int -> Int,(t203 -> t203,())) = (type-app (type-app @$pattern0#675 Int) t203); } in (match $scrut#1467 [ ((,) _ ((,) $selected#685 (()))) -> $selected#685 ]))); }
+nonrec { _old#678 : (Int,Bool,Char) = (app (app (app (lambda $field#1468 : Int (lambda $field#1469 : Bool (lambda $field#1470 : Char (con (,,) [Int] [Bool] [Char] $field#1468 $field#1469 $field#1470)))) (app (type-app @f#676 Int) 1)) (app (type-app @f#676 Bool) (con True))) (app (type-app @g#677 Char) 'x')); }
+nonrec { main#679 : () -> () = (app (app (type-app @print#103 (Int,Bool,Char)) (app (app (app (type-app (type-app (type-app @$fShow_42#873 Int) Bool) Char) @$fShow_2#833) @$fShow_19#850) @$fShow_11#842)) @_old#678); }

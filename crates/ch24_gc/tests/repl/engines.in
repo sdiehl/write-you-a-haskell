@@ -1,0 +1,12 @@
+f x = x + 1
+:engine flat
+f 41
+:engine anf
+f 41
+:engine core
+f 41
+:engine jit
+f 41
+:reset
+:k IO
+:quit

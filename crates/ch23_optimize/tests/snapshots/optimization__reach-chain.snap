@@ -1,0 +1,42 @@
+---
+source: crates/ch23_optimize/tests/optimization.rs
+expression: text
+---
+prim_intEq <- $i1_compare
+prim_intLt <- $i1_compare
+prim_strAppend <- $i15_<>
+prim_strUnpack <- _showArg
+prim_showInt <- $i2_show
+prim_putStr <- putStr
+== <- $i0_/=
+compare <- $i1_<
+< <- $i1_>
+<= <- $i1_>=
+> <- $i2__showsPrec
+show <- print
+<> <- putStrLn
+$i0_== <- $fEq_0
+$fEq_0 <- $fOrd_1
+$i0_/= <- $fEq_0
+$i1_compare <- $fOrd_1
+$fOrd_1 <- $i2__showsPrec
+$i1_< <- $fOrd_1
+$i1_<= <- $fOrd_1
+$i1_> <- $fOrd_1
+$i1_>= <- $fOrd_1
+$i1_max <- $fOrd_1
+$i1_min <- $fOrd_1
+$i2_show <- $fShow_2
+_hasSpace <- _showArg
+$i15_<> <- $fSemigroup_15
+$fSemigroup_15 <- putStrLn
+_showArg <- $i2__showsPrec
+$fShow_2 <- main
+$i2__showsPrec <- $fShow_2
+putStr <- putStrLn
+putStrLn <- print
+print <- main
+leaf <- mid
+mid <- main
+main <- root
+kept 37, dropped 377

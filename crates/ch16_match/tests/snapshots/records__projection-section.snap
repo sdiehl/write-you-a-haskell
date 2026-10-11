@@ -1,0 +1,7 @@
+---
+source: crates/ch15_io/tests/records.rs
+expression: dump
+---
+rec { map#675 : forall t200. forall t201. (t201 -> t200) -> [t201] -> [t200] = (type-lambda t200 (type-lambda t201 (lambda $match#757 : t201 -> t200 (lambda $match#758 : [t201] (let nonrec { $scrut#1458 : t201 -> t200 = $match#757; } in (let nonrec { $scrut#1459 : [t201] = $match#758; } in (match $scrut#1458 $scrut#1459 [ f#678 ([]) -> (con [] [t200]) ] [ f#679 (: x#680 xs#681) -> (app (app (lambda $field#1460 : t200 (lambda $field#1461 : [t200] (con : [t200] $field#1460 $field#1461))) (app f#679 x#680)) (app (app (type-app (type-app @map#675 t200) t201) f#679) xs#681)) ]))))))); }
+nonrec { _old#676 : [Int] = (app (app (type-app (type-app @map#675 Int) P) (lambda $section0#682 : P (let nonrec { $record#1462 : P = $section0#682; } in (match $record#1462 [ (P $field#1463 $field#1464) -> $field#1463 ])))) (app (app (lambda $field#1465 : P (lambda $field#1466 : [P] (con : [P] $field#1465 $field#1466))) (app (app (lambda $field#1467 : Int (lambda $field#1468 : Int (con P $field#1467 $field#1468))) 3) 4)) (app (app (lambda $field#1469 : P (lambda $field#1470 : [P] (con : [P] $field#1469 $field#1470))) (app (app (lambda $field#1471 : Int (lambda $field#1472 : Int (con P $field#1471 $field#1472))) 5) 6)) (con [] [P])))); }
+nonrec { main#677 : () -> () = (app (app (type-app @print#103 [Int]) (app (type-app @$fShow_28#858 Int) @$fShow_2#832)) @_old#676); }

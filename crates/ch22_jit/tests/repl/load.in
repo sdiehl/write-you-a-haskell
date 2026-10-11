@@ -1,0 +1,6 @@
+:load tests/repl/load.fun
+origin.x
+main
+:load tests/repl/missing.fun
+origin.x
+:quit

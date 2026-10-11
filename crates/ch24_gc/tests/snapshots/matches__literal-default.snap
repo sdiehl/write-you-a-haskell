@@ -1,0 +1,6 @@
+---
+source: crates/ch24_gc/tests/matches.rs
+expression: "support::dump(source, &after)"
+---
+nonrec { f#955 : Int -> Int = (lambda $match#1085 : Int (let nonrec { $scrut#1952 : Int = $match#1085; } in (join $rhs#3534 ( x#957 : Int) = x#957 in (join $rhs#3533 () = 3 in (join $rhs#3532 () = 1 in (case $scrut#1952 as $case#3538 : Int -> Int [ Lit(Int(0)) -> (jump $rhs#3532 : Int) ] [ Lit(Int(2)) -> (jump $rhs#3533 : Int) ] [ Default -> (jump $rhs#3534 : Int $scrut#1952) ])))))); }
+nonrec { main#956 : Int = (app @f#955 42); }

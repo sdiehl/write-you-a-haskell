@@ -1,0 +1,9 @@
+---
+source: crates/ch23_optimize/tests/data.rs
+expression: dump
+---
+nonrec { f#955 : String -> Int = (lambda $match#1087 : String (let nonrec { $scrut#1956 : String = $match#1087; } in (match $scrut#1956 [ "hello" -> 1 ] [ _ -> 2 ]))); }
+nonrec { g#956 : Char -> Int = (lambda $match#1088 : Char (let nonrec { $scrut#1957 : Char = $match#1088; } in (match $scrut#1957 [ 'λ' -> 3 ] [ _ -> 4 ]))); }
+nonrec { h#957 : Int -> Int = (lambda $match#1089 : Int (let nonrec { $scrut#1958 : Int = $match#1089; } in (match $scrut#1958 [ -2 -> 5 ] [ _ -> 6 ]))); }
+nonrec { _old#958 : (Int,Int,Int) = (app (app (app (lambda $field#1959 : Int (lambda $field#1960 : Int (lambda $field#1961 : Int (con (,,) [Int] [Int] [Int] $field#1959 $field#1960 $field#1961)))) (app @f#955 "no")) (app @g#956 'λ')) (app @h#957 (app (app (type-app @negate#63 Int) @$fNum_3#1166) 2))); }
+nonrec { main#959 : () -> () = (app (app (type-app @print#106 (Int,Int,Int)) (app (app (app (type-app (type-app (type-app @$fShow_42#1205 Int) Int) Int) @$fShow_2#1165) @$fShow_2#1165) @$fShow_2#1165)) @_old#958); }

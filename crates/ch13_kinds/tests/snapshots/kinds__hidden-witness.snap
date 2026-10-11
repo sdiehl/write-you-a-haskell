@@ -1,0 +1,16 @@
+---
+source: crates/ch13_kinds/tests/kinds.rs
+expression: "format!(\"{kinds}\\n{groups}\")"
+---
+Bool :: *
+Ordering :: *
+Maybe :: * -> *
+Either :: * -> * -> *
+[] :: * -> *
+() :: *
+(,) :: * -> * -> *
+(,,) :: * -> * -> * -> *
+Hold :: (* -> *) -> *
+(->) :: * -> * -> *
+nonrec { ignore#9 : forall t14. t14 -> Int = (type-lambda t14 (lambda x#11 : t14 42)); }
+nonrec { main#10 : Int = (app (type-app @ignore#9 $witness4 Int -> Hold $witness4) (lambda $field#30 : $witness4 Int (con Hold [$witness4] $field#30))); }

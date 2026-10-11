@@ -1,0 +1,6 @@
+---
+source: crates/ch14_classes/tests/records.rs
+expression: dump
+---
+nonrec { get#552 : forall t123. Box t123 -> t123 = (type-lambda t123 (lambda b#554 : Box t123 (let nonrec { $record#1188 : Box t123 = b#554; } in (match $record#1188 [ (Box $field#1189) -> $field#1189 ])))); }
+nonrec { main#553 : (Int,Bool,Box String) = (app (app (app (lambda $field#1190 : Int (lambda $field#1191 : Bool (lambda $field#1192 : Box String (con (,,) [Int] [Bool] [Box String] $field#1190 $field#1191 $field#1192)))) (app (type-app @get#552 Int) (app (lambda $field#1193 : Int (con Box [Int] $field#1193)) 3))) (app (type-app @get#552 Bool) (app (lambda $field#1194 : Bool (con Box [Bool] $field#1194)) (con True)))) (let nonrec { $field#1195 : String = "hi"; } in (con Box [String] $field#1195))); }

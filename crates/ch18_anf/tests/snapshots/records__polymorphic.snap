@@ -1,0 +1,8 @@
+---
+source: crates/ch18_anf/tests/records.rs
+expression: dump
+---
+nonrec { $i55_show#957 : forall t280. $DShow t280 -> Box t280 -> String = (type-lambda t280 (lambda $given#1964 : $DShow t280 (lambda $match#1087 : Box t280 (let nonrec { $scrut#1965 : Box t280 = $match#1087; } in (match $scrut#1965 [ (Box x#959) -> (app (app (app (type-app @<>#66 String) @$fSemigroup_15#1174) "Box {value = ") (app (app (app (type-app @<>#66 String) @$fSemigroup_15#1174) (app (app (type-app @show#57 t280) $given#1964) x#959)) "}")) ]))))); }
+nonrec { get#954 : forall t279. Box t279 -> t279 = (type-lambda t279 (lambda b#958 : Box t279 (let nonrec { $record#1956 : Box t279 = b#958; } in (match $record#1956 [ (Box $field#1957) -> $field#1957 ])))); }
+nonrec { _old#955 : (Int,Bool,Box String) = (app (app (app (lambda $field#1958 : Int (lambda $field#1959 : Bool (lambda $field#1960 : Box String (con (,,) [Int] [Bool] [Box String] $field#1958 $field#1959 $field#1960)))) (app (type-app @get#954 Int) (app (lambda $field#1961 : Int (con Box [Int] $field#1961)) 3))) (app (type-app @get#954 Bool) (app (lambda $field#1962 : Bool (con Box [Bool] $field#1962)) (con True)))) (let nonrec { $field#1963 : String = "hi"; } in (con Box [String] $field#1963))); }
+nonrec { main#956 : () -> () = (app (app (type-app @print#104 (Int,Bool,Box String)) (app (app (app (type-app (type-app (type-app @$fShow_42#1201 Int) Bool) Box String) @$fShow_2#1161) @$fShow_19#1178) (app (type-app @$fShow_55#1214 String) @$fShow_14#1173))) @_old#955); }

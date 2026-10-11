@@ -1,0 +1,5 @@
+---
+source: crates/ch17_prelude/tests/io.rs
+expression: "support::dump(&source, &program)"
+---
+nonrec { main#951 : () -> () = (app (app (type-app (type-app @pure#69 ()) (->) ()) @$fApplicative_44#1194) (con ())); }

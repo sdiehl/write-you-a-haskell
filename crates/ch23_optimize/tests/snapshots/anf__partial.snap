@@ -1,0 +1,18 @@
+---
+source: crates/ch23_optimize/tests/anf.rs
+expression: text
+---
+main = let $a#7749 = \($section0#956 : Int) -> { let $a#7770 = call @+#60(@$fNum_3#1160);
+let $a#7772 = call $a#7770($section0#956);
+tail $a#7772(1) };
+let $a#7751 = \($field#1950 : Int, $field#1951) -> { let $a#7768 = :($field#1950, $field#1951);
+return $a#7768 };
+let $a#7754 = \($field#1952 : Int, $field#1953) -> { let $a#7765 = :($field#1952, $field#1953);
+return $a#7765 };
+let $a#7757 = \($field#1954 : Int, $field#1955) -> { let $a#7762 = :($field#1954, $field#1955);
+return $a#7762 };
+let $a#7759 = []();
+let $a#7756 = call $a#7757(3, $a#7759);
+let $a#7753 = call $a#7754(2, $a#7756);
+let $a#7750 = call $a#7751(1, $a#7753);
+tail @map#126($a#7749, $a#7750)

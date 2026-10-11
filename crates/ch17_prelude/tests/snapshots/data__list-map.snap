@@ -1,0 +1,7 @@
+---
+source: crates/ch17_prelude/tests/data.rs
+expression: dump
+---
+rec { map#951 : forall t277. forall t278. (t278 -> t277) -> [t278] -> [t277] = (type-lambda t277 (type-lambda t278 (lambda $match#1086 : t278 -> t277 (lambda $match#1087 : [t278] (let nonrec { $scrut#1952 : t278 -> t277 = $match#1086; } in (let nonrec { $scrut#1953 : [t278] = $match#1087; } in (match $scrut#1952 $scrut#1953 [ f#954 ([]) -> (con [] [t277]) ] [ f#955 (: x#956 xs#957) -> (app (app (lambda $field#1954 : t277 (lambda $field#1955 : [t277] (con : [t277] $field#1954 $field#1955))) (app f#955 x#956)) (app (app (type-app (type-app @map#951 t277) t278) f#955) xs#957)) ]))))))); }
+nonrec { _old#952 : [Int] = (app (app (type-app (type-app @map#951 Int) Int) (lambda x#958 : Int (app (app (app (type-app @+#59 Int) @$fNum_3#1162) x#958) 1))) (app (app (lambda $field#1956 : Int (lambda $field#1957 : [Int] (con : [Int] $field#1956 $field#1957))) 1) (app (app (lambda $field#1958 : Int (lambda $field#1959 : [Int] (con : [Int] $field#1958 $field#1959))) 2) (app (app (lambda $field#1960 : Int (lambda $field#1961 : [Int] (con : [Int] $field#1960 $field#1961))) 3) (con [] [Int]))))); }
+nonrec { main#953 : () -> () = (app (app (type-app @print#104 [Int]) (app (type-app @$fShow_28#1187 Int) @$fShow_2#1161)) @_old#952); }

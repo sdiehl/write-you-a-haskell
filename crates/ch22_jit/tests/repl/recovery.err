@@ -1,0 +1,18 @@
+fun: E0201
+<input 2>:1:7
+Error: cannot unify Int with Bool
+   ╭─[ <input 2>:1:7 ]
+   │
+ 1 │ bad = 1 + True
+   │       ────┬───  
+   │           ╰───── cannot unify Int with Bool
+───╯
+fun: E0102
+<input 2>:1:1
+Error: duplicate definition x
+   ╭─[ <input 2>:1:1 ]
+   │
+ 1 │ x = 99
+   │ ───┬──  
+   │    ╰──── duplicate definition x
+───╯

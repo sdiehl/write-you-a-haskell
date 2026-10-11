@@ -1,0 +1,9 @@
+---
+source: crates/ch07_fun/tests/compiler.rs
+expression: dump
+---
+main : Int
+val div = (lambda $a (lambda $b (prim div $a $b)))
+val mod = (lambda $a (lambda $b (prim mod $a $b)))
+val id = (lambda x x)
+val main = (app id 42)

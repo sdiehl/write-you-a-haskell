@@ -1,0 +1,5 @@
+---
+source: crates/ch15_io/tests/io.rs
+expression: "support::dump(&source, &program)"
+---
+nonrec { main#675 : () -> () = (app (app (type-app @print#103 Maybe Int) (app (type-app @$fShow_33#856 Int) @$fShow_2#825)) (app (app (app (type-app (type-app (type-app @>>=#70 Int) Maybe) Int) @$fMonad_48#871) (app (lambda $field#1451 : Int (con Just [Int] $field#1451)) 20)) (lambda x#676 : Int (app (app (app (type-app (type-app (type-app @>>=#70 Int) Maybe) Int) @$fMonad_48#871) (app (lambda $field#1452 : Int (con Just [Int] $field#1452)) 22)) (lambda y#677 : Int (app (app (type-app (type-app @pure#68 Int) Maybe) @$fApplicative_47#870) (app (app (app (type-app @+#58 Int) @$fNum_3#826) x#676) y#677))))))); }

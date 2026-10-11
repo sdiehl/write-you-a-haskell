@@ -1,0 +1,8 @@
+---
+source: crates/ch08_layout/tests/layout.rs
+expression: "String::from_utf8(output.stdout).unwrap()"
+---
+{
+  %% = \a -> \b -> a * 10 + b;
+  main = %% 1 (%% 2 3);
+}

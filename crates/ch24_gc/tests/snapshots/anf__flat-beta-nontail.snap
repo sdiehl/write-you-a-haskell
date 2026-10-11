@@ -1,0 +1,20 @@
+---
+source: crates/ch24_gc/tests/anf.rs
+expression: text
+---
+main#955 = let $a#7749 = call f60[](@$fNum_3#1160);
+let $a#7751 = apply $a#7749(1);
+join $beta#7822($a#7753 : Int) = { tail-apply $a#7751($a#7753) };
+let $a#7765 = call f54[](@$fOrd_1#1158);
+let $a#7767 = apply $a#7765(40);
+let $scrut#1950 = apply $a#7767(0);
+join $rhs#3531() = { jump $beta#7822(0) };
+join $rhs#3530() = { let $a#7757 = call f60[](@$fNum_3#1160);
+let $a#7759 = apply $a#7757(40);
+let $betaResult#7823 : Int = apply $a#7759(1);
+jump $beta#7822($betaResult#7823) };
+case $scrut#1950 {
+True() -> { jump $rhs#3530() }
+False() -> { jump $rhs#3531() }
+_() -> { fail Span { file: FileId(0), start: 17, end: 39 } }
+}

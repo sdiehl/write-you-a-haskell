@@ -1,0 +1,6 @@
+---
+source: crates/ch23_optimize/tests/matches.rs
+expression: "support::dump(source, &after)"
+---
+nonrec { f#955 : Maybe Int -> Int = (lambda $match#1086 : Maybe Int (let nonrec { $scrut#1953 : Maybe Int = $match#1086; } in (join $rhs#3536 () = 99 in (join $rhs#3535 ( x#958 : Int) = x#958 in (join $fail#3539 () = (case $scrut#1953 as $case#3541 : Maybe Int -> Int [ Con(ConId { index: 6, name: "Just" }) $case#3540 : Int -> (jump $rhs#3535 : Int $case#3540) ] [ Con(ConId { index: 5, name: "Nothing" }) -> (jump $rhs#3536 : Int) ] [ Default -> (pattern-fail : Int) ]) in (join $rhs#3534 ( x#957 : Int) = (case (app (app (app (type-app @<#52 Int) @$fOrd_1#1161) x#957) 0) as $case#3543 : Bool -> Int [ Con(ConId { index: 1, name: "True" }) -> 0 ] [ Default -> (case (app (app (app (type-app @>#54 Int) @$fOrd_1#1161) x#957) 10) as $case#3542 : Bool -> Int [ Con(ConId { index: 1, name: "True" }) -> 10 ] [ Default -> (jump $fail#3539 : Int) ]) ]) in (case $scrut#1953 as $case#3545 : Maybe Int -> Int [ Con(ConId { index: 6, name: "Just" }) $case#3544 : Int -> (jump $rhs#3534 : Int $case#3544) ] [ Con(ConId { index: 5, name: "Nothing" }) -> (jump $rhs#3536 : Int) ] [ Default -> (pattern-fail : Int) ]))))))); }
+nonrec { main#956 : Int = (app @f#955 (app (lambda $field#1954 : Int (con Just [Int] $field#1954)) 4)); }

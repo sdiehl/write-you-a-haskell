@@ -1,0 +1,18 @@
+---
+source: crates/ch22_jit/tests/anf.rs
+expression: text
+---
+main = let $a#7735 = lambda ($section0#952) { let $a#7756 = call @+#59(@$fNum_3#1154);
+let $a#7758 = call $a#7756($section0#952);
+tail $a#7758(1) };
+let $a#7737 = lambda ($field#1944, $field#1945) { let $a#7754 = :($field#1944, $field#1945);
+return $a#7754 };
+let $a#7740 = lambda ($field#1946, $field#1947) { let $a#7751 = :($field#1946, $field#1947);
+return $a#7751 };
+let $a#7743 = lambda ($field#1948, $field#1949) { let $a#7748 = :($field#1948, $field#1949);
+return $a#7748 };
+let $a#7745 = []();
+let $a#7742 = call $a#7743(3, $a#7745);
+let $a#7739 = call $a#7740(2, $a#7742);
+let $a#7736 = call $a#7737(1, $a#7739);
+tail @map#124($a#7735, $a#7736)

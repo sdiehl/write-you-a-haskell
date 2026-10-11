@@ -1,0 +1,14 @@
+---
+source: crates/ch14_classes/tests/classes.rs
+expression: "format!(\"{declarations}\\n{groups}\")"
+---
+$MkDC (t0 -> Int) -> $DC t0
+$MkDD ($DC t1, t1 -> Int) -> $DD t1
+nonrec { value#0 : forall t3. $DC t3 -> t3 -> Int = (type-lambda t3 (lambda $given#11 : $DC t3 (let nonrec { $dictionary#12 : $DC t3 = $given#11; } in (match $dictionary#12 [ ($MkDC $slot0#13) -> $slot0#13 ])))); }
+nonrec { other#1 : forall t4. $DD t4 -> t4 -> Int = (type-lambda t4 (lambda $given#14 : $DD t4 (let nonrec { $dictionary#15 : $DD t4 = $given#14; } in (match $dictionary#15 [ ($MkDD $slot0#16 $slot1#17) -> $slot1#17 ])))); }
+nonrec { $i0_value#4 : Int -> Int = (lambda x#7 : Int x#7); }
+nonrec { $fC_0#9 : $DC Int = (con $MkDC [Int] @$i0_value#4); }
+nonrec { $i1_other#5 : Int -> Int = (lambda x#8 : Int x#8); }
+nonrec { $fD_1#10 : $DD Int = (con $MkDD [Int] @$fC_0#9 @$i1_other#5); }
+nonrec { f#2 : forall t2. $DD t2 -> t2 -> Int = (type-lambda t2 (lambda $given#18 : $DD t2 (lambda x#6 : t2 (app (app (type-app @value#0 t2) (let nonrec { $dictionary#19 : $DD t2 = $given#18; } in (match $dictionary#19 [ ($MkDD $slot0#20 $slot1#21) -> $slot0#20 ]))) x#6)))); }
+nonrec { main#3 : Int = (app (app (type-app @f#2 Int) @$fD_1#10) 42); }

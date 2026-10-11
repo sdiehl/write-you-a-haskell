@@ -1,0 +1,6 @@
+---
+source: crates/ch14_classes/tests/data.rs
+expression: dump
+---
+nonrec { f#552 : Maybe Int -> Int = (lambda $match#599 : Maybe Int (let nonrec { $scrut#1190 : Maybe Int = $match#599; } in (match $scrut#1190 [ (Just n#554) | (app (app (app (type-app @<#48 Int) @$fOrd_1#669) n#554) 0) -> 1 | (app (app (app (type-app @==#45 Int) @$fEq_0#668) n#554) 0) -> 2  ] [ (Just n#555) -> n#555 ] [ (Nothing) -> 4 ]))); }
+nonrec { main#553 : (Int,Int,Int) = (app (app (app (lambda $field#1191 : Int (lambda $field#1192 : Int (lambda $field#1193 : Int (con (,,) [Int] [Int] [Int] $field#1191 $field#1192 $field#1193)))) (app @f#552 (app (lambda $field#1194 : Int (con Just [Int] $field#1194)) 9))) (app @f#552 (app (lambda $field#1195 : Int (con Just [Int] $field#1195)) 0))) (app @f#552 (con Nothing [Int]))); }
