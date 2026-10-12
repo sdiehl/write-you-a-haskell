@@ -50,7 +50,16 @@ unsafe extern "C" fn parity(env: Word, args: *const Word) -> Word {
 }
 fn main() {
     rt::rt_init();
-    if let Some(mode) = std::env::args().nth(1) {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    // Test runners list a harness before running it; this one holds a single test.
+    if args.first().is_some_and(|flag| flag == "--list") {
+        if !args.iter().any(|flag| flag == "--ignored") {
+            println!("abi: test");
+        }
+        return;
+    }
+    if let Some(mode) = args.first().filter(|mode| !mode.starts_with("--"))
+    {
         print!("before");
         // SAFETY: all test operands are constructed with the runtime's own typed allocators.
         unsafe {

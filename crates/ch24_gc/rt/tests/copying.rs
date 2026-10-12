@@ -4,6 +4,14 @@ use fun_rt_24::{
     layout,
 };
 fn main() {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    // Test runners list a harness before running it; this one holds a single test.
+    if args.first().is_some_and(|flag| flag == "--list") {
+        if !args.iter().any(|flag| flag == "--ignored") {
+            println!("copying: test");
+        }
+        return;
+    }
     copying::rt_use_copying();
     let leaf = heap::string("moving λ");
     let shared = heap::constructor(0, &[leaf, leaf]);
