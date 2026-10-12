@@ -142,3 +142,7 @@ check of `1 / 0` is expected: its type is `Int`, even though execution fails.
 Pierce gives the formal progress and preservation proofs [@pierce2002].
 Damas and Milner motivate the next step beyond simple types:
 principal type schemes and polymorphic `let` [@damas1982].
+Takenobu Tani's Type Introduction Illustrated for Casual Haskellers
+([pdf](https://takenobu-hs.github.io/downloads/type_introduction_illustrated.pdf)
+/ [github](https://github.com/takenobu-hs/type-introduction-illustrated)) draws
+the same ideas as pictures, from simple types up to the extensions GHC adds.

@@ -167,7 +167,7 @@ build in.
 The original Haskell edition is preserved in the repository under the
 `haskell-edition` tag.
 
-## Why a strict Haskell-like language?
+## Why not laziness?
 
 Haskell's strongest lessons survive without making every ordinary computation
 potentially lazy: algebraic data, pattern matching, principal types, purity, and
@@ -340,3 +340,7 @@ The Haskell Report is the language reference [@haskell2010]. Pierce introduces
 the operational and typing judgments we will use [@pierce2002]. Kiselyov connects
 type generalization with dependency tracking, preparing for Chapter 6
 [@kiselyov2013].
+When you want to compare our choices with the real thing, Takenobu Tani's
+GHC Reading Guide ([pdf](https://takenobu-hs.github.io/downloads/haskell_ghc_reading_guide.pdf)
+/ [github](https://github.com/takenobu-hs/haskell-ghc-reading-guide)) is a map
+of the GHC source tree and its pipeline.

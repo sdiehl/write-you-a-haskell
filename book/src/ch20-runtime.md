@@ -308,3 +308,7 @@ establish the ABI that the next chapter's generated code must obey.
 - Representation choices in a strict functional runtime [@leroy1990].
 - Eval/apply and partial applications [@marlow2004].
 - Collection algorithms and implementation tradeoffs [@gc2023].
+- Takenobu Tani's GHC (STG, Cmm, asm) Illustrated
+  ([pdf](https://takenobu-hs.github.io/downloads/haskell_ghc_illustrated.pdf)
+  / [github](https://github.com/takenobu-hs/haskell-ghc-illustrated)), for
+  GHC's heap objects, stack layout, and calling convention next to ours.
