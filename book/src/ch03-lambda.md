@@ -44,6 +44,42 @@ Using the caller's binding of `x` instead would give dynamic scope.
 
 ## Theory
 
+### The Untyped Grammar
+
+The pure untyped lambda calculus has just three forms. An expression is a
+variable, an application, or an abstraction. Read each vertical bar as “or”.
+
+$$
+\begin{aligned}
+e & = x & \quad & \text{variable} \\
+  & \mid e_1\;e_2 & \quad & \text{application} \\
+  & \mid \lambda x.\;e & \quad & \text{abstraction}
+\end{aligned}
+$$
+
+That's the whole calculus! Our little language adds a few conveniences so we
+can experiment without encoding every number and boolean as a function.
+
+$$
+\begin{aligned}
+e & = \cdots & \quad & \text{the three forms above} \\
+  & \mid n & \quad & \text{integer literal} \\
+  & \mid \text{True}\mid\text{False} & \quad & \text{boolean literal} \\
+  & \mid \text{let}\;x = e_1\;\text{in}\;e_2 & \quad & \text{local binding} \\
+  & \mid \text{if}\;e_1\;\text{then}\;e_2\;\text{else}\;e_3 & \quad & \text{conditional} \\
+  & \mid -e & \quad & \text{integer negation} \\
+  & \mid e_1\;\mathit{op}\;e_2 & \quad & \text{binary operation}
+\end{aligned}
+$$
+
+Here $n$ is an integer and $\mathit{op}$ is one of `+`, `-`, `*`, `/`, `==`,
+`<`, or `<=`. Parentheses group expressions without adding a tree node.
+The parser also has an `Error` placeholder for recovery, which isn't a form
+of an accepted program. “Untyped” means we have no static type checker yet,
+not that every combination of these forms makes sense at runtime.
+
+### Reduction and Evaluation
+
 Calling a lambda means replacing its parameter with the supplied argument.
 This step is called _beta reduction_. For `\x -> x + 1` applied to `41`, we
 replace `x` and get `41 + 1`. So far, so good. The subtlety begins when names

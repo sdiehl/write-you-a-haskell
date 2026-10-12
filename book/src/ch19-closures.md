@@ -83,6 +83,54 @@ evaluate an unfinished recursive value.
 
 ## Implementation
 
+### The Flat Grammar
+
+Flat keeps ANF's explicit control flow, but functions now live in a separate
+function table. There is no lambda form inside an executable body. Instead,
+we allocate a closure that names a lifted function and stores its captures.
+
+$$
+\begin{aligned}
+e & = \text{let}\;x = r\;\text{in}\;e & \quad & \text{strict binding} \\
+  & \mid \text{case}\;a\;\text{of}\;\{\overline{q\;\overline{x}\to e}\} & \quad & \text{branch on an atom} \\
+  & \mid \text{join}\;j(\overline{x}) = e_1\;\text{in}\;e_2 & \quad & \text{local continuation} \\
+  & \mid \text{jump}\;j(\overline{a}) & \quad & \text{jump to a join} \\
+  & \mid \text{return}\;a & \quad & \text{return a value} \\
+  & \mid \text{tail}\;f[\rho](\overline{a}) & \quad & \text{known tail call} \\
+  & \mid \text{tailapply}\;a(\overline{a}) & \quad & \text{unknown tail call} \\
+  & \mid \text{fail}_{s} & \quad & \text{pattern failure at span }s
+\end{aligned}
+$$
+
+We keep the ANF notation for atoms $a$, join names $j$, alternative tags $q$,
+and sequences marked with an overbar. The name $f$ identifies a lifted function.
+Its optional environment operand $\rho$ is either an atom or absent. A known
+call names its code directly. An unknown call must inspect a closure or PAP to
+find out what to do.
+
+$$
+\begin{aligned}
+a & = x \mid g \mid \ell & \quad & \text{local, global, or literal} \\
+\rho & = a \mid \text{none} & \quad & \text{optional environment} \\
+r & = a & \quad & \text{atom} \\
+  & \mid \text{call}\;f[\rho](\overline{a}) & \quad & \text{known call} \\
+  & \mid \text{apply}\;a(\overline{a}) & \quad & \text{unknown call} \\
+  & \mid \text{con}\;K(\overline{a}) & \quad & \text{allocate a constructor} \\
+  & \mid \text{closure}\;f[\overline{a}] & \quad & \text{allocate a closure} \\
+  & \mid \text{env}\;x[i] & \quad & \text{read a capture} \\
+  & \mid \text{field}\;a[i] & \quad & \text{read a constructor field} \\
+  & \mid p(\overline{a}) & \quad & \text{primitive operation} \\
+  & \mid \text{patch}\;a[i] = a' & \quad & \text{fill a closure capture}
+\end{aligned}
+$$
+
+Here $K$ is a constructor, $p$ a primitive, and $i$ a slot index. Primitive
+source spans are omitted. `patch` is an internal operation used while tying
+recursive closures together, not mutable state available to a Fun program.
+The `LetRec` from ANF has disappeared into allocations followed by these patches.
+
+### Lifted Functions and Calls
+
 Flat IR removes lambda expressions from executable bodies. Each lifted function
 records its parameters, optional environment parameter, body, and ordered capture
 list:

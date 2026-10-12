@@ -47,6 +47,44 @@ the mistake earlier in the process.
 
 ## Theory
 
+### The Typed Grammar
+
+The new ingredient is a type on each lambda parameter. First, here are the
+types we can write. A function's input and output can themselves be functions.
+
+$$
+\begin{aligned}
+\tau & = \text{Int} & \quad & \text{integers} \\
+     & \mid \text{Bool} & \quad & \text{booleans} \\
+     & \mid \tau_1 \to \tau_2 & \quad & \text{function type}
+\end{aligned}
+$$
+
+The expressions are familiar from the previous chapter. The annotation in
+$\lambda x : \tau.\;e$ tells the checker what it may assume about $x$.
+
+$$
+\begin{aligned}
+e & = x & \quad & \text{variable} \\
+  & \mid e_1\;e_2 & \quad & \text{application} \\
+  & \mid \lambda x : \tau.\;e & \quad & \text{typed abstraction} \\
+  & \mid n & \quad & \text{integer literal} \\
+  & \mid \text{True}\mid\text{False} & \quad & \text{boolean literal} \\
+  & \mid \text{let}\;x = e_1\;\text{in}\;e_2 & \quad & \text{local binding} \\
+  & \mid \text{if}\;e_1\;\text{then}\;e_2\;\text{else}\;e_3 & \quad & \text{conditional} \\
+  & \mid -e & \quad & \text{integer negation} \\
+  & \mid e_1\;\mathit{op}\;e_2 & \quad & \text{binary operation}
+\end{aligned}
+$$
+
+As before, $n$ is an integer and $\mathit{op}$ is one of `+`, `-`, `*`, `/`,
+`==`, `<`, or `<=`. We omit source spans and the parser's recovery placeholder.
+This grammar describes what we can parse. The typing rules below decide which
+of those expressions we can safely run. For example, `1 True` still has the
+shape of an application, but it won't have a typing derivation.
+
+### Typing and Safety
+
 A typing environment maps names to types. Reading a variable looks up its nearest
 binding. A lambda extends that environment while checking its body. Application
 checks its argument against the function's domain [@pierce2002].
