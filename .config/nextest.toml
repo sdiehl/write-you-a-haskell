@@ -6,11 +6,9 @@ failure-output = "immediate-final"
 status-level = "fail"
 slow-timeout = { period = "120s", terminate-after = 15 }
 
-# Each corpus test already spawns a compiler process per program on up to four
-# threads, so two of them at once saturate a runner.
-[test-groups]
-corpus = { max-threads = 2 }
-
+# These tests spawn a compiler process per program on up to four threads, or
+# run a stress program against a wall-clock limit. Each one takes the whole
+# runner so the rest of the suite cannot push a single program past its limit.
 [[profile.default.overrides]]
-filter = "test(/^(golden_corpus|golden_programs|optimization_programs_agree_on_every_engine|corpus_collects_at_every_allocation)$/)"
-test-group = "corpus"
+filter = "test(/^(golden_corpus|golden_programs|optimization_programs_agree_on_every_engine|corpus_collects_at_every_allocation|one_thousand_generated_programs_agree|jit_runs_deep_tail_calls_and_allocation_stress|native_tail_calls_and_gc_survive_a_small_stack)$/)"
+threads-required = "num-test-threads"
