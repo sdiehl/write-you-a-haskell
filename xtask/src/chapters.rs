@@ -4,7 +4,7 @@ use std::{
     collections::BTreeSet,
     fs,
     path::{Path, PathBuf},
-    process::Command,
+    process::{Command, Stdio},
 };
 
 fn chapter(root: &Path, number: u8) -> Result<PathBuf> {
@@ -168,7 +168,9 @@ fn read_optional(path: &Path) -> Result<Option<Vec<u8>>> {
         Err(e) => Err(e.into()),
     }
 }
-pub fn check_inherit(root: &Path, number: u8) -> Result<()> {
+/// Inherited programs run on the default engine in the chapters between their
+/// introduction and the last chapter; `full` runs every engine everywhere.
+pub fn check_inherit(root: &Path, number: u8, full: bool) -> Result<()> {
     let current = chapter(root, number)?;
     if !(2..=24).contains(&number) {
         return Err("chapter must be 02 through 24".into());
@@ -182,16 +184,32 @@ pub fn check_inherit(root: &Path, number: u8) -> Result<()> {
     } else {
         0
     };
-    let status = Command::new("cargo")
-        .arg("test")
-        .arg("-p")
-        .arg(current.file_name().unwrap())
-        .status()?;
-    if !status.success() {
+    let mut test = test_command();
+    test.arg("-p").arg(current.file_name().unwrap());
+    if !full && (3..24).contains(&number) {
+        test.env("FUN_INHERITED_CRATE", chapter(root, number - 1)?);
+    }
+    if !test.status()?.success() {
         return Err("chapter tests failed".into());
     }
     println!("chapter {number:02}: {count} inherited programs verified and chapter tests passed");
     Ok(())
+}
+/// nextest runs a chapter's test binaries concurrently; cargo test is the fallback.
+fn test_command() -> Command {
+    let nextest = Command::new("cargo")
+        .args(["nextest", "--version"])
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .status()
+        .is_ok_and(|status| status.success());
+    let mut command = Command::new("cargo");
+    if nextest {
+        command.args(["nextest", "run"]);
+    } else {
+        command.arg("test");
+    }
+    command
 }
 /// Report implementation files, ordered by their role in the chapter.
 pub fn book_diff(root: &Path, number: u8) -> Result<()> {

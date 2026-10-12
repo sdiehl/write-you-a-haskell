@@ -1,20 +1,20 @@
 Contributors
 ============
 
-The following people contributed to the Haskell edition, 2014 through 2021.
+The following people contributed to the text:
 
-* Matthew Pickering
+* [Matthew Pickering](https://github.com/mpickering)
 * Nick Sinopoli
-* Nicolas Trangez
-* Ingo Blechschmidt
-* Rein Henrichs
-* Ian Connolly
-* Ben James
-* Abe Voelker
-* Paulo Tanimoto
-* Brandon Williams
-* Dmitry Ivanov
-* Christian Sievers
-* Franklin Chen
-* Jake Taylor
-* Vitor Coimbra
+* [Nicolas Trangez](https://github.com/NicolasT)
+* [Ingo Blechschmidt](https://github.com/iblech)
+* [Rein Henrichs](https://github.com/reinh)
+* [Ian Connolly](https://github.com/IanConnolly)
+* [Ben James](https://github.com/bmjames)
+* [Abe Voelker](https://github.com/abevoelker)
+* [Paulo Tanimoto](https://github.com/tanimoto)
+* [Brandon Williams](https://github.com/mbrandonw)
+* [Dmitry Ivanov](https://github.com/ethercrow)
+* [Christian Sievers](https://github.com/chsievers)
+* [Franklin Chen](https://github.com/FranklinChen)
+* [Jake Taylor](https://github.com/yupferris)
+* [Vitor Coimbra](https://github.com/VitorCBSB)

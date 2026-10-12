@@ -32,5 +32,7 @@ renderers = ["html"]
 [output.html]
 additional-js = ["theme/fun-highlight.js"]
 additional-css = ["theme/book.css"]
+git-repository-url = "https://github.com/sdiehl/write-you-a-haskell"
+edit-url-template = "https://github.com/sdiehl/write-you-a-haskell/edit/main/book/{path}"
 
 [output.markdown]

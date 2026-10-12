@@ -17,9 +17,10 @@ fn run() -> Result<()> {
         ["syntax","--check"] => syntax::generate(&root,true),
         ["pdf-collect"] => pdf::collect(&root),
         ["new-chapter", number, name] => chapters::new_chapter(&root, number.parse()?, name),
-        ["check-inherit", number] => chapters::check_inherit(&root, number.parse()?),
+        ["check-inherit", number] => chapters::check_inherit(&root, number.parse()?, false),
+        ["check-inherit", number, "--full"] => chapters::check_inherit(&root, number.parse()?, true),
         ["book-diff", number] => chapters::book_diff(&root, number.parse()?),
-        _ => Err("usage: cargo xtask {new-chapter NN name | check-inherit NN | book-diff NN | syntax [--check] | pdf-collect}".into()),
+        _ => Err("usage: cargo xtask {new-chapter NN name | check-inherit NN [--full] | book-diff NN | syntax [--check] | pdf-collect}".into()),
     }
 }
 fn main() -> ExitCode {

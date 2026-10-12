@@ -42,7 +42,7 @@ just build
 ```
 
 Earlier chapter packages and the book can still be built without LLVM.
-CI installs LLVM 22 on Ubuntu and macOS and runs the full test job.
+CI shards the chapters across Ubuntu jobs and runs chapter 24 on macOS as well.
 
 ## Current compiler
 
@@ -119,7 +119,10 @@ Each snapshot owns its compiler source and inherited corpus. Earlier snapshots
 are edited only for bug fixes applied forward. `new-chapter` refuses to overwrite
 an existing chapter. `check-inherit` checks sources and expectation sidecars,
 requires reasons in `BREAKING.md` for changed fixtures, then runs the chapter's
-tests. The foundations (2–6) are separate languages, not inherited snapshots.
+tests under cargo-nextest when it is installed. A program inherited unchanged runs
+on the default engine only (Flat where available); the chapter that introduces it
+and chapter 24 run every engine. Pass `--full` to run every engine in any chapter.
+The foundations (2–6) are separate languages, not inherited snapshots.
 
 The HTML and PDF share preprocessed Markdown; PDF builds reject unresolved includes and TeX conversion
 warnings. HTML citations use mdbook-bib; the bibliography page uses the pinned

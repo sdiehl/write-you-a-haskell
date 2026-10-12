@@ -1,7 +1,7 @@
 Contributing
 ============
 
-As always, I rely on the perpetual kindness and goodwill of Haskellers (like
+As always, I rely on the perpetual kindness and goodwill of other compiler nerds (like
 you!) to help correct grammar, clarify, and fix errors.
 
 Git Repo

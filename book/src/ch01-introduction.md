@@ -316,7 +316,8 @@ cannot deadlock the runner.
 
 `xtask new-chapter` copies a snapshot and its corpus. `check-inherit` compares each
 inherited source and expectation file, checks documented changes, and runs the
-chapter tests. The book collector reads preprocessed Markdown in `SUMMARY.md`
+chapter tests. A program inherited unchanged runs on the default engine there; the
+chapter that introduces it and the final chapter run every engine. The book collector reads preprocessed Markdown in `SUMMARY.md`
 order. It never substitutes raw source chapters when a build output is missing.
 
 ## Running it

@@ -17,12 +17,22 @@ jobs:
       - run: pipx install pre-commit==4.6.0
       - run: pre-commit run --all-files --show-diff-on-failure
   rust:
+    name: rust (${{ matrix.os }}, ch${{ matrix.from }}-${{ matrix.to }})
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-24.04, macos-15]
+        include:
+          - { os: ubuntu-24.04, from: "02", to: "17" }
+          - { os: ubuntu-24.04, from: "18", to: "19" }
+          - { os: ubuntu-24.04, from: "20", to: "21" }
+          - { os: ubuntu-24.04, from: "22", to: "22" }
+          - { os: ubuntu-24.04, from: "23", to: "23" }
+          - { os: ubuntu-24.04, from: "24", to: "24" }
+          - { os: macos-15, from: "24", to: "24" }
     runs-on: ${{ matrix.os }}
     env:
       CARGO_INCREMENTAL: 0
+      NEXTEST_PROFILE: ci
     steps:
       - uses: actions/checkout@v7
       - name: Free runner disk for the chapter builds
@@ -33,18 +43,20 @@ jobs:
           sudo docker image prune --all --force > /dev/null
           df -h /
       - run: rustup show
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: nextest@0.9.136
       - uses: ./.github/actions/native-dependencies
       - run: python3 scripts/check_runtime_abi.py
-      - run: cargo test --locked -p testkit -p xtask -p fun-rt-20 -p fun-rt-21 -p fun-rt-22 -p fun-rt-23 -p fun-rt-24
+      - run: cargo nextest run --locked -p testkit -p xtask -p fun-rt-20 -p fun-rt-21 -p fun-rt-22 -p fun-rt-23 -p fun-rt-24
       - name: Check inherited corpora
         shell: bash
         run: |
-          for dir in crates/ch*; do
-            [ -d "$dir" ] || continue
-            chapter="${dir#crates/ch}"
-            cargo xtask check-inherit "${chapter%%_*}"
+          for chapter in $(seq -f '%02g' ${{ matrix.from }} ${{ matrix.to }}); do
+            cargo xtask check-inherit "$chapter"
           done
       - name: Check deep inputs without compiler optimizations
+        if: matrix.to == '24'
         run: python3 scripts/check_deep_pipeline.py
   book:
     runs-on: ubuntu-24.04

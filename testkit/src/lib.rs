@@ -186,6 +186,55 @@ impl Fixture {
     }
 }
 
+/// The previous chapter's crate directory, set by `xtask check-inherit` for the
+/// chapters between a program's introduction and the final chapter.
+pub const INHERITED_CRATE: &str = "FUN_INHERITED_CRATE";
+
+/// Every requested engine the fixture allows, or only the default engine when the
+/// fixture is inherited unchanged from the chapter named by `FUN_INHERITED_CRATE`.
+/// The chapter that introduces a program and the final chapter run every engine.
+fn engines_for(config: &Config<'_>, fixture: &Fixture) -> Vec<Engine> {
+    let allowed: Vec<Engine> = config
+        .engines
+        .iter()
+        .copied()
+        .filter(|engine| {
+            fixture
+                .engines
+                .as_ref()
+                .is_none_or(|names| names.iter().any(|n| n == engine.name()))
+        })
+        .collect();
+    if !is_inherited(&fixture.path) {
+        return allowed;
+    }
+    allowed
+        .iter()
+        .copied()
+        .find(|engine| *engine == Engine::Flat)
+        .or(allowed.first().copied())
+        .into_iter()
+        .collect()
+}
+fn is_inherited(path: &Path) -> bool {
+    let Some(previous) = std::env::var_os(INHERITED_CRATE) else {
+        return false;
+    };
+    let Some(crate_dir) = path
+        .ancestors()
+        .find(|dir| dir.join("Cargo.toml").is_file())
+    else {
+        return false;
+    };
+    let Ok(relative) = path.strip_prefix(crate_dir) else {
+        return false;
+    };
+    let previous = Path::new(&previous).join(relative);
+    ["fun", "out", "err", "exit", "in"].iter().all(|extension| {
+        optional_read(&path.with_extension(extension)).ok()
+            == optional_read(&previous.with_extension(extension)).ok()
+    })
+}
 fn optional_read(path: &Path) -> io::Result<Option<Vec<u8>>> {
     match fs::read(path) {
         Ok(bytes) => Ok(Some(bytes)),
@@ -368,14 +417,7 @@ fn run_fixture(
         return Ok(());
     }
     let mut baseline: Option<Outcome> = None;
-    for &engine in config.engines {
-        if fixture
-            .engines
-            .as_ref()
-            .is_some_and(|names| !names.iter().any(|n| n == engine.name()))
-        {
-            continue;
-        }
+    for engine in engines_for(config, &fixture) {
         let actual = if engine == Engine::Native {
             let executable = scratch.0.join(format!("program-{i}"));
             let mut build = Command::new(config.binary);
