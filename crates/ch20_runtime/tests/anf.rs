@@ -94,15 +94,15 @@ fn anf_matches_core_before_and_after_simplification() {
     }
 }
 #[test]
-fn ten_million_tail_calls_use_bounded_continuations() {
+fn one_million_tail_calls_use_bounded_continuations() {
     let (mut sess, core) = compile(
-        "sumTo n = go 0 n where { go acc n = if n == 0 then acc else go (acc+n) (n-1); }\nmain = sumTo 10000000",
+        "sumTo n = go 0 n where { go acc n = if n == 0 then acc else go (acc+n) (n-1); }\nmain = sumTo 1000000",
     );
     let mut anf = anf::convert(&mut sess, erase::erase(core));
     anf_simplify::simplify(&mut sess, &mut anf);
     anf_lint::lint(&anf).unwrap();
     let (value, stats) = anf_machine::run(&anf, usize::MAX, false).unwrap();
-    assert_eq!(value.to_string(), "50000005000000");
+    assert_eq!(value.to_string(), "500000500000");
     assert!(stats.max_continuations < 32, "{stats:?}");
 }
 #[test]

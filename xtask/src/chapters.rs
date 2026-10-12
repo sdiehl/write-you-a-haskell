@@ -206,6 +206,10 @@ fn test_command() -> Command {
     let mut command = Command::new("cargo");
     if nextest {
         command.args(["nextest", "run"]);
+        // CI splits a late chapter across jobs with a nextest filter expression.
+        if let Some(filter) = std::env::var_os("FUN_TEST_FILTER").filter(|f| !f.is_empty()) {
+            command.arg("-E").arg(filter);
+        }
     } else {
         command.arg("test");
     }

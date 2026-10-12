@@ -161,7 +161,7 @@ The corpus grows to 402 programs, adding eight closure-focused cases. All three
 engines run the eligible inherited programs and 1,000 generated integer cases.
 Snapshots also compare simplification enabled and disabled. A million-call
 Flat sum returns `500000500000` with bounded continuation depth, while the
-inherited ANF ten-million-call check remains in place. Cyclic local environments,
+inherited ANF one-million-call check remains in place. Cyclic local environments,
 dictionary captures, shadowed names, and escaping recursive closures have
 separate regressions.
 

@@ -27,10 +27,14 @@ jobs:
           - { os: ubuntu-24.04, from: "19", to: "19" }
           - { os: ubuntu-24.04, from: "20", to: "20" }
           - { os: ubuntu-24.04, from: "21", to: "21" }
-          - { os: ubuntu-24.04, from: "22", to: "22" }
-          - { os: ubuntu-24.04, from: "23", to: "23" }
-          - { os: ubuntu-24.04, from: "24", to: "24" }
-          - { os: macos-15, from: "24", to: "24" }
+          - { os: ubuntu-24.04, from: "22", to: "22", half: frontend }
+          - { os: ubuntu-24.04, from: "22", to: "22", half: backends }
+          - { os: ubuntu-24.04, from: "23", to: "23", half: frontend }
+          - { os: ubuntu-24.04, from: "23", to: "23", half: backends }
+          - { os: ubuntu-24.04, from: "24", to: "24", half: frontend }
+          - { os: ubuntu-24.04, from: "24", to: "24", half: backends }
+          - { os: macos-15, from: "24", to: "24", half: frontend }
+          - { os: macos-15, from: "24", to: "24", half: backends }
     runs-on: ${{ matrix.os }}
     env:
       CARGO_INCREMENTAL: 0
@@ -53,12 +57,19 @@ jobs:
       - run: cargo nextest run --locked -p testkit -p xtask -p fun-rt-20 -p fun-rt-21 -p fun-rt-22 -p fun-rt-23 -p fun-rt-24
       - name: Check inherited corpora
         shell: bash
+        env:
+          HALF: ${{ matrix.half }}
         run: |
+          backends='binary(optimization) | binary(jit) | binary(native) | binary(copying)'
+          case "$HALF" in
+            backends) export FUN_TEST_FILTER="$backends" ;;
+            frontend) export FUN_TEST_FILTER="not ($backends)" ;;
+          esac
           for chapter in $(seq -f '%02g' ${{ matrix.from }} ${{ matrix.to }}); do
             cargo xtask check-inherit "$chapter"
           done
       - name: Check deep inputs without compiler optimizations
-        if: matrix.to == '24'
+        if: matrix.to == '24' && matrix.half == 'backends'
         run: python3 scripts/check_deep_pipeline.py
   book:
     runs-on: ubuntu-24.04

@@ -163,7 +163,7 @@ branches, finite recursion, and lists. Twenty cases share each compilation to
 amortize the Prelude. Their printed results must agree with both engines and an
 independent wrapping-integer oracle. Failures retain the seed and source.
 
-A separate ten-million-call sum returns `50000005000000` while recording fewer
+A separate one-million-call sum returns `500000500000` while recording fewer
 than 32 pending continuations. That assertion tests bounded continuation depth,
 not merely whether a machine happens to finish. The Core oracle also uses
 explicit continuations, independently of ANF conversion. Non-tail calls may grow
