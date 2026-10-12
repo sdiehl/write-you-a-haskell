@@ -14,14 +14,14 @@ book:
     cargo xtask syntax --check
     python3 scripts/check_book.py
     mkdir -p build
-    mdbook build book 2> build/mdbook.log
+    mdbook build book 2> build/mdbook.log || { status=$?; cat build/mdbook.log >&2; exit "$status"; }
     cat build/mdbook.log
     ! rg -i "warn|error" build/mdbook.log
 
 pdf: book
     cargo xtask pdf-collect
     mkdir -p build/pdf
-    pandoc build/pdf/book.md -f markdown+tex_math_dollars+raw_attribute -t typst --lua-filter pdf/filters/links.lua --lua-filter pdf/filters/callouts.lua --lua-filter pdf/filters/parts.lua --lua-filter pdf/filters/code.lua -o build/pdf/body.typ 2> build/pdf/pandoc.log
+    pandoc build/pdf/book.md -f markdown+tex_math_dollars+raw_attribute -t typst --lua-filter pdf/filters/links.lua --lua-filter pdf/filters/callouts.lua --lua-filter pdf/filters/parts.lua --lua-filter pdf/filters/code.lua -o build/pdf/body.typ 2> build/pdf/pandoc.log || { status=$?; cat build/pdf/pandoc.log >&2; exit "$status"; }
     cat build/pdf/pandoc.log
     ! rg 'Could not convert TeX math|WARNING|ERROR' build/pdf/pandoc.log
     typst compile --root . --font-path pdf/fonts --ignore-system-fonts pdf/book.typ build/write-you-a-haskell.pdf

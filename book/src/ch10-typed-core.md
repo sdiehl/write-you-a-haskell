@@ -77,6 +77,54 @@ Core terms test that distinction without extending source syntax [@pierce2002].
 
 ### The Core Datatypes
 
+We can write the same language as a small grammar before looking at the Rust.
+Read each vertical bar as “or”. An expression $e$ is one of the forms below,
+and the right-hand column tells us what that form does.
+
+$$
+\begin{aligned}
+e & = x & \quad & \text{local variable} \\
+  & \mid g & \quad & \text{global reference} \\
+  & \mid \ell & \quad & \text{literal} \\
+  & \mid e_1\;e_2 & \quad & \text{application} \\
+  & \mid \lambda x : \tau.\;e & \quad & \text{term abstraction} \\
+  & \mid \Lambda\alpha.\;e & \quad & \text{type abstraction} \\
+  & \mid e[\tau] & \quad & \text{type application} \\
+  & \mid \text{let}\;b\;\text{in}\;e & \quad & \text{binding group} \\
+  & \mid \text{if}\;e_1\;\text{then}\;e_2\;\text{else}\;e_3 & \quad & \text{conditional} \\
+  & \mid p[\overline{\tau}](\overline{e}) & \quad & \text{primitive operation}
+\end{aligned}
+$$
+
+Here $x$ and $g$ name local and global values, $\ell$ is a literal, and $p$ is
+a primitive. An overbar means a sequence, so $\overline{e}$ stands for the
+primitive's operands in evaluation order. We leave source spans out of the
+notation, though the Rust representation keeps them for diagnostics.
+
+The types and binding groups have their own grammar.
+
+$$
+\begin{aligned}
+\tau & = \text{Int}\mid\text{Bool}\mid\text{Char}\mid\text{String} & \quad & \text{base types} \\
+     & \mid \alpha & \quad & \text{type variable} \\
+     & \mid \tau_1 \to \tau_2 & \quad & \text{function type} \\
+     & \mid \forall\alpha.\;\tau & \quad & \text{universal type} \\
+b & = x : \tau = e & \quad & \text{nonrecursive binding} \\
+  & \mid \text{rec}\;\{\overline{x : \tau = e}\} & \quad & \text{recursive group}
+\end{aligned}
+$$
+
+A recursive group's names are in scope throughout its right-hand sides. Lint
+also checks that those right-hand sides describe functions, possibly wrapped
+in type abstractions. In a nonrecursive binding, the new name is available only
+in the body of the `let`.
+
+Notice the two different lambdas. In $\Lambda\alpha.\;\lambda x : \alpha.\;x$,
+the capital $\Lambda$ chooses no value at all. It introduces the type parameter
+used by the ordinary $\lambda$. Applying this identity to a type and then a
+value gives $(\Lambda\alpha.\;\lambda x : \alpha.\;x)[\mathsf{Int}]\;42$.
+That's the explicit version of the source-level `id 42` we started with.
+
 A Core expression is a Rust enum. Each variable and term binder carries an
 `Id` with its type, so lint can check the tree without rerunning inference.
 

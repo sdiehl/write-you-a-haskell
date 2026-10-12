@@ -89,6 +89,56 @@ primitives, printers, and diagnostics.
 #![function!("../../crates/ch18_anf/src/erase.rs", erase)]
 ```
 
+### The ANF Grammar
+
+Here is the control language in symbolic form. We use $a$ for an atom, $r$ for
+a right-hand side, and $e$ for a complete ANF body. Each row corresponds to a
+Rust variant below.
+
+$$
+\begin{aligned}
+e & = \text{let}\;x = r\;\text{in}\;e & \quad & \text{strict binding} \\
+  & \mid \text{letrec}\;\{\overline{x = \lambda\overline{y}.\;e_1}\}\;\text{in}\;e_2 & \quad & \text{recursive functions} \\
+  & \mid \text{join}\;j(\overline{x}) = e_1\;\text{in}\;e_2 & \quad & \text{local continuation} \\
+  & \mid \text{jump}\;j(\overline{a}) & \quad & \text{jump to a join} \\
+  & \mid \text{case}\;a\;\text{of}\;\{\overline{q\;\overline{x}\to e}\} & \quad & \text{branch on an atom} \\
+  & \mid \text{return}\;a & \quad & \text{return a value} \\
+  & \mid \text{tailcall}\;a(\overline{a}) & \quad & \text{replace this activation} \\
+  & \mid \text{fail}_{s} & \quad & \text{pattern failure at span }s
+\end{aligned}
+$$
+
+An overbar means a sequence. The name $j$ identifies a join point, while $q$
+is an alternative's constructor tag, literal, or default marker. Constructor
+alternatives bind their fields to $\overline{x}$. Literal and default
+alternatives have no field binders.
+
+The smaller pieces explain the “normal form” part of the name. An operand is
+always an atom, never another call waiting to happen.
+
+$$
+\begin{aligned}
+a & = x & \quad & \text{local variable} \\
+  & \mid g & \quad & \text{global reference} \\
+  & \mid \ell & \quad & \text{literal} \\
+r & = a & \quad & \text{atom} \\
+  & \mid a(\overline{a}) & \quad & \text{function call} \\
+  & \mid K(\overline{a}) & \quad & \text{constructor} \\
+  & \mid p(\overline{a}) & \quad & \text{primitive operation} \\
+  & \mid \lambda\overline{x}.\;e & \quad & \text{function value} \\
+  & \mid \text{field}\;a\;i & \quad & \text{field at index }i
+\end{aligned}
+$$
+
+Here $K$ names a constructor and $p$ a primitive. Primitive source spans are
+omitted from the grammar. Unlike Core's lambdas, these lambdas can take several
+parameters, and there are no type abstractions or type applications left.
+
+The distinction between a call and a tail call is now visible in the syntax.
+$\mathsf{let}\;x = f(a)\;\mathsf{in}\;e$ saves work to do after the call.
+$\mathsf{tailcall}\;f(a)$ has no such body. A jump also has no following body,
+but stays inside the current function and transfers to a local join point.
+
 The ANF control language separates ordinary bindings, recursive closures,
 branches, joins, and terminal transfers. `Fail` preserves the source span of a
 pattern failure:
