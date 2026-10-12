@@ -28,7 +28,7 @@
   Prose: Creative Commons Attribution-ShareAlike 4.0 International.
   Code: MIT License. Fonts: SIL Open Font License.
 ]
-#outline(depth: 2, title: [Contents])
+#outline(depth: 1, title: [Contents])
 #include "../build/pdf/body.typ"
 #pagebreak(to: "odd")
 #bibliography("../book/refs.bib", style: "chicago-author-date", full: true)
