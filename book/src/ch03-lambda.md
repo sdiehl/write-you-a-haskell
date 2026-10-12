@@ -15,18 +15,20 @@
 
 ## Motivation
 
-Functions let a program name a computation without running it immediately. A
-lambda expression creates a function. Application supplies its argument. These
-two forms are enough to express an untyped computational language. Integers and
-booleans make the examples easier to inspect, but Church encodings show that
-functions can represent data too [@pierce2002].
+Our calculator can name a number. What if we could name a computation and use
+it with different inputs? That's a function, and adding functions takes us a
+surprisingly long way. With just lambdas and application we can express the
+pure untyped lambda calculus. Even data can be represented by functions, as
+we'll see with Church encodings [@pierce2002]. That's a remarkable amount of
+expressive power for two pieces of syntax!
 
-Two questions now matter. What does replacing a variable mean when another
-binder has the same name? And when should the argument be evaluated? We implement
-substitution and closures separately so that neither question is hidden inside
-the host language's function-call mechanism.
+There are a couple of details we need to get right. If two variables are both
+called `x`, how do we know which one a function means? And when we call a
+function, should we evaluate its argument first? We'll build substitution and
+closures ourselves so we can see the answers, rather than quietly borrowing
+Rust's answers.
 
-## The language, now
+## The Language, Now
 
 Programs remain single expressions. Lambdas have one parameter, application
 associates left, and booleans control an `if` expression. Comparisons are integer
@@ -42,24 +44,30 @@ Using the caller's binding of `x` instead would give dynamic scope.
 
 ## Theory
 
-Beta reduction replaces the free occurrences of a parameter with the argument.
-The word _free_ matters: a binder of the same name inside the body ends the
-substitution's scope. If a binder would capture a free name from the argument,
-we first rename that binder. Pierce develops this definition and its metatheory
-[@pierce2002].
+Calling a lambda means replacing its parameter with the supplied argument.
+This step is called _beta reduction_. For `\x -> x + 1` applied to `41`, we
+replace `x` and get `41 + 1`. So far, so good. The subtlety begins when names
+repeat. We replace only _free_ occurrences of the parameter in the body, and
+rename an inner binder if it would capture a free name from the argument.
+We'll work through exactly that mistake below [@pierce2002].
 
-Normal order contracts the leftmost outermost redex and continues under lambdas
-to a full normal form. Call-by-value evaluates the function and then its argument
-before entering the body. A lambda is already a value. The two strategies agree
-on many terminating integer examples but differ on discarded divergent arguments.
-The Y combinator reduces factorial under normal order and exhausts the strict
-evaluator's fuel. Exhausting fuel reports a limit, not a proof of divergence.
+Evaluation order decides which reduction we do next. Normal order takes the
+leftmost outermost reducible expression, and our full reducer also continues
+under lambdas. Call-by-value first evaluates the function and its argument,
+then enters the body. A lambda itself is already a value.
+
+The difference becomes visible when a function ignores an argument that would
+run forever. Normal order can skip that argument. Call-by-value gets stuck
+trying to compute it. The Y combinator gives us a particularly striking example.
+It computes factorial under normal order but exhausts our strict evaluator's
+fuel. Running out of fuel means we've reached our experiment's limit, not that
+we've proved the computation will never finish.
 
 ### Why De Bruijn Indices?
 
 Names help us read programs, but their spelling is incidental to binding.
 `\x -> x` and `\answer -> answer` describe the same function. We call them
-_alpha-equivalent_: renaming a bound variable consistently changes nothing.
+_alpha-equivalent_. Renaming a bound variable consistently changes nothing.
 Comparing their syntax trees directly, however, finds different strings.
 A compiler that rewrites named terms must keep distinguishing harmless renaming
 from a change in which binder an occurrence refers to.
@@ -110,7 +118,7 @@ f (f x)                 1 (1 0)
 Both occurrences of `f` have index 1. Application adds no binder, so entering
 `(f x)` does not change either index. Renaming the parameters to `g` and `seed`
 produces exactly the same indexed tree. Alpha-equivalence has become ordinary
-structural equality [@pierce2002]. This is useful in our printer tests: a
+structural equality [@pierce2002]. This is useful in our printer tests. A
 parse–print–parse round trip should preserve binding even if names change.
 
 An open term still needs a way to represent free variables. Our `Term` type
@@ -157,7 +165,7 @@ S = \f -> \g -> \x -> f x (g x)
 
 These capital letters are mathematical names. The executable tests use
 lowercase `s`, `k`, and `i` as ordinary local bindings. Applications associate
-left: `S f g a` means `((S f) g) a`. Each reduction rule needs all its displayed
+left, so `S f g a` means `((S f) g) a`. Each reduction rule needs all its displayed
 arguments before it can fire.
 
 `I` and `K` are easy to picture. `S` explains how an application can depend on
@@ -172,8 +180,10 @@ S K K a
 → a                apply the K rule
 ```
 
-So `S K K` behaves as `I`. Identity is convenient to name, but S and K already
-suffice. The chapter's test `s k k (i 42)` exercises precisely this reduction.
+So `S K K` behaves as `I`. That's a beautiful little result. We can build
+identity out of two operations that, at first glance, don't look much like
+identity at all. S and K suffice, though keeping I around makes expressions
+easier to read. Try the chapter's `s k k (i 42)` example and follow the reductions.
 
 Why should these particular operations eliminate lambdas? For a body `t`, write
 `[x]t` for a combinator expression that accepts `x` and produces `t`. Once inner
@@ -214,14 +224,14 @@ Bracket abstraction removes the binders and expresses their work as application.
 This gives us a small example of compilation between two representations of the
 same computation.
 
-There is an evaluation-strategy qualification. These are rewriting rules for
-the pure calculus, not permission to discard an arbitrary strict computation.
-Normal order reduces `K 42 omega` to `42` even if `omega` diverges. Our
-call-by-value evaluator tries to evaluate `omega` before entering `K`'s body.
-Likewise, naive bracket abstraction is not a semantics-preserving strict
-compiler pass for all terms. We use SKI to study binding and reduction here.
-Fun's back end uses closures, which also avoid the large application trees a
-simple combinator translation can produce.
+There is a catch, and it is the same evaluation-order question we started
+with. Normal order reduces `K 42 omega` to `42` even if `omega` runs forever.
+Our strict evaluator tries to compute `omega` before entering K's body, so it
+never gets that far. These combinator equations describe rewriting in the pure
+calculus. They don't let a strict compiler discard arbitrary computations.
+We'll use SKI to understand binding and reduction, while Fun's back end will
+use closures. Closures also spare us the large application trees that a simple
+combinator translation can produce.
 
 ## Implementation
 
@@ -279,7 +289,7 @@ recursive visit consumes fuel. The CLI uses a larger host stack for these tree
 walkers. Chapter 5 replaces host recursion with an explicit machine. Neither
 fuel nor a larger stack is a substitute for that transformation.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch03_lambda
@@ -295,11 +305,10 @@ lambda> :trace (\x -> x) 42
 lambda> :quit
 ```
 
-Select normal order with `run --engine=normal`. `--fuel=N` bounds either
-strategy, but the counters measure different operations: evaluator visits or
-small-step reductions. All 15 calculator fixtures still run unchanged with the
-default strict engine. New fixtures test closures, booleans, higher-order calls,
-and dynamic type errors.
+Select normal order with `run --engine=normal`. Use `--fuel=N` when experimenting
+with terms that might not finish. The two engines count different operations,
+so the same fuel limit needn't stop them at the same point. Try a function that
+ignores a failing argument to see why their answers can differ.
 
 ## Exercises
 
@@ -309,7 +318,7 @@ and dynamic type errors.
 4. **Medium.** Trace `K I a b` and explain which argument is discarded.
 5. **Hard.** Construct a fixed-point combinator suitable for call-by-value and compare its trace with Y.
 
-## Further reading
+## Further Reading
 
 Pierce treats substitution, reduction, and nameless terms [@pierce2002].
 Felleisen and Friedman introduce the abstract-machine setting

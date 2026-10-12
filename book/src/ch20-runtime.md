@@ -18,24 +18,28 @@
 
 ## Motivation
 
-The Flat interpreter represents values with Rust enums and closures with arena
-indexes. Native code needs a concrete agreement about bits, addresses, object
-headers, function entry points, and ownership. Polymorphic code makes that
-agreement especially useful: one compiled function must accept values of many
-source types without knowing their representation at each use.
+Our interpreters have enjoyed a useful luxury. Rust enums describe their
+values, and Rust helps manage their storage. The machine code we're about to
+generate won't have those enums. We need to decide exactly what an integer,
+a list node, or a closure looks like in memory.
 
-This chapter defines a uniform word representation and implements the supporting
-runtime independently of LLVM. A C smoke program links the real static archive,
-while Rust tests construct objects and call the ABI directly. At the same time,
-the interpreters adopt the runtime's safe primitive implementation, so formatting
-and conversion rules have one source of truth before native execution arrives.
+Polymorphism makes the question especially interesting. One compiled `id`
+function should accept an integer, a string, or a tree. We'd like to pass all
+of them through the same calling convention. A uniform machine word gives us
+that common representation, with a little tagging to distinguish immediate
+values from pointers.
 
-## The language, now
+We'll build the runtime before connecting LLVM. This lets us inspect the memory
+layout and application protocol on their own. The interpreters will also reuse
+its primitive operations. We shouldn't need three slightly different ideas of
+how to print a floating-point number.
 
-Source syntax and entry-point rules are unchanged. Runtime representation must
-preserve the behavior already established by the corpus: 63-bit wrapping
-integers, Unicode scalar characters, UTF-8 strings, strict constructors, buffered
-IO, and precise error and exit behavior.
+## The Language, Now
+
+The programs we write don't change here. Our new representation must still
+give us wrapping 63-bit integers, Unicode characters, UTF-8 strings, and strict
+constructor fields. Changing how a value fits in memory shouldn't change what
+a Fun program can observe.
 
 This inherited program exercises floating display for NaN, infinity, and signed
 zero:
@@ -61,12 +65,15 @@ holds character scalar values and nullary constructor tags.
 #![function!("../../crates/ch20_runtime/rt/src/layout.rs", signed)]
 ```
 
-These bit patterns are interpreted by source type. Unit, `False`, the empty
-list, and `Nothing` all use word `1`. This is safe because checked code never
-examines one at an unrelated type. A uniform representation permits dictionary
-passing and polymorphic functions without per-instantiation layouts. Strict
-functional implementations have long used tagging and boxing tradeoffs of this
-kind [@leroy1990].
+Notice something odd about word `1`. It can represent unit, `False`, the empty
+list, or `Nothing`. That isn't an ambiguity the runtime has to resolve. The
+type checker already established which interpretation the program can use.
+We don't inspect a list as though it were a boolean.
+
+This is what makes the uniform representation useful. A polymorphic function
+can pass words around without needing a different memory layout for every
+instantiation. Tagging and boxing give strict functional implementations a
+practical way to make that work [@leroy1990].
 
 Heap objects begin with a header. Its low eight bits identify the object kind,
 the next 24 bits carry a constructor tag, and the high 32 bits count payload
@@ -74,13 +81,15 @@ words. Constructor tags are local to a datatype and follow declaration order.
 The fixed Prelude tags keep runtime-created lists and optional values compatible
 with compiler-created ones.
 
-Conservative collection scans potential pointer words without exact source-type
-information [@boehm1988]. This avoids adding liveness maps to code generation,
-but may retain an unreachable object when an unrelated bit pattern resembles
-its address. Objects cannot be freely moved when such apparent pointers cannot
-be distinguished and updated. A precise moving collector requires an explicit
-root protocol. That later extension builds on the contrast explained by
-Henderson [@henderson2002] and the GC handbook [@gc2023].
+Boehm finds potential pointers by inspecting words in memory [@boehm1988].
+That saves us from describing every live pointer in the generated code. The
+tradeoff is that an unrelated bit pattern can look like an address and keep
+an otherwise dead object alive. The collector also can't freely move an object
+when it doesn't know which apparent pointers are real references to update.
+
+A precise moving collector needs our help. We'll build that cooperation in
+Chapter 24, using an explicit account of roots. Henderson and the GC handbook
+develop this distinction [@henderson2002; @gc2023].
 
 ## Implementation
 
@@ -247,13 +256,13 @@ Language failures instead follow the explicit runtime error and exit paths.
 `show_double` starts with Rust's shortest round-trip digits, then normalizes
 notation. Nonzero magnitudes from `1e-4` inclusive to `1e16` exclusive use
 positional notation. Other finite values use a signed exponent. Zero retains
-its sign, and special values spell `NaN`, `Infinity`, and `-Infinity`. A 200-row
-checked-in table exercises both the safe API and the word ABI, including finite
-bit-preserving round trips. `readInt` accepts optional surrounding whitespace
+its sign, and special values spell `NaN`, `Infinity`, and `-Infinity`. We check
+boundary values through both the safe API and the word ABI, including whether
+finite values survive a print-and-read round trip with the same bits. `readInt` accepts optional surrounding whitespace
 and a decimal sign, then rejects values outside the signed 63-bit range.
 Floating `round` uses ties-to-even and saturates. NaN converts to zero.
 
-## Running it
+## Running It
 
 The larger `double-specials` fixture also checks the positional/scientific
 notation boundary:
@@ -279,29 +288,27 @@ C smoke program with the system compiler, and checks that it prints `42`.
 requires `libgc-dev`. MacOS uses Homebrew's `bdw-gc`, with `GC_LIB_DIR` available
 for another installation location.
 
-The cumulative corpus has 409 programs and still compares all eligible
-interpreters. New fixtures cover Unicode scalars, numeric boundaries, a wide
-constructor, and allocation. The larger strict-list stress case runs on ANF and
-Flat because it exceeds the reference Core interpreter's host-stack allowance.
-A smaller version runs on all three. Runtime tests additionally exercise exact,
-partial, and oversaturated calls, recursive closures under collection, worker
-registration, input flushing, runtime diagnostics, and exit status. These checks
-establish the ABI that the next chapter's generated code must obey.
+A collector bug often hides until allocation happens at exactly the wrong
+moment. The runtime tests force collection while recursive closures are being
+built and while calls hold live arguments. They also exercise partial and
+oversaturated calls, Unicode strings, and output before errors. These are the
+places where a correct-looking object layout has to work as part of a running
+program.
 
 ## Exercises
 
-1. **Warm-up:** compute the encoded words for `-1`, `0`, `True`, and unit. Explain
+1. **Warm-up.** Compute the encoded words for `-1`, `0`, `True`, and unit. Explain
    why equal words need not represent equal source values.
-2. **Intermediate:** draw a two-field constructor and a one-argument PAP, including
+2. **Intermediate.** Draw a two-field constructor and a one-argument PAP, including
    their headers and payload sizes.
-3. **Intermediate:** explain why a live pointer stored only in an ordinary Rust
+3. **Intermediate.** Explain why a live pointer stored only in an ordinary Rust
    vector can disappear from Boehm's view.
-4. **Advanced:** add a forced collection between recursive closure allocation and
+4. **Advanced.** Add a forced collection between recursive closure allocation and
    patching in an ABI test, keeping every unfinished object rooted.
-5. **Advanced:** identify what extra metadata a moving collector would need to
+5. **Advanced.** Identify what extra metadata a moving collector would need to
    update closure captures, PAP arguments, globals, and live local values.
 
-## Further reading
+## Further Reading
 
 - Conservative collection without compiler cooperation [@boehm1988].
 - Root discovery with compiler cooperation [@henderson2002].

@@ -18,21 +18,24 @@
 
 ## Motivation
 
-A language becomes useful when small programs can rely on a coherent library.
-That library also tests the compiler unusually well: folds exercise polymorphism,
-monadic traversals exercise higher-kinded dictionaries, and derived operations
-combine constructor typing, guards, recursion, and instance resolution.
+A language starts to feel like a language when you can reach for `map`, `foldr`,
+or `maybe` without writing them yourself every time. We now have enough Fun to
+write its standard library in Fun. That's a good milestone!
 
-The Prelude stays in Fun source. Deriving extends the same principle: the
-compiler writes a conventional instance declaration, then sends it through the
-existing checker. There is no separate evaluator shortcut for equality on user
-data or for displaying a record. This chapter completes the interpreted language
-before the following chapters change its execution machinery.
+We'll also teach the compiler to write the repetitive parts. Given a datatype,
+`deriving` generates an ordinary instance for equality, ordering, or display.
+The generated code goes through the same checker as code we'd write by hand.
+There's no secret equality operation in the interpreter waiting to rescue it.
 
-## The language, now
+This chapter brings the interpreted language together. Take a little time to
+play with it before we head into the back end. Small library functions are also
+excellent compiler examples. Their types and definitions often tell the whole
+story in just a few lines.
+
+## The Language, Now
 
 A datatype may request `deriving Eq` or a nonempty parenthesized list drawn from
-`Eq`, `Ord`, and `Show`. The following corpus program deliberately constructs
+`Eq`, `Ord`, and `Show`. This example constructs
 its record fields in a different order from their declaration:
 
 ```fun
@@ -52,18 +55,42 @@ monadic control. `[a..b]` is an inclusive `Int` range. `iterateN` produces a
 bounded sequence. Infinite lists are unavailable because constructor fields are
 strict. `foldl'` and `foldl` have the same strict behavior here.
 
-`++` now appends lists. Strings use `<>`. This changes 13 inherited fixtures,
-all listed in `BREAKING.md`. Numeric literals remain monomorphic. In particular,
-`sum` and `product` work on `Int` lists: their identity values are integer
-literals, and Fun's `Num` class has no literal-conversion method.
+Use `++` to append lists and `<>` to append strings. Numeric literals still
+have fixed types, so `sum` and `product` operate on `Int` lists. Their starting
+values are integer literals, and Fun's `Num` class has no operation for turning
+a literal into an arbitrary numeric type.
+
+### Putting Small Functions Together
+
+Now we can write something compact enough to read in one breath.
+
+```fun
+total = sum . map (\x -> x * x) . filter even
+
+main = print (total [1..10])
+```
+
+This prints `220`. Read the composition from right to left. Keep the even
+numbers, square each one, then add them up. Each function does one familiar job,
+and `(.)` connects the result of one to the input of the next. We don't have to
+name a loop index or describe how to advance through the list.
+
+That is a beautiful way to express the calculation. It doesn't mean the work
+has vanished. Fun is strict, and this program builds intermediate lists. Later
+optimizations could remove them, but the useful separation is already here.
+We can understand what the program means before choosing how to make it faster.
 
 ## Theory
 
-Deriving is elaboration into a smaller language. The generated instance must
-satisfy exactly the same instance-head, context, superclass, and method checks
-as a handwritten one. The Haskell report specifies the structural behavior of
-the standard derived instances [@haskell2010]. Fun adapts that behavior to
-nominal records, primitive strings, and its smaller `Show` interface.
+Imagine writing equality for a tree by hand. Empty trees are equal. Two nodes
+are equal when their corresponding fields are equal. Different constructors
+aren't equal. The datatype declaration already tells us enough to write those
+clauses, so let's have the compiler write them.
+
+That's deriving. We generate an ordinary instance, then check it just as we
+would check a handwritten one. The Haskell Report specifies the structural
+behavior [@haskell2010]. We adapt it to Fun's records, primitive strings, and
+smaller `Show` interface.
 
 A parameter used in a field usually introduces a corresponding instance
 constraint. A phantom parameter does not. For `data Token a = Token Int`,
@@ -73,13 +100,16 @@ fields. The normal instance solver then checks whether the generated context
 actually suffices for every field operation [@jones1999]. Deriving is not an
 escape from those checks.
 
-Precedence-sensitive display needs more information than `a -> String`. A
-helper receives the surrounding precedence and can parenthesize an application
-when embedded as an argument. Fun's Show dictionary therefore has an internal
-`_showsPrec` method. Handwritten instances inherit a default. Derived instances
-provide the structural implementation. Top-level `show` starts with precedence
-zero, while positional constructor fields are rendered at precedence eleven.
-Record field values use ordinary `show` inside their labelled braces.
+Printing constructors has a small but important wrinkle. `Just (Left 3)` needs
+parentheses, but `Left 3` on its own doesn't. A function of type `a -> String`
+can't see where its result will be used. We need to pass that surrounding
+precedence in as well.
+
+Fun's Show dictionary has an internal `_showsPrec` method for this purpose.
+Handwritten instances inherit a default, while derived instances implement it
+structurally. Top-level `show` starts at precedence zero. Positional constructor
+arguments use eleven, which asks nested constructor applications to parenthesize
+themselves. Record fields use ordinary `show` inside their labelled braces.
 
 Strictness changes another familiar library definition. An ordinary top-level
 `undefined = error "undefined"` would fail during startup, even if unused.
@@ -120,7 +150,7 @@ required equality evidence also fails through the existing instance checks.
 The library lives in `prelude.fun`, embedded ahead of the user program. Its
 private helper references are resolved within that scope, so a user binding
 cannot silently change the implementation of a Prelude function. Inclusive
-ranges check the upper bound before incrementing: a range ending at the largest
+ranges check the upper bound before incrementing. A range ending at the largest
 63-bit integer must terminate rather than wrap around.
 
 Character classification and simple case conversion use checked-in Unicode
@@ -131,15 +161,13 @@ mappings therefore execute through the language rather than adding a large
 set of new primitives. `isDigit` deliberately recognizes ASCII decimal digits.
 Not every character with a Unicode numeric classification satisfies it.
 
-The larger Prelude exposed two infrastructure costs. Immutable constructor
-field vectors are now shared through `Rc`, avoiding repeated deep copies of
-list tails during traversal. Core lint removes newly bound unique names on
-scope exit instead of cloning the entire term environment. Neither change
-alters source semantics. A literal regression also checks that accepted integer
-literals, including negative patterns, normalize to signed 63 bits. That bug fix
-was applied to all earlier affected Fun snapshots.
+A library also teaches us where the compiler is doing unnecessary work. Walking
+a list shouldn't copy its entire tail at every step. We share immutable
+constructor field vectors with `Rc`, and Core lint removes local bindings on
+scope exit instead of copying its whole environment. These are useful reminders
+to look at the cost of our Rust representation as well as the Fun program.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch17_prelude
@@ -155,27 +183,25 @@ instance dictionaries. `--pass=match` shows their compiled structural tests.
 The separate `derive-show-tree` and `derive-show-literals` fixtures cover nested
 applications and escaping.
 
-The corpus grows to 386 programs, with 57 new cases. Most are small executable
-library specifications: empty-list behavior, range endpoints, finite iteration,
-Unicode classification, monadic traversals, phantom parameters, synonym fields,
-and rejection of unsupported deriving. These tests will accompany every later
-back end, so the library's observable formatting becomes part of the compiler's
-compatibility contract.
+Library edge cases make good experiments. Try a singleton range at the largest
+`Int`, an empty list passed to a fold, or a derived instance with a phantom
+parameter. The little examples are doing real work here. A boundary case can
+explain a library definition more clearly than a long ordinary input.
 
 ## Exercises
 
-1. **Warm-up:** derive `Eq`, `Ord`, and `Show` for a two-constructor tree and compare
+1. **Warm-up.** Derive `Eq`, `Ord`, and `Show` for a two-constructor tree and compare
    the result with a handwritten instance.
-2. **Intermediate:** add an unused datatype parameter and inspect whether its
+2. **Intermediate.** Add an unused datatype parameter and inspect whether its
    dictionary appears in the derived instance context.
-3. **Intermediate:** trace the precedence passed while displaying
+3. **Intermediate.** Trace the precedence passed while displaying
    `Just (Left (Just 3))`.
-4. **Intermediate:** test a singleton range at the maximum `Int` and explain why
+4. **Intermediate.** Test a singleton range at the maximum `Int` and explain why
    the order of the bound check and increment matters.
-5. **Advanced:** measure constructor-tail copying on a Unicode lookup before and
+5. **Advanced.** Measure constructor-tail copying on a Unicode lookup before and
    after immutable field-vector sharing, without changing the Fun program.
 
-## Further reading
+## Further Reading
 
 - Standard derived instances and the Prelude [@haskell2010].
 - Instance contexts and entailment [@jones1999].

@@ -18,19 +18,21 @@
 
 ## Motivation
 
-A compiler's back end is a collection of agreements. A field load must agree
-with the allocator about object layout. A call must agree with its callee about
-arguments and registers. A branch must preserve the evaluation order established
-before it. LLVM supplies instruction selection, register allocation, and machine
-optimization. These agreements remain our responsibility.
+We can now run Fun programs, but they still need our interpreter to do the
+work. In this chapter we'll produce an executable you can launch from the shell.
+That's a pretty satisfying destination for a project that began with a calculator!
 
-The preceding chapters have made this boundary small. Flat IR already names
-every intermediate value, lifts every function, distinguishes known calls from
-closure applications, and makes tail transfers explicit. This chapter translates
-those decisions into LLVM without revisiting source-language inference or
-pattern matching. The result is the first standalone native Fun compiler.
+Much of the preparation is already behind us. Pattern matching has become
+branches, closures have explicit environments, and Flat IR tells us where calls
+and tail transfers belong. LLVM will handle instruction selection, register
+allocation, and machine optimization.
 
-## The language, now
+We still have to tell it how our values fit in memory and how our functions
+call one another. If those decisions disagree with the runtime, LLVM can
+efficiently compile the wrong program. We'll work through that boundary carefully,
+using the representations we already understand to keep the new work manageable.
+
+## The Language, Now
 
 The language is unchanged. `fun-ch21 build FILE -o OUT` produces an executable.
 `run` still selects an interpreter. `-O0` through `-O3` control optimization,
@@ -44,24 +46,31 @@ functions, IO, and a strict accumulator loop:
 {{#include ../../crates/ch21_llvm/tests/programs/native/acceptance.fun}}
 ```
 
-The final call performs ten million iterations. Its correctness includes space
-behavior: the native call stack must remain bounded.
+The final call performs ten million iterations. Getting the number right is
+only part of the challenge. The native stack should stay bounded too, just as
+it does for a tail call in our explicit machines.
 
 ## Theory
 
-LLVM's static single assignment form gives each instruction result one
-definition. Our unique Flat binders already provide that discipline. A `Let`
-associates its name with an LLVM value. A `Join` creates a basic block, and each
-join parameter becomes a phi node. A `Jump` supplies incoming values and branches
-to that block. Join points express this shared continuation directly
-[@maurer2017].
+LLVM uses _static single assignment_, or SSA. Each instruction result has one
+definition, so a name always identifies the same computed value. Our unique
+Flat binders already fit this idea. A `Let` associates a binder with an LLVM
+value, while a `Join` becomes a basic block that several paths can enter.
 
-A phi does not select a value by testing a condition. It selects the value paired
-with the predecessor block through which control arrived. This matters when
-emitting one Flat operation creates several LLVM blocks: division inserts a
-zero check, and a mixed constructor case distinguishes an immediate from a
-pointer. A jump records the builder's **current** block after emitting its
-arguments, not the block in which emission originally began.
+The interesting question is how those paths pass values to the block. LLVM
+uses _phi nodes_. Each join parameter becomes a phi, and a `Jump` supplies its
+incoming value before branching to the block. The join points we've already
+built give this translation a natural shape [@maurer2017].
+
+Imagine two paths that meet at a join. One supplies `10`, the other `20`.
+The phi takes the value associated with whichever path we arrived from. It
+doesn't test the original condition again.
+
+There is an easy codegen mistake here. Emitting one Flat operation can create
+several LLVM blocks. Division, for example, adds a zero check. The phi's incoming
+edge must name the block we actually leave after that check, not the block
+where we started emitting the expression. Record the builder's **current**
+block after emitting the jump arguments.
 
 | Flat construct  | LLVM translation                                  |
 | --------------- | ------------------------------------------------- |
@@ -94,9 +103,8 @@ recursive calls need no special case.
 The chapter pins Inkwell 0.10.0 with `llvm22-1-prefer-dynamic` and LLVM 22. Target initialization runs once. The target machine uses the host
 triple, the generic CPU, and position-independent relocation. Its triple and
 data layout are installed on the module **before** emission. A 32-bit pointer
-target is rejected. The smaller examples in
-[Compiler Crates](https://sdiehl.github.io/compiler-crates/inkwell.html)
-as a companion introduction.
+target is rejected. For a smaller introduction to the bindings, see the examples
+in [Compiler Crates](https://sdiehl.github.io/compiler-crates/inkwell.html).
 
 Builder operations return errors. Flat lint checks the input, and LLVM's verifier
 checks every completed module, regardless of `--lint`. Optimization uses the
@@ -106,10 +114,11 @@ new pass manager and verifies again:
 #![function!("../../crates/ch21_llvm/src/llvm/mod.rs", Backend::optimize)]
 ```
 
-Verification detects malformed LLVM, such as a missing terminator, a wrong call
-type, or an invalid phi. It cannot establish Fun's semantics. A well-formed
-module can still evaluate arguments in the wrong order or overflow incorrectly.
-Those are differential-test obligations.
+The verifier can catch a missing terminator, an invalid phi, or a call with
+the wrong type. It's an excellent first line of defence. But perfectly valid
+LLVM can still be a wrong translation of Fun, perhaps evaluating arguments
+in the wrong order or mishandling integer overflow. We catch those mistakes by
+running the same programs through the interpreters and native code.
 
 ### Traverse with a worklist
 
@@ -122,14 +131,12 @@ by Flat lint, so emission does not clone a scope map at each branch. A join's
 phis are created before its callers are visited. Incoming edges can be added
 as those callers are emitted. Each completed block has exactly one terminator.
 
-This chapter also makes Flat lint and printing iterative. Lint uses explicit
-enter/leave events to maintain lexical scopes. Owned Flat program destruction
-drains `Rc` edges through a worklist: otherwise Rust's generated destructors
-could recursively free a deep tree after compilation had succeeded. A test
-constructs 50,000 bindings and 5,000 nested joins, then checks, prints, emits,
-verifies, and drops them on a 512 KiB thread stack. This establishes the bound
-for our Flat traversal code. Inherited front-end passes and the Core reference
-interpreter still use recursion.
+The worklist approach also applies to lint, printing, and cleanup. That last
+one is easy to forget. Rust's generated destructors can recursively free a deep
+`Rc` tree after compilation has apparently succeeded. We drain those edges with
+a worklist too. Deep Flat trees are checked, printed, emitted, verified, and
+released on a small Rust stack. This checks our Flat traversals, rather than
+assuming a successful code-generation loop makes every other pass safe.
 
 ```rust
 #![function!("../../crates/ch21_llvm/src/llvm/control.rs", Backend::body)]
@@ -166,7 +173,7 @@ because they contain no pointers. Generated globals and live machine
 registers/stack slots remain visible to Boehm [@boehm1988].
 
 Integer operations decode with arithmetic shift, compute in `i64`, and retag.
-No `nsw` or `nuw` flags are attached: wrapping is defined behavior. A zero divisor
+We attach neither `nsw` nor `nuw`, since wrapping is defined behavior. A zero divisor
 branches to `rt_div_zero` before division. The smallest Fun integer divided by
 minus one fits in the wider intermediate `i64`. Retagging supplies the required
 63-bit wrap. `div` and `mod` adjust truncating quotient and remainder when their
@@ -219,12 +226,12 @@ only on success. There is no shell interpolation and a failed link leaves an
 existing output intact.
 
 Calls crossing between `tailcc` and the C runtime are explicitly `notail`.
-Without that restriction, LLVM can infer an ABI-crossing tail transfer whose
-stack cleanup is wrong for wide calls. Chapter 22's JIT exposed this AArch64
-failure. The correction is applied here too. Known Fun-to-Fun tail calls retain
-their guarantee.
+Otherwise LLVM can infer a tail transfer across the two conventions and get
+stack cleanup wrong for a wide call. This is a particularly unpleasant bug
+because the IR can pass verification. Marking this boundary doesn't interfere
+with our guaranteed tail calls between known Fun functions.
 
-## Running it
+## Running It
 
 Install LLVM 22 and Boehm as described in the repository README. Set
 `LLVM_SYS_221_PREFIX` to the LLVM installation prefix, then build from the root:
@@ -243,13 +250,11 @@ $ target/debug/fun-ch21 dump --pass=llvm crates/ch21_llvm/tests/programs/native/
 $ target/debug/fun-ch21 dump --pass=llvm-opt crates/ch21_llvm/tests/programs/native/acceptance.fun > build/acceptance-opt.ll
 ```
 
-The corpus now contains 417 programs. Native output, the first stderr line,
-and exit status are compared with the interpreters wherever each fixture's
-engine header permits. The large acceptance and mutual-recursion tests use ten
-million calls. A smaller acceptance program runs on all four engines. The
-1,000-case generator also includes native execution. Ten LLVM snapshots expose
-instruction-level changes, while `-O0` through `-O3` tests cover representation,
-argument order, wide calls, and global initialization.
+Run the examples through both native code and the interpreters. Compare errors
+as well as successful answers, since evaluation-order bugs often reveal
+themselves in which error appears first. It's also worth trying all optimization
+levels. A calling-convention mistake can hide until LLVM decides to make a
+particular transformation.
 
 Separate stress tests execute the native recursion programs with a 512 KiB
 stack. Another loop allocates at least 100 million words under a 64 MiB Boehm
@@ -259,18 +264,18 @@ LLVM verification alone establishes neither.
 
 ## Exercises
 
-1. **Warm-up:** trace a field load from a tagged word through `inttoptr`, GEP,
+1. **Warm-up.** Trace a field load from a tagged word through `inttoptr`, GEP,
    and `load`. State which earlier check justifies the field index.
-2. **Intermediate:** draw the blocks for a join with two callers. Add division
+2. **Intermediate.** Draw the blocks for a join with two callers. Add division
    in one caller and identify the correct phi predecessor afterward.
-3. **Intermediate:** explain why adding `nsw` to integer multiplication would
+3. **Intermediate.** Explain why adding `nsw` to integer multiplication would
    change Fun's semantics, even if most examples still pass.
-4. **Advanced:** compare unoptimized and optimized IR for `sumTo`. Check the
+4. **Advanced.** Compare unoptimized and optimized IR for `sumTo`. Check the
    calling convention at both ends of its recursive transfer.
-5. **Advanced:** design an unknown-call stress test that exposes the C apply
+5. **Advanced.** Design an unknown-call stress test that exposes the C apply
    boundary. Describe the ABI change needed to make it a guaranteed tail call.
 
-## Further reading
+## Further Reading
 
 - [Compiler Crates: Inkwell](https://sdiehl.github.io/compiler-crates/inkwell.html),
   for building LLVM modules through Rust.

@@ -23,19 +23,19 @@
 
 ## Motivation
 
-The foundation chapters isolated particular ideas. We now bring their useful
-parts into one compiler that will grow throughout the rest of the book. Each
-later chapter owns a complete copy of this compiler. The preceding copy remains
-runnable, so a reader can inspect a pass before and after its extension.
+We've built a parser, explored how functions run, and taught a compiler to
+infer types. Now we can bring those pieces together. From this chapter onward
+we'll be building Fun, the language we'll eventually compile to native code.
+Each chapter keeps a runnable snapshot, so you can always return to a simpler
+version when you want to see where an idea began.
 
-That arrangement needs more than a parser and evaluator. Every pass must agree
-on source locations, names, diagnostics, and how failure stops compilation.
-Tests must also survive the copying process. These interfaces are deliberately
-small: a session owns the shared state, while a pass consumes one representation
-and returns another. The pipeline figure in Chapter 1 shows where later
-representations will fit.
+Some of the work here is the ordinary engineering that makes the interesting
+parts pleasant to build. When the type checker finds a mistake, it needs to
+point back to the source. When one pass fails, the next shouldn't try to make
+sense of its unfinished output. We'll give names, source locations, and errors
+a shared home, then connect our passes into a compiler we can keep extending.
 
-## The language, now
+## The Language, Now
 
 A program is an explicit brace block containing declarations. Semicolons separate
 declarations. A trailing semicolon is optional. Each declaration may refer to
@@ -51,7 +51,7 @@ until Chapter 9.
 ```
 
 Local `let` uses braces too, with one binding in this snapshot. Recursive bindings
-need no `rec` keyword: a self-reference identifies recursion, and the right-hand
+need no `rec` keyword. A self-reference identifies recursion, and the right-hand
 side must be a lambda. `let { x = x; } in x` is rejected with `E0120`.
 
 `Char` contains a Unicode scalar value, and `String` is a primitive UTF-8 string.
@@ -176,7 +176,7 @@ machine from Chapter 5 returns as an ANF oracle in Chapter 18. Keeping Core's
 reference interpreter direct makes the forthcoming elaboration passes easier
 to inspect.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch07_fun
@@ -193,11 +193,10 @@ main : a -> a
 fun> :quit
 ```
 
-Available dumps are `tokens`, `parse`, `types`, and `core`, through either
-`dump --pass=...` or the common `--dump=...` option. The initial REPL evaluates
-individual expressions. Persistent JIT definitions arrive later. All 65 inherited
-programs are migrated explicitly, and 15 new programs bring the corpus to 80.
-Ten Core snapshots expose representative lowering results.
+Try the `tokens`, `parse`, `types`, and `core` dumps on the same small program.
+Each shows a different stage of the journey. You can use `dump --pass=...` or
+the common `--dump=...` option. The REPL evaluates individual expressions for
+now. Persistent definitions will arrive with the JIT.
 
 ## Exercises
 
@@ -206,7 +205,7 @@ Ten Core snapshots expose representative lowering results.
 3. **Medium.** Inspect Core for a local recursive function and explain where the self reference becomes bound.
 4. **Hard.** Construct an invalid Core program that passes source parsing but could only be produced by a faulty compiler transformation. Extend a lint test to reject it.
 
-## Further reading
+## Further Reading
 
 The Haskell Report provides the lexical and scoping reference that Fun gradually
 adopts [@haskell2010]. Pierce develops the typed intermediate-language perspective

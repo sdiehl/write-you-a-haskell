@@ -15,20 +15,24 @@
 
 ## Motivation
 
-Typed Core makes type correctness explicit, but its nested expressions leave
-many execution steps implicit. Before calling a function, an evaluator must
-walk its argument expressions, preserve intermediate values, and remember what
-to do after the call. A code generator needs that order written down.
+Consider `f (g x) (h y)`. To run it, we need to evaluate the function and its
+arguments in the right order, keep the result of `g x` while computing `h y`,
+and finally make the call. Our interpreter has been doing that bookkeeping
+for us. A code generator needs to see the steps.
 
-A-normal form, or ANF, gives each intermediate computation a name and restricts
-operation operands to atoms. We can then interpret the result with an explicit
-continuation stack. The machine revisits the CEK design from Chapter 5, now with
-constructors, dictionaries, IO, and join points. It is both a route toward native
-code and an independent check on the reference interpreter.
+A-normal form, usually shortened to ANF, writes those intermediate results down
+as named bindings. Function calls and other operations then take simple operands
+rather than nested computations. The name sounds rather grand for what amounts
+to introducing some useful local variables.
 
-## The language, now
+This also gives us a good place to bring back the CEK machine from Chapter 5.
+We'll run ANF with an explicit continuation stack, now with all of Fun's data,
+dictionaries, IO, and join points. We can compare its answers with Core while
+getting the program ready for native code.
 
-The source language is unchanged. Consider a case expression used as an operand:
+## The Language, Now
+
+Let's follow a case expression whose result is used by another computation.
 
 ```fun
 {{#include ../../crates/ch18_anf/tests/programs/anf/case-continuation.fun}}
@@ -46,12 +50,11 @@ cannot disappear merely because its result has no uses.
 
 ## Theory
 
-An atom is a literal or a reference to an already available local or global
-value. Reading a well-scoped atom performs no language computation. A
-right-hand side performs one operation on atoms, and a `Let` names its result.
-This separation exposes the sequencing implicit in nested call-by-value terms.
-Flanagan and colleagues develop the connection between this style of direct
-representation and continuation-based compilation [@flanagan1993].
+In `f (g x) (h y)`, the interesting work is in the calls. The names themselves
+just refer to values. ANF makes that distinction part of the syntax. An _atom_
+is a literal or a reference to an available value. A right-hand side performs
+one operation on atoms, and a `Let` gives the result a name. Nested evaluation
+has become an explicit sequence [@flanagan1993].
 
 Conversion receives a context describing what to do with a result. At the end
 of a function it returns the atom. Inside an expression it binds the atom and
@@ -70,7 +73,7 @@ Tail position is a property of the remaining work. If a function call supplies
 the current function's result directly, the machine needs no return frame for
 that activation. A non-tail call must remember its pending computation. Constant
 host-stack use therefore does not imply constant memory for every recursive
-program: pending non-tail work can still grow the explicit continuation stack.
+program. Pending non-tail work can still grow the explicit continuation stack.
 This is the practical advantage of making the CEK continuation visible
 [@felleisen1986].
 
@@ -141,7 +144,7 @@ captured join environment. Neither transfer recursively invokes the Rust
 interpreter. Primitive values cross a data-only adapter to the existing
 primitive implementation. Control flow does not call the Core evaluator.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch18_anf
@@ -157,33 +160,33 @@ Repeat execution with `--engine=core` to compare the reference result. Dumps
 include the Prelude. The small snapshots in `tests/anf.rs` isolate individual
 transformations such as a non-tail case and a guard-failure join.
 
-The corpus now contains 394 programs. In addition, `testkit/src/gen.rs` creates
-1,000 deterministic well-typed integer programs using arithmetic, local bindings,
-branches, finite recursion, and lists. Twenty cases share each compilation to
-amortize the Prelude. Their printed results must agree with both engines and an
-independent wrapping-integer oracle. Failures retain the seed and source.
+Alongside the handwritten examples, `testkit/src/gen.rs` generates small
+well-typed programs containing arithmetic, local bindings, branches, recursion,
+and lists. Both engines must agree with an independent wrapping-integer
+calculation. We save the source and seed of a failure so an unexpected answer
+becomes a program we can debug.
 
-A separate one-million-call sum returns `500000500000` while recording fewer
-than 32 pending continuations. That assertion tests bounded continuation depth,
-not merely whether a machine happens to finish. The Core oracle also uses
-explicit continuations, independently of ANF conversion. Non-tail calls may grow
-either machine's heap-allocated continuation stack, but do not consume Rust call
-frames. Ordinary fixtures continue to compare both engines.
+A million-call sum is a useful test of the machine's control flow. We measure
+the number of pending continuations, rather than just checking that it finishes.
+A tail call should replace the current computation. A non-tail call may add
+pending work to the heap-allocated continuation stack. Neither needs another
+Rust call frame. Core uses its own explicit machine, so comparing it with ANF
+also checks that conversion hasn't changed the answer.
 
 ## Exercises
 
-1. **Warm-up:** locate the continuation after the example's case in an
+1. **Warm-up.** Locate the continuation after the example's case in an
    unsimplified ANF dump.
-2. **Intermediate:** make two arguments fail with different messages and check
+2. **Intermediate.** Make two arguments fail with different messages and check
    which must run first for a known call and an unknown call.
-3. **Intermediate:** explain why removing an unused division can be wrong even
+3. **Intermediate.** Explain why removing an unused division can be wrong even
    though integer division has no IO effects.
-4. **Advanced:** instrument the machine on tail-recursive and non-tail-recursive
+4. **Advanced.** Instrument the machine on tail-recursive and non-tail-recursive
    sums and compare maximum continuation depth.
-5. **Advanced:** extend the deterministic generator with one new well-typed
+5. **Advanced.** Extend the deterministic generator with one new well-typed
    construct and an independent expected-result calculation.
 
-## Further reading
+## Further Reading
 
 - Direct representations and continuation-based compilation [@flanagan1993].
 - Join points and shared continuations [@maurer2017].

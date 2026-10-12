@@ -13,12 +13,12 @@ should have to take the same slow route. In the spirit of “be the change you
 want to see,” I decided to write the introduction I had been looking for.
 This book is my way of lowering the ladder for the next person.
 
-We will build Fun, a strict functional language with inferred types, algebraic
+We'll build Fun, a strict functional language with inferred types, algebraic
 data, nominal records, and type classes. And building Fun is going to be fun!
-The implementation is in Rust. The
-finished compiler will produce native code through LLVM, alongside interpreters
-that let us check what compilation preserves. The Haskell Report supplies our
-baseline for syntax and typing. Differences are stated explicitly [@haskell2010].
+We'll write it in Rust and take it all the way to native code through LLVM.
+Along the way we'll build interpreters that let us run programs before we have
+a code generator, and check our translations as we go. The Haskell Report gives
+us a starting point for syntax and typing [@haskell2010].
 
 A compiler becomes easier to understand when each transformation has a small
 input language and a small output language. The early chapters study parsing,
@@ -170,8 +170,8 @@ The original Haskell edition is preserved in the repository under the
 ## Why not laziness?
 
 Haskell's strongest lessons survive without making every ordinary computation
-potentially lazy: algebraic data, pattern matching, principal types, purity, and
-type classes. Fun keeps those ideas and chooses call-by-value. Arguments are
+potentially lazy. Algebraic data, pattern matching, principal types, purity, and
+type classes are all worth keeping. Fun brings them together with call-by-value. Arguments are
 computed before a call, constructor fields before construction, and ordinary
 bindings before their bodies. This gives the reader a direct account of when
 work happens and where storage is needed.
@@ -185,8 +185,7 @@ yet that is substantial machinery to reconstruct a cost model we could have
 made explicit from the start. Chapter 5 studies the tradeoff in executable form.
 
 Delayed computation is still useful. My preferred foundation for making it
-opt-in is **call-by-push-value** (CBPV). It separates values from computations:
-a computation can produce a value, and a value can hold a suspended computation.
+opt-in is **call-by-push-value** (CBPV). It separates values from computations. A computation can produce a value, and a value can hold a suspended computation.
 Explicit thunk and force operations mark the boundary. Both call-by-value and
 call-by-name can be expressed through these smaller operations [@levy2001].
 The programmer or compiler can therefore specify where delay belongs instead
@@ -196,7 +195,7 @@ CBPV does not by itself memoize a suspension. Call-by-need additionally requires
 sharing and an update that remembers the result. Forcing an ordinary thunk twice
 can run its computation twice. That distinction is precisely why I prefer this
 foundation for exploring laziness. Fun itself remains a strict call-by-value
-language: it implements neither CBPV nor lazy values. An explicit account of
+language. It implements neither CBPV nor lazy values. An explicit account of
 delay is a direction for a later language, beyond this book's compiler.
 
 ## Chapter roadmap
@@ -265,8 +264,8 @@ studying.
 
 Read the changes as well as the finished code. Each chapter lists its new and
 changed source files, with the important ones first. Comparing two snapshots
-lets you see what a feature actually asks of the compiler: a new syntax node,
-perhaps, followed by a typing rule and a translation. The book includes code
+lets you see what a feature actually asks of the compiler. You might need a new
+syntax node, a typing rule, and a translation into simpler operations. The book includes code
 from those source files, so the implementation you read is the one you run.
 Tests carry forward too, helping us check that adding a feature has not broken
 what already worked.
@@ -287,7 +286,7 @@ print `42`. If it asks for your name before greeting you, compilation must keep
 those actions in that order.
 
 We will build up those steps one at a time. First we work out how the source
-text fits together: in `1 + 2 * 3`, multiplication belongs inside the addition.
+text fits together. In `1 + 2 * 3`, multiplication belongs inside the addition.
 Then we check that the operations make sense, so adding a number to a function
 is caught before the program runs. Later chapters translate the program into
 simpler forms that are easier to turn into machine code.
@@ -304,23 +303,26 @@ can test [@pierce2002].
 
 ## Implementation
 
-The workspace starts with `testkit` and `xtask`. Compiler snapshots will call the
-same corpus API. A fixture records stdout as bytes, an optional diagnostic or
-runtime-error line, and an exit code. Tests set lint on and color off. Each child
-process has a timeout, with output pipes drained concurrently so large output
-cannot deadlock the runner.
+The repository is part of the book. Each chapter has a crate you can run, take
+apart, and change. If you're wondering what a transformation really did, ask the
+compiler to dump its output and compare it with the input. That habit will tell
+you more than staring at the implementation and hoping for enlightenment.
+
+We also want to keep the examples working as the compiler grows. `testkit` runs
+small programs and checks their output, errors, and exit status. Later it runs
+the same program through several execution engines. If two engines disagree,
+we have something concrete to investigate.
 
 ```rust
 {{#include ../../testkit/src/lib.rs:config}}
 ```
 
-`xtask new-chapter` copies a snapshot and its corpus. `check-inherit` compares each
-inherited source and expectation file, checks documented changes, and runs the
-chapter tests. A program inherited unchanged runs on the default engine there; the
-chapter that introduces it and the final chapter run every engine. The book collector reads preprocessed Markdown in `SUMMARY.md`
-order. It never substitutes raw source chapters when a build output is missing.
+`xtask` handles the repetitive work of copying a chapter and checking its
+inherited examples. The book itself includes Rust directly from the chapter
+sources. You can follow an included function into the crate and experiment with
+the code you're reading. The HTML and PDF are built from the same chapters.
 
-## Running it
+## Running It
 
 Install the pinned book tools with `just bootstrap`, then run:
 
@@ -334,7 +336,7 @@ The HTML is in `book/build/html/`. The PDF is
 `build/write-you-a-haskell.pdf`. Compiler `--dump` commands start in Chapter 2.
 There is no compiler pass to dump in Chapter 1.
 
-## Further reading
+## Further Reading
 
 The Haskell Report is the language reference [@haskell2010]. Pierce introduces
 the operational and typing judgments we will use [@pierce2002]. Kiselyov connects

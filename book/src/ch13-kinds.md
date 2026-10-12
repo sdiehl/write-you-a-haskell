@@ -22,17 +22,21 @@
 
 ## Motivation
 
-`Maybe Int` is a type of values, while `Maybe` takes a type before it describes
-values. Chapter 11 checked this distinction by counting arguments. That works
-until a datatype parameter itself takes arguments. A wrapper around `f a` needs
-to express the difference between the roles of `f` and `a`.
+`Int` describes a value. `Maybe Int` does too. But `Maybe` on its own is waiting
+for another type before it can describe a value. We already handle this by
+counting a datatype's arguments. What happens when one of those arguments is
+itself something like `Maybe`?
 
-Kinds describe those roles. They use a small language of arrows and `*`, where
-`*` denotes a type of values. The same unification ideas used for types work for
-kinds, with a separate store and no interaction between their metavariables.
-This prepares the type constructor parameters used by classes in Chapter 14.
+Consider a field with type `f a`. Here `f` must accept a type, while `a` fills
+that argument. We need a way to describe their different jobs. These descriptions
+are called _kinds_. They look reassuringly familiar, using arrows and `*` instead
+of the richer collection of ordinary types.
 
-## The language, now
+Much of the machinery we need is already familiar too. We'll infer kinds by
+solving equations, just as we inferred types. It's a nice example of a compiler
+idea earning its keep a second time.
+
+## The Language, Now
 
 ```fun
 data Wrap f a = Wrap (f a)
@@ -65,7 +69,9 @@ Cycles are rejected, including unused cycles. `E0301` reports a kind mismatch,
 
 ## Theory
 
-The application rule consumes one arrow in a constructor's kind:
+Read `Maybe :: * -> *` much like a function type. It accepts one type of
+values and produces another. Applying it to `Int :: *` gives `Maybe Int :: *`.
+The kind application rule writes down that same step.
 
 $$
 \frac{\Gamma \vdash f : \kappa \to \sigma \quad \Gamma \vdash a : \kappa}
@@ -118,7 +124,7 @@ witness of the right kind. These compiler-only type constants have no values or
 source syntax and disappear at erasure. This extends the `Int` witness used in
 Chapter 10 to kinds for which `Int` is unsuitable.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch13_kinds
@@ -130,21 +136,21 @@ $ cargo run -q -- check tests/programs/kinds/synonym-self.fun
 E0303
 ```
 
-The last command exits unsuccessfully and also prints a labelled diagnostic.
-The cumulative corpus retains Chapter 12's behavior except for its deliberate
-higher-kinded-parameter rejection, which now succeeds. New tests include partial
-constructors, recursive fixed-point datatypes, records with higher-kinded
-parameters, malformed Core kinds, and synonym failures.
+The last command fails and points to the bad kind application. Try a partially
+applied datatype constructor next, then a partially applied synonym. The former
+can be useful at a higher kind, while the latter is rejected by our synonym
+rules. Having the same apparent number of missing arguments doesn't make the
+two declarations interchangeable.
 
 ## Exercises
 
-1. **Warm-up:** infer the kind of `data Compose f g a = Compose (f (g a))`.
-2. **Intermediate:** explain why `data Bad f = Bad (f f)` fails the occurs check.
-3. **Intermediate:** trace kind inference through mutually dependent declarations.
-4. **Advanced:** find a term whose elaboration needs an internal witness of kind
+1. **Warm-up.** Infer the kind of `data Compose f g a = Compose (f (g a))`.
+2. **Intermediate.** Explain why `data Bad f = Bad (f f)` fails the occurs check.
+3. **Intermediate.** Trace kind inference through mutually dependent declarations.
+4. **Advanced.** Find a term whose elaboration needs an internal witness of kind
    `* -> *`, and inspect the corresponding Core application.
 
-## Further reading
+## Further Reading
 
 - Pierce's treatment of type operators [@pierce2002].
 - The Haskell report's datatype and synonym rules [@haskell2010].

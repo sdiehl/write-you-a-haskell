@@ -18,20 +18,21 @@
 
 ## Motivation
 
-A successful source type check does not prove that the compiler translated the
-program correctly. Elaboration can apply a function to the wrong argument, omit a
-polymorphic instantiation, or accidentally reuse a binder. An untyped intermediate
-language would leave many of these mistakes for the evaluator to discover.
+The type checker has accepted our program. Excellent. Now the compiler gets
+to rewrite it, which gives us plenty of opportunities to introduce mistakes of
+our own. We might pass the wrong argument, forget a type instantiation, or reuse
+a variable identity. The source program being correct doesn't help if we
+translate it incorrectly.
 
-Typed Core gives each compiler pass a checkable contract. The source checker still
-infers types with mutable metavariables. After inference, the elaborator turns its
-results into immutable, explicit types. A second checker then verifies the Core
-term without invoking inference. The two implementations agree on the intended
-rules but have different jobs and different representations.
+We'll give Core explicit types and write a second checker for it. This checker
+has an easier job than inference. All the answers are already in the tree, so
+it only needs to verify that they fit together. When a transformation goes
+wrong, we can catch it close to where it happened. A compiler that checks its
+own homework is a rather useful thing to have.
 
-## The language, now
+## The Language, Now
 
-The source language is unchanged. Let-polymorphism remains implicit:
+We can still write polymorphic functions without spelling out their type arguments.
 
 ```fun
 id x = x
@@ -46,10 +47,16 @@ program still prints `True`.
 
 ## Theory
 
-System F makes universal quantification part of the term language. A type
-abstraction introduces a universally quantified type. A type application supplies
-its argument. Girard and Reynolds developed this explicit account of polymorphism
-[@girard1972; @reynolds1974].
+The source expression `id 42` hides a small decision. We're using identity at
+`Int`. System F gives us a way to write that decision into the program. A
+_type abstraction_ introduces a type parameter, and a _type application_ chooses
+a type for it. Girard and Reynolds developed this explicit treatment of
+polymorphism [@girard1972; @reynolds1974].
+
+Think of the two new forms alongside ordinary lambdas and calls. An ordinary
+lambda waits for a value. A type abstraction abstracts over a type. This analogy
+helps us read the rules, although the type arguments will disappear before
+runtime.
 
 $$
 \frac{\Gamma, \alpha \vdash e : \tau \quad \alpha \notin \mathsf{ftv}(\Gamma)}{\Gamma \vdash \Lambda\alpha.e : \forall\alpha.\tau}\;\text{(Type abstraction)}
@@ -179,7 +186,7 @@ main = 42
 
 Chapter 18 introduces an explicit erased IR. Corpus runs already enable `--lint`.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch10_core
@@ -191,22 +198,23 @@ nonrec { main#1 : Int = (app (type-app @id#0 Int) 42); }
 $ cargo test -p ch10_core --test system_f
 ```
 
-All 116 inherited expectations remain unchanged. Sixteen new programs cover
-polymorphism, errors, and strict initialization. Another 200 generated programs
-pass independent lint and evaluate correctly. Malformed-Core tests check rejections.
+For a useful experiment, remove a type application from a small Core term
+and run lint. The source checker has no role in this test. We're deliberately
+feeding the second checker a mistake that only the compiler could have made.
+It should reject the term before evaluation.
 
 ## Exercises
 
-1. **Introductory:** identify every type abstraction and type application in the
+1. **Introductory.** identify every type abstraction and type application in the
    Core dump for `id id 42`.
-2. **Intermediate:** explain why a captured outer type variable remains free in a
+2. **Intermediate.** Explain why a captured outer type variable remains free in a
    local binding's scheme but is bound in the complete Core program.
-3. **Intermediate:** construct a malformed Core primitive call with the right
+3. **Intermediate.** Construct a malformed Core primitive call with the right
    number of arguments but the wrong operand type.
-4. **Advanced:** demonstrate a capture bug in type substitution if freshening is
+4. **Advanced.** Demonstrate a capture bug in type substitution if freshening is
    removed, then explain why alpha equivalence alone does not repair it.
 
-## Further reading
+## Further Reading
 
 Girard's thesis and Reynolds's paper are the original sources for explicit
 polymorphism [@girard1972; @reynolds1974]. Pierce develops System F's typing and

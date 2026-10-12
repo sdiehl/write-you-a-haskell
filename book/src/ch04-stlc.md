@@ -16,18 +16,20 @@
 
 ## Motivation
 
-The preceding evaluator discovers a mistake such as `1 True` only when it
-tries to call the integer. We can reject that expression before running it.
-A type describes the values an expression can produce. A function type also
-describes the arguments it accepts. Checking these descriptions is another
-compiler pass, with the same source spans used by parsing diagnostics.
+Our evaluator will happily try to run `1 True`. It eventually discovers that
+an integer isn't a function, but we didn't need to run the program to spot
+that mistake. Could the compiler catch it for us?
 
-This chapter makes parameter types explicit. That choice keeps the checker
-small enough to follow directly from its rules. Chapter 6 removes the annotations
-and asks the compiler to infer polymorphic types. For now, every binding has
-one simple type, even when introduced by `let`.
+A type checker does exactly this sort of reasoning. A function type tells us
+what a function accepts and what it returns. We check a call by comparing those
+types with the argument we're about to pass. The rules are small enough to
+write down, and the Rust implementation will follow them closely.
 
-## The language, now
+For now we'll ask the programmer to annotate lambda parameters. This gives us
+a clear starting point. In Chapter 6 we'll teach the compiler to work out types
+for itself, including types that work for many different kinds of values.
+
+## The Language, Now
 
 Types are `Int`, `Bool`, and arrows. Arrows associate right, so `Int -> Bool -> Int`
 means `Int -> (Bool -> Int)`. An arrow on the left needs parentheses.
@@ -38,10 +40,10 @@ let choose = \(b : Bool) -> \(x : Int) -> \(y : Int) ->
 in choose True 10 20
 ```
 
-All lambda parameters require an annotation. Application, arithmetic, and
-lexical scope retain their earlier meanings. The inherited lambda examples
-have been annotated. Their outputs are unchanged. Three inherited runtime
-type errors now produce `E0201` during checking. `BREAKING.md` lists those changes.
+We annotate every lambda parameter, but calls, arithmetic, and scope work as
+before. Try calling an integer as a function again. This time `E0201` comes from
+the checker, before the evaluator gets involved. We've moved the discovery of
+the mistake earlier in the process.
 
 ## Theory
 
@@ -63,17 +65,21 @@ $$
 The condition of an `if` has type `Bool`. Both branches have the same type.
 Arithmetic takes integers, while comparisons return booleans. A `let` checks its
 right-hand side before extending the environment, so it remains non-recursive.
-There is no implicit quantification: an identity annotated `Int -> Int` cannot
+There is no implicit quantification. An identity annotated `Int -> Int` cannot
 also accept `Bool`.
 
-Two informal properties explain the value of these rules. _Preservation_ says
-that a reduction step retains the term's type. The substitution lemma supplies
-the main argument for beta reduction. _Progress_ says a closed, well-typed term
-is a value or can take a step. Our partial division primitive requires one
-qualification: a step may report a defined runtime error, such as divide by
-zero. Types eliminate the dynamic shape errors, not every possible failure.
-The tests check preservation on representative reductions. They are examples,
-not a proof of the theorem.
+Two useful ideas explain what we've gained. _Preservation_ says that taking an
+evaluation step doesn't change an expression's type. If we start with an `Int`
+expression, reducing it shouldn't suddenly produce a function. The main proof
+step for a lambda call shows that substituting a correctly typed argument keeps
+the body's type intact. This is the substitution lemma.
+
+_Progress_ says that a closed, well-typed expression is either a value or can
+take a step. We won't reach a nonsensical instruction such as calling `42`.
+Our division primitive needs a small qualification, since division by zero can
+still report a runtime error. Types catch this language's shape mistakes. They
+don't promise that every computation succeeds. Pierce develops the proofs
+behind these claims [@pierce2002].
 
 ## Implementation
 
@@ -111,7 +117,7 @@ Chapter 3. Substitution, normal-order reduction, and de Bruijn conversion carry
 types through their lambda cases. This lets the preservation tests check every
 intermediate term, and keeps annotated terms distinct in nameless dumps.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch04_stlc
@@ -128,7 +134,7 @@ stlc> :quit
 
 `check` checks without evaluating. Both execution engines check types first.
 `:trace` also rejects ill-typed input before displaying reductions. A successful
-check of `1 / 0` is expected: its type is `Int`, even though execution fails.
+check of `1 / 0` is expected. Its type is `Int`, even though execution fails.
 
 ## Exercises
 
@@ -137,7 +143,7 @@ check of `1 / 0` is expected: its type is `Int`, even though execution fails.
 3. **Medium.** Write an application with a well-typed function and an argument of the wrong type. Check the diagnostic's span.
 4. **Hard.** State the substitution lemma for this calculus, including the condition on the replacement term, and work through the lambda case.
 
-## Further reading
+## Further Reading
 
 Pierce gives the formal progress and preservation proofs [@pierce2002].
 Damas and Milner motivate the next step beyond simple types:

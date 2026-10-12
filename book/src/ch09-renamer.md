@@ -22,17 +22,18 @@
 
 ## Motivation
 
-Spelling is enough to find a variable in a small interpreter. It is a poor identity
-for a compiler that moves expressions. Two different binders can both be called
-`x`. Moving an expression must not accidentally change which one its occurrence
-refers to. We now resolve that question once, before inference.
+Two variables can both be called `x` and mean entirely different things. That's
+easy enough to follow in a small expression. It gets less comfortable when the
+compiler starts moving expressions around. We'd like to settle which binding
+each occurrence means once, then carry that answer through the rest of the
+compiler.
 
-Declaration order is another accidental restriction. A function should be able to
-call a helper written later in the file. Some functions call each other, so no
-linear source order can put every dependency first. The renamer discovers those
-cycles and presents explicit groups to the checker and evaluator.
+That's the renamer's first job. Its second is to free us from writing helpers
+before the functions that use them. Some functions even call each other, so
+there is no possible ordering that puts every helper first. We'll find those
+groups in a dependency graph and give the type checker the whole group at once.
 
-## The language, now
+## The Language, Now
 
 Top-level and local declarations may refer forward within their block. These two
 functions belong to the same recursive component:
@@ -60,11 +61,15 @@ Inference and Core use these identities, so neither has to repeat lexical lookup
 This is the compiler counterpart of the binding distinctions explored in
 Chapter 3 [@pierce2002].
 
-For dependency analysis, draw an edge from each binding to every binding in the
-same block that its body references. A strongly connected component is a maximal
-set of vertices that can reach one another. Condensing these components produces
-a directed acyclic graph. Its dependency order tells us when a binding's type can
-be generalized [@haskell2010].
+Draw an arrow from a function to each binding in its block that it uses. If
+`even` calls `odd` and `odd` calls `even`, we can follow arrows from either one
+back to the other. They belong together. A _strongly connected component_ is a
+maximal group with this mutual-reachability property.
+
+Now treat each group as one node. The resulting graph has no cycles, so we can
+process its dependencies first. That's the order our type checker needs. A
+helper outside a recursive group can have its type generalized before its callers
+use it [@haskell2010].
 
 Inside a recursive component, allocate one provisional monotype per binder and
 infer all bodies against them. Unify those provisional types with the results.
@@ -104,11 +109,12 @@ is the root of a complete component, which can be popped together.
 {{#include ../../crates/ch09_rename/src/scc.rs:tarjan}}
 ```
 
-An edge points toward a dependency, so completed components already arrive in the
-order needed by inference. Traversal visits source indices deterministically.
-A singleton component is recursive only if it has an edge to itself. Tests compare
-this implementation with mutual reachability on 570 generated graphs and check
-that every inter-component edge points backward in the resulting order.
+Our edges point toward dependencies, so completed components arrive in the
+order inference needs. We visit source indices in a fixed order to keep dumps
+reproducible. A group containing just one binding is recursive only if that
+binding refers to itself. As a check on Tarjan's bookkeeping, the tests also
+find components by the much slower but direct method of testing mutual
+reachability.
 
 ### Inference by group
 
@@ -141,7 +147,7 @@ Top-level value initializers run once in dependency order. Functions are closure
 Creating one does not run its body. Core lint now checks unique binder identities
 as well as scope, primitive saturation, and the recursive-lambda restriction.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch09_rename
@@ -154,25 +160,25 @@ $ cargo xtask check-inherit 09
 chapter 09: 101 inherited programs verified and chapter tests passed
 ```
 
-The chapter contains 116 programs, including seven new error cases. The inherited
-forward-reference fixture changes from `E0101` to a successful result of `1`.
-`BREAKING.md` records that intentional change. Other inherited expectations stay
-unchanged.
+Try moving the helper in a small program below its caller. It now works.
+Then make the two functions call each other and inspect the rename dump.
+You should see one recursive group, which tells the checker to infer them
+together.
 
 ## Exercises
 
-1. **Introductory:** annotate each occurrence of `x` in a nested-shadowing example
+1. **Introductory.** annotate each occurrence of `x` in a nested-shadowing example
    with the binder it references. Compare with the rename dump.
-2. **Intermediate:** draw the dependency graph of a three-function recursive group
+2. **Intermediate.** Draw the dependency graph of a three-function recursive group
    with one non-recursive helper, then predict the emitted component order.
-3. **Intermediate:** add a diagnostic test with two independent misspelled names
+3. **Intermediate.** Add a diagnostic test with two independent misspelled names
    and verify that the pass reports both.
-4. **Advanced:** explain why the immutable closure recipe has no reference-counting
+4. **Advanced.** Explain why the immutable closure recipe has no reference-counting
    cycle even when one of its functions returns another closure.
-5. **Advanced:** identify where signature-directed polymorphic recursion will
+5. **Advanced.** Identify where signature-directed polymorphic recursion will
    require the current component construction and checking strategy to change.
 
-## Further reading
+## Further Reading
 
 The Haskell Report describes binding groups and dependency analysis [@haskell2010].
 Pierce supplies the underlying treatment of variables, scope, and binding

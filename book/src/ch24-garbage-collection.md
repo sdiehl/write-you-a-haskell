@@ -21,17 +21,22 @@
 
 ## Motivation
 
-Boehm lets a compiler allocate without describing every live pointer. That was a
-useful boundary while we were building the language. Now we can move the boundary.
-Our compiler knows which values may be used again, and our runtime knows which
-object fields contain values. Together they can identify the live graph exactly.
+Boehm has let us allocate objects without telling the collector where every
+live pointer is. That was useful while we were building the language. Now our
+compiler knows which values may be used again, and our runtime knows which
+fields contain them. We have enough information to build a precise collector
+of our own.
 
-Moving that graph makes the contract more demanding. Suppose a closure captures
-a list and collection moves the list. Updating the closure's field is necessary,
-but insufficient if the caller still holds the old address in an LLVM register.
-Every reference used after collection must come from a location the collector
-can update. This chapter is optional for readers using the Boehm backend, but it
-completes the compiler/runtime account of memory [@henderson2002].
+We'll use a copying collector. Live objects move into fresh space, and the old
+space becomes available for reuse. The idea is wonderfully compact. The catch
+is that every reference to a moved object has to follow it.
+
+Suppose a closure captures a list. Updating the closure's field after moving
+the list won't help a caller that still holds the old address in a register.
+We'll need cooperation between the generated code and the runtime to keep those
+references current [@henderson2002]. You can stay with Boehm and skip this chapter,
+but building the collector is a great way to see the whole memory story come
+together.
 
 ## The Language, Now
 
@@ -65,7 +70,9 @@ into _to-space_. Replace each evacuated object's old header with a forwarding
 marker and its first payload word with the new address. A second reference to
 that object follows the forwarding address, preserving sharing and cycles.
 
-Cheney's algorithm uses the copied objects themselves as a queue [@cheney1970]:
+Here is the beautiful part of Cheney's algorithm. The copied objects themselves
+form the work queue, so we don't need a separate stack to walk the graph
+[@cheney1970]. Two pointers are enough to track our progress.
 
 ```text
 from-space                         to-space
@@ -77,11 +84,14 @@ from-space                         to-space
                                    start      scan          free
 ```
 
-Everything before `scan` has had its pointer fields updated. Between `scan` and
-`free` are copied objects whose fields still need inspection. Scanning one object
-can append more objects at `free`. When the pointers meet, the live graph is
-complete. Swap the spaces and allocate after `free`. No recursive walk or native
-stack growth is involved.
+Everything before `scan` has been inspected. Between `scan` and `free` are
+objects we've copied but haven't inspected yet. When we scan one, its fields
+may lead us to more objects, which we append at `free`. Eventually `scan` catches
+up. We've found the whole live graph!
+
+Now swap the spaces and resume allocation after `free`. Sharing and cycles are
+handled by forwarding addresses, and the scan itself never recurses through
+Rust's call stack.
 
 Object kinds tell the collector what to inspect. Constructor payloads contain
 values. Closures begin with an untraced code address and arity, followed by
@@ -159,11 +169,11 @@ addresses are never invalidated by resizing active from-space.
 {{#include ../../crates/ch24_gc/rt/src/copying.rs:cheney}}
 ```
 
-Tests force collection before every allocation with `FUN_GC_STRESS=1`. Runtime
-contracts check relocation, shared references, a cycle, raw Double bits that look
-like an address, heap growth, and complete reclamation after removing roots.
-The native corpus additionally exercises closures, PAPs, recursive closure
-patching, globals, Unicode strings, and values surviving calls.
+We can make stale-pointer bugs much easier to reproduce by setting
+`FUN_GC_STRESS=1`, which collects before every allocation. A closure or PAP must
+survive even if collection happens between the steps that construct it. Shared
+references must still point to one object, cycles must remain cycles, and raw
+Double bits must never be mistaken for a field to trace.
 
 ## Running It
 
@@ -176,7 +186,7 @@ $ cargo test --test copying
 ```
 
 The dump shows the root protocol before LLVM optimization. Stress collection is
-intentionally expensive: repeatedly copying a growing live list takes quadratic
+intentionally expensive. Repeatedly copying a growing live list takes quadratic
 work. Use it to expose stale addresses, then measure normal collection separately.
 Neither backend promises recovery from operating-system allocation failure.
 

@@ -14,22 +14,24 @@
 
 ## Motivation
 
-An ANF lambda can refer to names in its surrounding lexical scope. A machine
-function cannot rely on that compiler environment still existing when the
-function is called. If a function escapes its defining activation, the values
-it needs must travel with it.
+A function can outlive the call that created it. That is easy to write in Fun,
+but it leaves our back end with a question. Where do the variables from that
+old call live now?
 
-Closure conversion makes that storage explicit. Each lambda becomes a function
-in a program-wide table, and each closure packages its function identity with
-captured values. Calls with a known target can use the function directly.
-Other calls inspect the closure through a common application protocol. An
-independent Flat interpreter lets us validate that protocol before committing
-to native memory layouts.
+Our interpreters answered by storing an environment with each function. We'll
+make the same idea explicit in the program we compile. Each lambda becomes a
+function in a program-wide table. Its closure carries the values that function
+needs from the surrounding scope.
 
-## The language, now
+We'll also work out how to call these functions. When we know the target, we
+can call it directly. When a function arrives as an argument or comes back from
+another call, we need to inspect its closure. Partial application adds one more
+interesting case. We'll model all of this in a Flat interpreter before we start
+laying out the objects in native memory.
 
-No syntax changes. This example returns a function that remembers `x`, then
-passes it to `map`:
+## The Language, Now
+
+Here's a small function that remembers `x` and can be passed to `map`.
 
 ```fun
 {{#include ../../crates/ch19_closure/tests/programs/closure/capture-return.fun}}
@@ -63,19 +65,21 @@ can instead add them as explicit function parameters when call sites permit it
 even non-escaping ones. Optional lambda lifting is deferred. A known local call
 can still bypass general apply while passing its environment explicitly.
 
-Currying requires an application protocol. If a closure's syntactic arity is
-`n`, an application with fewer arguments returns a partial application, or PAP.
-An exact application enters the function. An application with excess arguments
-first calls the function with `n`, then applies the remaining arguments to the
-result. Marlow and Peyton Jones describe this eval/apply organization and its
-relationship to other calling conventions [@marlow2004]. Fun uses a deliberately
-small version suitable for its strict language.
+A source function can be called a little at a time. Our lifted machine function
+expects a fixed number of arguments. How do we reconcile those two views?
 
-Recursive groups add an allocation dependency. If `even` captures `odd` and
-`odd` captures `even`, neither final environment can be constructed first.
-Allocate all closures with placeholder slots, then patch the slots once every
-closure has an identity. The source restriction to recursive functions ensures
-that this initialization need not evaluate a recursive non-function value.
+If the function's syntactic arity is `n` and we have fewer arguments, we save
+them in a _partial application_, or PAP. If we have exactly `n`, we enter the
+function. If we have more, we call it with `n` and apply the leftover arguments
+to the function it returns. That's the eval/apply protocol in miniature
+[@marlow2004]. A single calling mechanism now handles all three cases.
+
+Mutual recursion gives us a chicken-and-egg problem. If `even` captures `odd`
+and `odd` captures `even`, which closure can we build first? We'll allocate both
+with placeholder capture slots, then fill the slots once both addresses exist.
+No source code can call them until this initialization is finished. Requiring
+recursive bindings to be functions makes this possible without trying to
+evaluate an unfinished recursive value.
 
 ## Implementation
 
@@ -122,7 +126,7 @@ body, so no source expression can call a partially initialized closure.
 Flat lint checks each lifted function independently. It rejects an implicit
 free variable, unknown function identity, incorrect known-call arity, missing
 or unexpected environment operand, out-of-bounds environment load, or invalid
-join transfer. Capture binder identities can recur in different functions:
+join transfer. Capture binder identities can recur in different functions, since
 each environment load rebinds the name in a separate function scope.
 
 The Flat machine owns an indexed arena of closure records. A closure value is
@@ -139,7 +143,7 @@ Primitive operands cross a data adapter, but evaluation never delegates a Flat
 body to the Core or ANF interpreter. Agreement is meaningful because the three
 engines implement control flow independently.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch19_closure
@@ -150,35 +154,33 @@ main : IO ()
 ```
 
 Dump this file with `--pass=flat` to find the partial application of `make`.
-The global entry has no environment: apply saves its dictionary and integer
+The global entry has no environment. Apply saves its dictionary and integer
 arguments in a PAP. In contrast, `escape-recursive.fun` returns a local recursive
 closure capturing an outer value, and `known-local.fun` uses direct local calls. `pap-chain.fun` supplies arguments in
 stages. `over-application.fun` supplies arguments to a function whose result is
 itself a function. The small Flat snapshots in `tests/anf.rs` omit unrelated
 Prelude functions by selecting reachable code.
 
-The corpus grows to 402 programs, adding eight closure-focused cases. All three
-engines run the eligible inherited programs and 1,000 generated integer cases.
-Snapshots also compare simplification enabled and disabled. A million-call
-Flat sum returns `500000500000` with bounded continuation depth, while the
-inherited ANF one-million-call check remains in place. Cyclic local environments,
-dictionary captures, shadowed names, and escaping recursive closures have
-separate regressions.
+Try supplying arguments in stages, returning a local function, and making two
+local functions call each other while both capture an outer value. These all
+look natural in source, but exercise different parts of the closure machinery.
+Core, ANF, and Flat should agree on their results. The Flat machine also checks
+that a long tail-recursive sum keeps a bounded number of pending continuations.
 
 ## Exercises
 
-1. **Warm-up:** trace how uncurrying and partial application preserve the example's
+1. **Warm-up.** Trace how uncurrying and partial application preserve the example's
    integer argument and `Num` dictionary.
-2. **Intermediate:** change a local function from saturated-only use to returning
+2. **Intermediate.** Change a local function from saturated-only use to returning
    it as a value. Explain the resulting call classification.
-3. **Intermediate:** trace a PAP receiving another argument, followed by an
+3. **Intermediate.** Trace a PAP receiving another argument, followed by an
    oversaturated call whose first result is a closure.
-4. **Advanced:** construct mutually recursive local functions that also capture
+4. **Advanced.** Construct mutually recursive local functions that also capture
    an outer integer. Draw their environment graph after patching.
-5. **Advanced:** prototype lambda lifting for non-escaping functions and compare
+5. **Advanced.** Prototype lambda lifting for non-escaping functions and compare
    allocation counts while retaining differential agreement.
 
-## Further reading
+## Further Reading
 
 - Eval/apply, partial application, and calling conventions [@marlow2004].
 - Closure conversion in a complete compiler [@appel1992].

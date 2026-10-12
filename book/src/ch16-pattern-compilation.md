@@ -17,18 +17,22 @@
 
 ## Motivation
 
-A tree interpreter can try patterns in source order. A native compiler needs
-more explicit instructions: inspect a constructor tag, load fields, test a
-literal, and branch. Translating each clause into an independent chain of tests
-would repeat work and duplicate the expressions reached by several paths.
+Our interpreter tries patterns from top to bottom, which makes their meaning
+easy to follow. A native compiler needs to turn that process into instructions
+that inspect tags, load fields, and branch. We could translate each pattern
+separately, but we'd often inspect the same value again and again.
 
-This chapter separates the meaning of a match from its execution strategy. A
-pattern matrix describes the ordered clauses. Compilation turns it into a
-decision tree, while local join points share clause bodies and guard fallbacks.
-An independent usefulness analysis asks which inputs remain uncovered. Core
-lint checks the resulting control transfers before the interpreter runs them.
+Instead, we'll look at the patterns together. Put them in a matrix, choose a
+useful test, and divide the remaining work according to its result. This gives
+us a decision tree. Join points let different paths share the code they reach,
+including the next clause when a guard fails.
 
-## The language, now
+We can also ask whether any inputs slip through the patterns, or whether an
+earlier clause has already caught everything a later clause could match. It's
+a pleasing connection. Understanding the shapes of values helps us both run
+patterns and explain mistakes in them.
+
+## The Language, Now
 
 There is no new source syntax. Earlier programs keep the same results, including
 guards that fail after their patterns match:
@@ -42,12 +46,11 @@ the second clause and return `42`. It must not report pattern failure or skip
 to the `Nothing` clause. Local `where` bindings remain in scope for the guards
 and right-hand side of their own equation.
 
-`W0001` now reports a non-exhaustive match with up to three example missing
-patterns. `W0002` identifies an unreachable clause. Warnings do not reject the
-program. If an uncovered input is actually encountered, execution still raises
-`fun: pattern match failure at FILE:LINE:COL`. Five inherited successful fixtures
-now expect warnings. Their changed diagnostic sidecars are listed in
-`BREAKING.md`.
+The checker can now show us holes in a match. `W0001` includes example inputs
+that aren't covered, and `W0002` points out a clause that earlier clauses have
+made unreachable. These are warnings, so the program can still run. Encountering
+an uncovered input at runtime still reports
+`fun: pattern match failure at FILE:LINE:COL`.
 
 ## Theory
 
@@ -72,23 +75,24 @@ including equality of positive and negative zero.
 Usefulness asks whether a candidate pattern vector admits a value not matched
 by preceding covering rows [@maranget2007]. A useless source row is redundant.
 A useful all-wildcard candidate supplies a missing-case witness. Guards complicate
-coverage: a matching pattern may still fall through. The implementation treats
+coverage because a matching pattern may still fall through. The implementation treats
 a guarded row as covering only when one guard is literally `True`. It does not
 attempt to prove arbitrary Boolean expressions.
 
 ### One Question, Two Checks
 
-Maranget's matrix algorithm makes exhaustiveness and reachability two uses of
-one operation: **is this candidate useful?** Write `U(P, q)` for the question
-whether some input matches candidate vector `q` but none of the rows in matrix
-`P`. A witness answers yes. Absence of a witness answers no [@maranget2007].
+There's a neat way to turn both warnings into the same question. Does this
+pattern match anything the earlier patterns missed? Maranget calls such a
+pattern _useful_. We'll write `U(P, q)` for this question, with earlier rows
+`P` and candidate pattern vector `q`. A witness is an actual shape that slips
+past `P` and matches `q` [@maranget2007].
 
 For reachability, `P` contains the covering rows before the current clause and
 `q` is that clause's pattern vector. For exhaustiveness, `P` contains all
 covering rows and `q` is an all-wildcard vector. The first query asks whether a
 clause adds any cases. The second asks whether anything is still missing.
-Coverage is a property of the combined rows: no single earlier row need subsume
-a clause for that clause to be unreachable.
+It's the rows together that determine coverage. A clause can be unreachable
+even when no single earlier clause covers it completely.
 
 Consider a function with two arguments, `Maybe Bool` and `Bool`:
 
@@ -153,7 +157,7 @@ shape to its temporary coverage matrix, and search again for up to three example
 ### Guards and the Limits of Coverage
 
 A guarded clause can be unreachable because earlier clauses already cover its
-patterns. It cannot usually establish coverage itself: its guard might fail.
+patterns. It can't usually establish coverage itself, since its guard might fail.
 Fun checks the row against earlier coverage, then adds it only if it is unguarded
 or has a syntactically literal `True` guard. It does not solve arbitrary guard
 expressions. Consequently a reported gap can reflect this conservative policy,
@@ -161,7 +165,7 @@ and a useful pattern does not prove that its guard will ever succeed.
 
 The analysis uses typed constructor families and treats variables as wildcards.
 As-pattern names do not change coverage. It does not prove that recursive field
-types are inhabited. Compilation and checking remain separate: the decision tree
+types are inhabited. Compilation and checking remain separate. The decision tree
 must preserve clause order and guard fallthrough regardless of these warnings.
 
 ### Sharing the Decision Tree
@@ -223,7 +227,7 @@ Its driver repeatedly asks for useful witnesses and records diagnostics:
 Generated do-pattern fallback rows share the originating span. The diagnostic
 pass suppresses redundant warnings for those synthetic adjacent rows, while
 retaining warnings for source clauses. Warning analysis does not choose the
-runtime branches: a mistake in diagnostics must not silently change evaluation.
+runtime branches. A mistake in a warning must not silently change evaluation.
 
 Core lint now checks flat alternative shape, constructor field types, globally
 unique binders, and join argument types and arities. A jump must be in tail
@@ -244,7 +248,7 @@ full whenever the interpreter saves a continuation. Recursive closures refer to
 a machine-owned group by index, so calls reuse the group without creating a
 reference-count cycle.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch16_match
@@ -260,26 +264,25 @@ For the transformation itself, dump the same file with `--pass=core` and then
 Prelude, so the small no-Prelude cases in `tests/matches.rs` are useful for
 studying one decision tree at a time.
 
-The 329-program corpus includes 15 new cases. Tests compare execution before
-and after match compilation, snapshot nested and literal decision trees, check
-malformed joins, and compare usefulness against all 512 subsets of the small
-Boolean-pattern matrix used by the regression. These checks test runtime
-preservation and diagnostic coverage separately.
+We check the translation by running matches both before and after compilation.
+Coverage needs its own check. For small Boolean patterns we can enumerate all
+possible inputs and compare that direct answer with the usefulness algorithm.
+This catches a different kind of mistake from a wrong runtime branch.
 
 ## Exercises
 
-1. **Warm-up:** draw the decision tree for the example and mark the failing guard's
+1. **Warm-up.** Draw the decision tree for the example and mark the failing guard's
    destination.
-2. **Intermediate:** add a wildcard clause before a constructor clause and predict
+2. **Intermediate.** Add a wildcard clause before a constructor clause and predict
    the redundant-clause warning before running the checker.
-3. **Intermediate:** specialize a two-column matrix whose first row begins with a
+3. **Intermediate.** Specialize a two-column matrix whose first row begins with a
    variable and whose second pattern is a constructor.
-4. **Advanced:** change the column heuristic in an experimental copy. Compare
+4. **Advanced.** Change the column heuristic in an experimental copy. Compare
    tree sizes while keeping the full before/after execution corpus unchanged.
-5. **Advanced:** construct malformed Core that jumps to an outer join from a
+5. **Advanced.** Construct malformed Core that jumps to an outer join from a
    non-tail expression, and explain the continuation that would be discarded.
 
-## Further reading
+## Further Reading
 
 - Decision trees and column-selection heuristics [@maranget2008].
 - Usefulness, exhaustiveness, and redundancy [@maranget2007].

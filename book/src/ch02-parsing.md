@@ -17,18 +17,17 @@
 
 ## Motivation
 
-A parser turns a sequence of tokens into a tree. The tree must make choices
-that the text leaves implicit: multiplication binds more tightly than addition,
-and repeated subtraction groups to the left. If those choices are wrong,
-a correct evaluator still computes the wrong answer.
+We read `1 + 2 * 3` and know that the multiplication comes first. The computer
+gets a string of characters. Before it can calculate anything, we have to teach
+it how those characters fit together. That's the parser's job.
 
-We implement the same language twice. LALRPOP generates a parser from a grammar.
-A small Pratt parser expresses precedence directly as binding powers. Their
-agreement is useful evidence, but we also test known answers: two implementations
-can agree on the same mistake. Unlike the full language, this calculator has no
-functions, types, comments, or top-level declarations.
+We'll start with a calculator, small enough to follow all the way from source
+text to an answer. We'll build its parser twice. LALRPOP lets us write down a
+grammar and generates the parsing machinery for us. A Pratt parser puts the
+operator-handling logic in a short Rust function. Seeing both is a useful way
+to discover what a parser generator is doing on our behalf.
 
-## The language, now
+## The Language, Now
 
 A program is one expression. It has decimal integer literals, names, `+`, `-`,
 `*`, `/`, unary minus, parentheses, and a non-recursive `let`.
@@ -46,16 +45,20 @@ Full Fun will reserve `/` for fractional arithmetic and spell this operation
 
 ## Theory
 
-A grammar with a single production for every binary operator leaves multiple
-possible trees for `1 + 2 * 3`. Splitting expressions into sums, products, and
-atoms encodes precedence structurally. Left recursion gives left associativity.
-Parentheses re-enter the complete expression grammar.
+There are two plausible trees for `1 + 2 * 3`. One adds first and returns 9.
+The other multiplies first and returns 7. We want the second, so our grammar
+needs to express that choice. We'll separate sums, products, and atoms into
+different rules. A sum can contain a whole product as an operand. Parentheses
+let us start again from the full expression grammar when we want another
+grouping.
 
 ### Choosing a parsing strategy
 
-Parsing techniques answer different questions. A grammar describes the accepted
-syntax. A parsing algorithm recognizes it. An API determines how we express the
-parser in code. Keeping those distinctions clear prevents misleading comparisons.
+There isn't one parsing technique that wins at everything. Some approaches
+make the whole grammar easy to inspect. Others make it easy to write a little
+parser directly in the host language. Before choosing, it helps to separate
+three things we often bundle together. The grammar says what syntax we accept,
+the algorithm recognizes it, and the API determines how we write the parser.
 
 | Approach           | Main idea                                                                                | Tradeoff for this book                                                                       |
 | ------------------ | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -75,7 +78,7 @@ this bottom-up process naturally.
 their lookahead sets. This reduces table size but can introduce conflicts absent
 from the unmerged grammar. Despite its name, our generator uses LR(1) by default.
 LALR(1) is an option. See the [LALRPOP documentation](https://github.com/lalrpop/lalrpop#lalrpop).
-A conflict is useful feedback: the grammar needs attention before we can trust
+A conflict is useful feedback. The grammar needs attention before we can trust
 its generated parser.
 
 **Pratt parsing** makes the operator decision local. After reading `1 + 2`, the
@@ -88,7 +91,7 @@ structure of a class declaration or a layout block.
 
 **Packrat parsing** avoids repeated work during backtracking by remembering a
 rule's success or failure at each position. It is commonly associated with
-parsing expression grammars (PEGs), whose alternatives use ordered choice: the
+parsing expression grammars (PEGs), whose alternatives use ordered choice. The
 first successful alternative wins. Reordering alternatives can therefore change
 the language. For a fixed grammar with bounded work per memoized entry, this
 gives linear recognition time and generally linear memo storage. Ordinary
@@ -133,7 +136,7 @@ $$
 {\Gamma \vdash e_1 + e_2 : \mathsf{Int}}\;\text{(Add)}
 $$
 
-This chapter does not implement an inferencer: integers are the only values.
+We don't need an inferencer yet, since integers are our only values.
 It does check lexical scope before evaluating. Pierce develops the distinction
 between syntax, typing, and evaluation [@pierce2002]. The Haskell Report is useful
 for comparison, although Fun's later fixity rules are deliberately absent here
@@ -189,11 +192,12 @@ The normalization function is included as a Rust item:
 {{#include ../../crates/ch02_calc/src/eval.rs:evaluate}}
 ```
 
-`main.rs` connects parsing, scope checking, execution, dumps, and the rustyline
-REPL. The corpus tests the command-line boundary. Separate tests compare complete
-ASTs from 200 deterministic generated expressions and snapshot ten parse dumps.
+`main.rs` connects these pieces to commands and a REPL. Try both parsers on
+the same expression and inspect their trees. The tests do this too, including
+generated expressions with different groupings. Comparing the trees catches
+mistakes that a coincidentally correct numerical answer could hide.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch02_calc
@@ -222,7 +226,7 @@ Use `dump --pass=tokens` to inspect lexer spans.
 4. **Medium.** Write a malformed expression that reports two independent syntax errors. Explain where recovery can resume.
 5. **Hard.** Extend the generator to insert redundant parentheses and verify that evaluation remains unchanged.
 
-## Further reading
+## Further Reading
 
 Pierce separates syntax and semantics carefully [@pierce2002]. The Haskell
 Report specifies a much larger concrete syntax and fixity-resolution procedure

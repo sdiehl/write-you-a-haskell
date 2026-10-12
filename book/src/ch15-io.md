@@ -24,19 +24,23 @@
 
 ## Motivation
 
-Until now, the driver has evaluated `main` and printed its value. That is enough
-for arithmetic and data structures, but gives a program no control over when to
-print or read. Putting an effectful print function directly into the pure
-language would make ordinary expression evaluation perform effects. Instead, we
-need values that describe computations and an explicit boundary that runs them.
+So far, our programs have had a rather limited relationship with the outside
+world. The driver evaluates `main`, prints the answer, and goes home. Let's
+write programs that can ask a question, read a response, and decide what to do
+next.
 
-Chapter 14 already supplied the machinery for abstracting over a type
-constructor. `Functor`, `Applicative`, and `Monad` use that machinery to express
-mapping and sequencing. Their instances determine what sequencing means:
-propagating `Nothing`, carrying an `Either` error, enumerating list results, or
-performing IO. The syntax is shared. The dictionaries select the behavior.
+We want to keep ordinary expressions pure, so evaluating an IO value won't
+perform its effects. We'll represent an action as a value and run it at an
+explicit boundary. That distinction lets us build and combine actions using
+the functions we already know.
 
-## The language, now
+The type classes from Chapter 14 give us a way to describe these combinations.
+`Functor`, `Applicative`, and `Monad` work with IO, but they also describe useful
+operations on `Maybe`, `Either`, and lists. We'll start with what the operations
+do and expand the syntax by hand. There's plenty to understand here without
+adding mystique to the vocabulary.
+
+## The Language, Now
 
 A complete program now has `main :: IO ()`, whether that signature is written or
 inferred. The smallest example calls the new Prelude printer:
@@ -67,8 +71,10 @@ signature checking with `E0203`.
 
 ## Theory
 
-The central bind operation has the qualified type below. The class parameter
-`m` has kind `* -> *`. Its dictionary chooses the operation [@jones1993].
+Suppose an action produces an `a`, and the rest of our program knows how to
+use that `a` to make the next action. Bind connects the two. Its second argument
+is a function because the next action may depend on the first result. Read
+this type slowly from left to right [@jones1993].
 
 $$
 \mathsf{Monad}\ m \Rightarrow m\ \alpha \to (\alpha \to m\ \beta) \to m\ \beta
@@ -81,11 +87,15 @@ $$
 \mathsf{IO}\ \alpha \quad\Rightarrow\quad () \to \alpha
 $$
 
-This is a representation translation, not an equality available to source
-programs. A user cannot apply an action to `()` to run it. The trusted Prelude
-implements `returnIO` by returning a unit-taking function, and `bindIO` by
-returning a function that runs the first action and then its continuation.
-Effectful primitives occur inside those function bodies.
+The unit argument gives us somewhere to put the delay. Constructing the
+function doesn't run its body. `returnIO` builds a function that returns its
+saved value, while `bindIO` builds one that runs the first action and passes
+the result to the next. The effectful primitives sit inside those bodies.
+
+Only the trusted Prelude and compiler can use this representation. Source
+programs see abstract `IO a` values, so they can't apply an action to `()`
+and run it wherever they please. That boundary is what lets ordinary Fun
+expressions remain pure.
 
 Strictness still applies. Constructing `putStrLn "hello"` evaluates its string
 argument and returns an action. It does not print. Constructing an action with
@@ -152,13 +162,13 @@ blocks. The test runner accepts `.in` files and sends identical input to each
 engine. A pipe-handshake regression checks flushing independently of terminal
 buffering.
 
-The corpus migration is an observable interface change. Successful old programs
-retain their expression in `_old`, then print it from IO `main`. Values that the
-old diagnostic printer could display sometimes need an explicit `Show` instance
-or a concrete type annotation. `BREAKING.md` lists those changes. `--print-value`
-keeps the former runner available for compiler tests and fragment inspection.
+Existing programs need a small adjustment here. The driver no longer prints
+`main` for us, so we put the printing in the program itself. If a value has no
+`Show` instance, we'll need to supply one or choose something printable from it.
+The old value printer remains available through `--print-value` for inspecting
+compiler fragments.
 
-## Running it
+## Running It
 
 From the repository root, enter the chapter crate. These commands print an
 explicit action's output and its inferred entry-point type:
@@ -173,25 +183,25 @@ $ cargo run -q -- run tests/programs/io/deferred.fun --lint
 ok
 ```
 
-Use `--pass=core` to inspect dictionary arguments and the unit-taking lambda.
-The 314-program corpus includes 30 new programs covering sequencing, lexical
-scope, opaque IO, pattern failure, input, EOF, flushing, and exit status. At this
-stage the Core interpreter remains the only execution engine.
+Use `--pass=core` to find the dictionary arguments and the lambda taking unit.
+It's worth comparing an unused print action with one that is actually sequenced
+by `main`. Both are values, but only the latter's body runs. The Core interpreter
+is still our execution engine in this chapter.
 
 ## Exercises
 
-1. **Warm-up:** replace the second `Just` in the example with a suitably annotated
+1. **Warm-up.** Replace the second `Just` in the example with a suitably annotated
    `Nothing`. Explain why its continuation is not called.
-2. **Warm-up:** compare constructing an unused print action with constructing one
+2. **Warm-up.** Compare constructing an unused print action with constructing one
    whose string argument calls `error`.
-3. **Intermediate:** trace the generated scopes for a do block containing a
+3. **Intermediate.** Trace the generated scopes for a do block containing a
    `let`, a tuple bind, and a shadowing bind.
-4. **Intermediate:** inspect a `Monad IO` dictionary in Core and identify every
+4. **Intermediate.** Inspect a `Monad IO` dictionary in Core and identify every
    type affected by IO lowering.
-5. **Advanced:** extend the pipe-handshake test to issue two prompts and verify
+5. **Advanced.** Extend the pipe-handshake test to issue two prompts and verify
    the order without relying on a terminal's line buffering.
 
-## Further reading
+## Further Reading
 
 - The report's do expressions and monadic library [@haskell2010].
 - Higher-kinded constructor classes [@jones1993].

@@ -23,19 +23,23 @@
 
 ## Motivation
 
-Positional constructors become hard to read when several fields have the same
-type. A point represented by two integers is small enough to remember. A larger
-configuration or syntax node is not. Field names make construction and access
-state their intent without changing the underlying algebraic datatype.
+What does the third argument to a constructor mean? With a small point or pair,
+you can probably remember. With a configuration value containing half a dozen
+integers, it becomes a small memory test every time you read the code. Let's
+give those fields names.
 
-Traditional Haskell record selectors expose two problems for this design. A
-selector may be partial when only some constructors contain its field, and the
-selector's generated function occupies the ordinary value namespace. Fun avoids
-both: a record must have exactly one constructor, and fields are accessed through
-dot syntax rather than generated functions. Different record types may therefore
-reuse a field name [@haskell2010; @recorddot].
+Fun's records build on the datatypes we already have. We'll use dot syntax to
+read a field and require every record type to have just one constructor. This
+avoids two awkward properties of traditional Haskell selectors. Access cannot
+fail because we picked the wrong constructor, and field names don't consume
+ordinary function names. Two record types can both have an `x` field
+[@haskell2010; @recorddot].
 
-## The language, now
+The interesting work is in inference. When we see `p.x`, how much do we know
+about `p`? We'll arrange for information elsewhere in the expression to help
+answer that question.
+
+## The Language, Now
 
 ```fun
 data Point = Point { x :: Int, y :: Int }
@@ -67,10 +71,12 @@ checker can infer its receiver type without an annotation.
 
 ## Theory
 
-These are nominal records: the declaration determines their identity. Two types
-with identical fields remain different types. This differs from a structural or
-row-polymorphic system, where a function may accept any record containing a named
-field [@pierce2002].
+Two declarations with identical fields still describe different types. That
+is what _nominal_ means here. A `Point` doesn't become some other record merely
+because both happen to contain `x` and `y`. A structural or row-polymorphic
+system could instead let a function accept any record with the fields it needs
+[@pierce2002]. We're choosing the nominal design so field access can resolve
+to a particular constructor and slot before runtime.
 
 Projection introduces a wanted constraint linking the receiver and result types:
 
@@ -103,7 +109,7 @@ spans before trivia capture and layout can obscure adjacency:
 The token preceding a projection must be an identifier, literal, or closing
 delimiter. A dot immediately following `(` and preceding a variable identifier is
 a projection-section token. Other dots remain operators. In particular, the
-normative rule also leaves `x .y` as an ordinary operator occurrence.
+same rule leaves `x .y` as an ordinary operator occurrence.
 
 `E0004` diagnoses malformed recognized sections such as `(.x y)`. The formatter
 keeps dot and label tokens adjacent and moves attached comments outside that
@@ -148,7 +154,7 @@ loop repeats because one resolved field may identify the receiver of another:
 ```
 
 Signature-directed checking supplies lambda parameter types before their bodies
-are visited. This matters when a local binding accesses a shared field: the
+are visited. This matters when a local binding accesses a shared field. The
 outer signature must be available before that local group is generalized. The
 existing rigid signature check still rejects an annotation that claims too much
 polymorphism.
@@ -174,7 +180,7 @@ types, and the interpreter executes ordinary matches and constructors. Its value
 printer consults the constructor's labels to print `Point {x = 3, y = 4}` in
 declaration order. Later native projection will become a field load.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch12_records
@@ -185,25 +191,26 @@ main : Int
 $ cargo test --test records
 ```
 
-The corpus contains 209 programs: all 171 inherited programs are unchanged, and
-38 new cases cover records and their diagnostics. Ten new snapshots show the Core
-lowering. Targeted tests check dot tokenization, comment-preserving formatting,
-and failure order when both the receiver and replacement fields can fail.
+Try giving a second record an `x` field and remove the annotation from a
+projection. The ambiguity error shows why field names alone aren't always
+enough. Another useful experiment is to put different errors in a receiver and
+an updated field. The first error should follow source evaluation order, even
+though the final fields are stored in declaration order.
 
 ## Exercises
 
-1. **Introductory:** define a polymorphic `Box a` record and infer the type of
+1. **Introductory.** define a polymorphic `Box a` record and infer the type of
    its projection section.
-2. **Intermediate:** add another record with the same field label, observe the
+2. **Intermediate.** Add another record with the same field label, observe the
    ambiguity error, and resolve it with a signature.
-3. **Intermediate:** explain why another uniquely named field can disambiguate
+3. **Intermediate.** Explain why another uniquely named field can disambiguate
    an earlier unresolved access in the same binding group.
-4. **Advanced:** write a construction whose source field order differs from its
+4. **Advanced.** Write a construction whose source field order differs from its
    declaration order and whose first failure reveals the evaluation order.
-5. **Advanced:** identify the parts of inference and generalization that would
+5. **Advanced.** Identify the parts of inference and generalization that would
    need to change to support row-polymorphic access. Do not add that feature here.
 
-## Further reading
+## Further Reading
 
 The Haskell Report describes traditional record construction, update, and selector
 functions [@haskell2010]. GHC proposal 282 motivates record-dot syntax and its

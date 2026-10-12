@@ -18,19 +18,23 @@
 
 ## Motivation
 
-A mathematical evaluation rule often describes a recursive computation. Writing
-that rule as a recursive Rust function is convenient, but it also gives the
-program's control stack to Rust. A tail-recursive loop can then exhaust the host
-stack even though it has no pending work. A larger stack only postpones the
-failure.
+A recursive evaluator is a lovely way to explain evaluation. Each Rust call
+follows one more piece of the program. Unfortunately, each call can also use
+another piece of Rust's stack. Our little language has inherited a limit we
+never intended to give it. A bigger stack buys us time, but the problem is
+still there.
 
-An abstract machine makes that pending work explicit. Its control component
-says what to evaluate, its environment gives meanings to variables, and its
-continuation records what remains. These are the C, E, and K of the CEK machine
-[@felleisen1986]. A single Rust loop drives the machine, and entering a function
-body does not call the evaluator recursively.
+We'll fix this by writing down what the evaluator needs to do next. Instead
+of leaving that information in Rust call frames, we'll store it in a data
+structure and drive the whole evaluator with a loop. This is the idea behind
+an abstract machine.
 
-## The language, now
+The machine we'll use is called CEK. The C tells us what we're evaluating, the
+E records the current variable bindings, and the K records what comes next
+[@felleisen1986]. The name is more intimidating than the idea. We're turning
+the evaluator's implicit bookkeeping into something we can inspect.
+
+## The Language, Now
 
 A recursive binding gives its type before its right-hand side. That right-hand
 side must be syntactically a lambda. A value such as `let rec x : Int = x in x`
@@ -57,7 +61,7 @@ must wait for each recursive factorial call to return.
 
 ## Theory
 
-A fixed point of a function satisfies the unfolding equation: `fix f` behaves
+A fixed point of a function satisfies an unfolding equation. `fix f` behaves
 as `f (fix f)`. Its type rule requires the argument to return the same type
 that it accepts [@pierce2002].
 
@@ -66,17 +70,18 @@ $$
 {\Gamma \vdash \mathsf{fix}\ f : \tau}\;\text{(Fix)}
 $$
 
-Adding `fix` permits well-typed nontermination. The expression
-`fix (\(x : Int) -> x)` consumes every fuel budget. Types alone no longer
-provide normalization. Recursive `let` lowers to a fixed point, but its
-function-only restriction makes initialization predictable. This is the
-restriction Fun will retain for recursive binding groups.
+With `fix`, a well-typed program can run forever. Try
+`fix (\(x : Int) -> x)` and watch it use up any fuel budget you give it.
+The type checker hasn't failed us. It never promised this recursive program
+would terminate. Recursive `let` uses the same fixed-point idea, but requires
+a function on the right-hand side so we know how to initialize it. Fun will
+keep that restriction.
 
 Call-by-value evaluates a function and its argument before entering its body.
 Call-by-name substitutes an unevaluated argument each time it is used and stops
 at a lambda. Call-by-need additionally shares the argument's result, requiring
 a suspended computation and a memoized result. Our small comparison interpreter
-implements name, without memoization: its substitution code makes the absence
+implements call-by-name without memoization. Its substitution code makes the absence
 of sharing explicit. Chapter 3's full normal-order reducer also enters lambda
 bodies, unlike this weak call-by-name evaluator.
 
@@ -121,12 +126,14 @@ been popped:
 {{#include ../../crates/ch05_eval/src/cek.rs:tail-transfer}}
 ```
 
-There is no return frame for a tail call. A surrounding addition does retain a
-frame, because it has work left to do. Thus both kinds of recursion use constant
-Rust stack, while only tail recursion has bounded continuation storage. The
-million-call test runs on a 256 KiB host thread stack and checks that its maximum
-continuation depth equals that of a hundred-call run. A separate non-tail sum
-test confirms that its explicit stack grows.
+Look at the sum again. Its recursive call already produces the answer, so
+there's nothing to remember for the caller. Factorial still has a multiplication
+to finish. That pending work needs a frame.
+
+Both versions now avoid growing Rust's call stack. Only the tail-recursive
+version avoids growing our explicit continuation stack as well. We check this
+by comparing the maximum continuation depth of a short run with a million-call
+run. Finishing on one generously sized machine wouldn't tell us nearly as much.
 
 The complete transition loop follows the expression forms and pops one frame
 when a value returns. `max_continuations` is measured before every transition,
@@ -146,7 +153,7 @@ first demand computes and saves the argument. We leave that implementation for
 future work. The production path here remains the strict machine, and the
 comparison interpreter is selected explicitly.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch05_eval
@@ -164,10 +171,11 @@ $ cargo test -q a_million_tail_calls_use_bounded_continuations
 The default engine is `cek`. `core` selects the recursive closure evaluator,
 `cbn` selects the comparison interpreter, and `normal` retains the earlier
 full reducer. `--fuel=N` bounds execution. Use a modest fuel budget for the
-tree interpreters: only CEK removes their dependence on the host stack.
-All 35 inherited fixtures are unchanged. The golden runner compares both strict
-engines on the 50-program corpus. Non-strict execution deliberately has different
-results for the error-order examples.
+tree interpreters. CEK is the one that removes their dependence on the host stack.
+The two strict engines should agree on both answers and failures. The
+call-by-name comparison deliberately differs when an unused argument would
+fail. Try it before reading the implementation and predict which error, if
+any, you'll see.
 
 ## Exercises
 
@@ -176,7 +184,7 @@ results for the error-order examples.
 3. **Medium.** Explain why a closure must capture its definition environment rather than its caller's environment.
 4. **Hard.** Give an expression for which call-by-name repeats substantial work that call-by-value computes once. Explain what sharing would change.
 
-## Further reading
+## Further Reading
 
 Felleisen and Friedman develop the abstract-machine account [@felleisen1986].
 Pierce relates evaluation strategies, typing, and fixed points [@pierce2002].

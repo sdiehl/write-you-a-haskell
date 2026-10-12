@@ -28,17 +28,20 @@
 
 ## Motivation
 
-Functions over integers show how inference works, but they leave most useful data
-structures outside the language. A tree needs a choice between an empty branch and
-a node. A lookup needs a choice between absence and a result. Algebraic datatypes
-express those choices while retaining ordinary parametric polymorphism.
+Integers and functions have taken us a long way, but it's time to build some
+proper data structures. A binary tree can be empty or contain a value and two
+subtrees. A lookup can fail or return a result. Algebraic datatypes let us say
+these things directly, without inventing special values to mean “nothing here”.
 
-Pattern matching provides the corresponding elimination operation. A pattern both
-checks a value's constructor and gives names to its fields. This chapter implements
-that meaning directly. The interpreter remains the reference against which the
-more efficient decision trees of Chapter 16 will be checked.
+Pattern matching gives us an equally direct way to take the values apart. The
+shape of the data becomes the shape of the program. This is one of the beautiful
+parts of functional programming, and we'll use it constantly from here on.
 
-## The language, now
+We'll first implement matching by trying patterns in source order. That gives
+us a clear account of what a match means. In Chapter 16 we'll turn the same
+matches into decision trees suitable for native code.
+
+## The Language, Now
 
 Declarations introduce nominal types and their constructors. Constructor arguments
 are strict, and constructors can be passed around as curried functions.
@@ -51,6 +54,25 @@ size (Node left _ right) = 1 + size left + size right
 
 main = size (Node Empty 42 Empty)
 ```
+
+Read `size` beside the datatype. `Empty` contributes zero. A `Node` contributes
+one, plus the sizes of its two children. The definition follows the data almost
+word for word. That's beautiful, and it scales to much more interesting trees.
+
+We can mirror a tree just as directly.
+
+```fun
+data Tree a = Empty | Node (Tree a) a (Tree a)
+
+mirror Empty = Empty
+mirror (Node left x right) = Node (mirror right) x (mirror left)
+
+main = mirror (Node Empty 1 (Node Empty 2 Empty))
+```
+
+Notice that `mirror` never examines `x`. Its type is `Tree a -> Tree a`, so it
+works for trees of any element type. The recursion changes the shape while
+leaving the values alone.
 
 Equations may have nested constructor patterns, literals, wildcards, and as-patterns.
 Lists, pairs, triples, and unit have dedicated syntax. Guards must have type `Bool`.
@@ -65,7 +87,7 @@ main = select [-1,2,3]
 A `where` block belongs to its entire equation, including every guard. A `case`
 alternative may also have guards and a `where` block. Pattern lambdas and strict,
 non-recursive pattern bindings work as well: `let (x,y) = (20,22) in x + y`.
-Types remain first-order here: a datatype parameter has kind `*`, so `Tree Int` is
+Types remain first-order here. A datatype parameter has kind `*`, so `Tree Int` is
 valid but applying a parameter as in `f Int` waits for Chapter 13.
 
 The initial Prelude is embedded from this actual Fun source:
@@ -92,8 +114,8 @@ The combined pattern environment must not bind a name twice. Each row is checked
 against the same scrutinee types, and every successful right-hand side must have
 the same result type. Guards additionally unify with `Bool`.
 
-Fun differs from Haskell in evaluation: fields are evaluated before construction,
-and a failed pattern is a runtime error. There are no lazy patterns or suspended
+Fun evaluates fields before constructing a value. A failed match raises a
+runtime error. There are no lazy patterns or suspended
 constructor fields. Exhaustiveness and redundancy warnings require a separate
 analysis. They arrive with match compilation [@maranget2007].
 
@@ -182,7 +204,7 @@ The value printer uses constructor precedence, so a nested application prints as
 `Just (Left 3)`. Lists and tuples use their surface notation. A character list
 prints as `['a','b']`, while primitive strings keep double quotes.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch11_data
@@ -194,26 +216,26 @@ nonrec { main#10 = (app (app (,) (app not#9 True)) (app not#9 False)); }
 $ cargo test --test data
 ```
 
-All 132 inherited programs remain unchanged. The 39 new programs cover data
-structures, polymorphic constructors, guard fallthrough, strict initialization,
-and errors. Ten new Core snapshots complement runtime and malformed-Core tests.
-Formatter tests traverse the extended AST and still check idempotence and
-round-tripping modulo source spans.
+Guard fallthrough is worth experimenting with. Make the first pattern match
+but its guard fail, then check that the next equation runs. Also try an unused
+top-level pattern binding that fails. Strict evaluation means “unused” doesn't
+make the match disappear. These examples exercise the parts that an ordinary
+successful tree traversal might miss.
 
 ## Exercises
 
-1. **Introductory:** define a binary tree mirror function and test it on an
+1. **Introductory.** define a binary tree mirror function and test it on an
    asymmetric tree.
-2. **Intermediate:** explain the type errors from a constructor pattern with too
+2. **Intermediate.** Explain the type errors from a constructor pattern with too
    few fields and from two equations returning different types.
-3. **Intermediate:** write two guards that fall through to a later equation.
+3. **Intermediate.** Write two guards that fall through to a later equation.
    Move their shared computation into `where` and inspect the Syn dump.
-4. **Advanced:** compare strict pattern binding with Haskell's ordinary pattern
+4. **Advanced.** Compare strict pattern binding with Haskell's ordinary pattern
    binding. Construct a program whose termination or error behavior differs.
-5. **Advanced:** design a lint test that swaps two differently typed constructor
+5. **Advanced.** Design a lint test that swaps two differently typed constructor
    fields while preserving the field count.
 
-## Further reading
+## Further Reading
 
 The Haskell Report specifies datatype declarations, patterns, guards, and local
 scopes [@haskell2010]. Pierce develops the connection between data introductions

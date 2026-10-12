@@ -31,20 +31,23 @@
 
 ## Motivation
 
-An equality function for integers cannot compare a list without knowing how to
-compare its elements. Passing that operation explicitly works, but repeats the
-same plumbing at every call. A type class names a set of operations, and an
-instance supplies their implementation for a particular type constructor.
+How do we compare two lists? We compare their elements, which means we need
+to know how to compare those elements. We could pass an equality function into
+every list comparison. That works, but we'd soon spend a lot of our time
+passing around the same handful of operations.
 
-This chapter makes that plumbing the compiler's responsibility. Inference records
-which operations a term needs. Elaboration passes ordinary records of functions.
-The Core interpreter needs no class lookup. Independent lint checks the resulting
-constructor fields, type applications, and function arguments just as it checked
-ordinary programs in earlier chapters.
+Type classes let the compiler do that plumbing. We describe the operations in
+a class and provide implementations in instances. The compiler works out which
+implementation a call needs and passes it along.
 
-## The language, now
+The lovely part is that we don't need a mysterious new runtime feature. A
+class becomes a record of functions, usually called a _dictionary_. Once we've
+made those arguments explicit, our existing Core interpreter can run the result.
+In this chapter we'll follow that translation all the way through.
 
-This complete corpus program defines a class and its integer instance:
+## The Language, Now
+
+Let's define a class and give it an instance for integers.
 
 ```fun
 {{#include ../../crates/ch14_classes/tests/programs/classes/minimal.fun}}
@@ -57,7 +60,7 @@ methods accept ordinary equations, guards, and local `where` bindings.
 
 The Prelude now defines `Eq`, `Ord`, `Show`, `Num`, `Fractional`, `Semigroup`, and
 `Monoid`. Arithmetic and comparisons resolve to methods. Literals remain
-monomorphic: `1` has type `Int`, while `1.0` has type `Double`. Consequently
+monomorphic. `1` has type `Int`, while `1.0` has type `Double`. Consequently
 `1 + 2.0` fails. `toDouble 1 + 2.0` succeeds. There is no defaulting.
 
 ```fun
@@ -75,30 +78,34 @@ type reports `E0230`: for example, `show Nothing` cannot choose the element's
 
 `Double` adds floating arithmetic, comparisons, conversions, and mathematical
 functions. Primitive names remain private to the embedded Prelude. The source
-still has no IO: `run` prints the value of `main`. For compatibility with the
-inherited corpus, `++` remains string append here. List `++` belongs to the
+still has no IO, so `run` prints the value of `main`. `++` still appends strings
+in this chapter. List `++` belongs to the
 complete Prelude chapter. `<>` already supports both strings and lists.
 
 ## Theory
 
-A qualified scheme consists of quantified variables, a context of predicates,
-and a type. Instantiation freshens its variables and creates one wanted predicate
-per context entry. Generalization reduces concrete predicates using instances,
-simplifies superclass consequences, and retains predicates over the generalized
-variables. Constraints concerning an outer variable float to its enclosing group.
-Jones gives an executable presentation of these constraint operations
-[@jones1999].
+The type `Eq a => a -> a -> Bool` says we can compare two values of `a` if
+someone supplies equality for `a`. The part before `=>` is the _context_. When
+we use a function with this type, inference creates a request for that equality
+operation. We call this a _wanted_ constraint.
 
-Evidence gives the typing judgment an operational meaning. If a context contains
-an `Ord a` dictionary, its superclass field supplies an `Eq a` dictionary. If
-it contains `Eq a`, the list instance constructs evidence for `Eq [a]`. A wanted
-predicate is solved by a given, a superclass projection, or an instance applied
-to recursively solved context predicates.
+Some requests have immediate answers, such as the instance for `Int`. Others
+remain requests about a type variable. When we generalize a binding, those can
+become part of its scheme so callers supply the answer. Constraints involving
+an outer variable instead belong to the enclosing scope. Jones gives an
+executable account of these operations [@jones1999].
+
+Finding an instance is only half the job. We also need something to pass at
+runtime. That is the _evidence_ for a constraint. An `Ord a` dictionary already
+contains its `Eq a` superclass dictionary. Given `Eq a`, the list instance can
+build a dictionary for `Eq [a]`. Following these steps constructs an ordinary
+expression, made from dictionary variables, field selections, and instance
+applications. There is no runtime search left to perform.
 
 Signatures are checked with rigid skolems and their context as givens. Signed
 bindings may be used polymorphically inside their own bodies. Following the
 Haskell report [@haskell2010], type-inference dependencies omit edges to signed
-bindings. Runtime dependencies retain those edges: recursive functions still
+bindings. Runtime dependencies retain those edges, since recursive functions still
 need a shared recursive environment. These are two different uses of the same
 source dependency graph.
 
@@ -165,7 +172,7 @@ special values. Tests cover negative zero, boundary magnitudes, Unicode strings,
 and failed conversions. The shared runtime chapter will move the non-trivial
 operations into `fun-rt`.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch14_classes
@@ -183,26 +190,23 @@ The small dictionary snapshots disable the Prelude to keep those examples
 readable. Ordinary builds compile the embedded Prelude before the user's scope.
 Shadowing a Prelude name cannot change the Prelude's own references.
 
-All inherited programs retain their expectations. New tests cover default
-methods, superclass chains, higher-kinded classes, polymorphic method fields,
-qualified annotations, polymorphic recursion, ambiguity, and malformed Core.
-Expression annotations are supported without enclosing parentheses. A case
-alternative's guard needs parentheses around an annotation to distinguish its
-type arrow from the alternative arrow.
+Expression annotations also work without enclosing parentheses. There is one
+place to be careful. Inside a case guard, parenthesize an annotation so its type
+arrow can't be confused with the arrow leading to the alternative's body.
 
 ## Exercises
 
-1. **Warm-up:** inspect the dictionary arguments for equality on `[Maybe Int]`.
-2. **Intermediate:** write an instance whose context is insufficient for its
+1. **Warm-up.** Inspect the dictionary arguments for equality on `[Maybe Int]`.
+2. **Intermediate.** Write an instance whose context is insufficient for its
    superclass, then identify the missing proof.
-3. **Intermediate:** explain why `show Nothing` is ambiguous but
+3. **Intermediate.** Explain why `show Nothing` is ambiguous but
    `show (Nothing :: Maybe Int)` is not.
-4. **Advanced:** compare the type-inference and runtime dependency components
+4. **Advanced.** Compare the type-inference and runtime dependency components
    of the polymorphic-recursion fixture.
-5. **Advanced:** corrupt a superclass dictionary's Core type and add a lint
+5. **Advanced.** Corrupt a superclass dictionary's Core type and add a lint
    regression that does not invoke surface inference.
 
-## Further reading
+## Further Reading
 
 - Typing Haskell in Haskell [@jones1999].
 - Constructor classes and higher-kinded parameters [@jones1993].

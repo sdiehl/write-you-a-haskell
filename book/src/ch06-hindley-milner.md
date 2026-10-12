@@ -20,19 +20,23 @@
 
 ## Motivation
 
-The identity function does not inspect its argument. Its behavior works for an
-integer, a boolean, or another function, yet our simple type checker required
-one parameter annotation. A type scheme describes that flexibility: each use
-may choose a fresh type for the quantified parameter. Hindley–Milner inference
-finds a principal scheme from the program itself [@damas1982].
+Look at `\x -> x`. We haven't said what type `x` has, but we already know
+something useful. Whatever goes in is exactly what comes back out. Its type
+must have the shape `a -> a`.
 
-We implement inference twice. Algorithm W keeps substitutions as explicit maps,
-following the classical presentation [@damas1982]. The second algorithm
-stores mutable solutions in a vector and uses levels to track which variables
-can be generalized. Both solve the same equations. Keeping them independent
-lets their results check one another before we choose the latter for Fun.
+That's pretty cool! We learned something about every possible call without
+running the function once. An integer, a boolean, or another function would
+all work. A _type scheme_ lets each use choose its own `a`. Hindley–Milner
+inference finds the most general scheme that the program permits [@damas1982].
 
-## The language, now
+We'll implement it in two ways. Algorithm W keeps an explicit record of the
+type substitutions it discovers [@damas1982]. Our second implementation updates
+mutable cells and uses levels to track which variables can be generalized.
+They solve the same equations, but make different implementation choices.
+Working through both will help us understand the algorithm before we choose
+the version we'll carry into Fun.
+
+## The Language, Now
 
 Poly has unannotated lambdas, application, polymorphic `let`, function-only
 `let rec`, integers, booleans, conditionals, and arithmetic. The explicit `fix`
@@ -45,23 +49,23 @@ id True
 ```
 
 The two occurrences of `id` instantiate its scheme independently. Lambda
-parameters do not behave this way: `\f -> let first = f 1 in f True` is rejected,
+parameters behave differently. `\f -> let first = f 1 in f True` is rejected,
 because `f` has one type throughout that lambda body.
 
-Annotations from Chapter 5 are removed, including recursive-binding annotations.
-Some inherited error examples consequently become valid: an identity no longer
-has an imposed `Int` parameter type. Every changed source or expectation is
-listed in `BREAKING.md`. This is a new standalone mini-language, not a silent
-change to an earlier chapter.
+We can drop the parameter annotations from the previous chapter. In particular,
+identity no longer has to choose between accepting integers and booleans.
+We'll keep the evaluation machinery we already understand and concentrate on
+how the compiler discovers that freedom.
 
 ## Theory
 
 ### How to read a typing rule
 
-A typing rule is a small contract for one piece of syntax. Read the conclusion
-first to find the expression it describes, then read the premises to see what
-must be established about its parts. Pierce uses this style to make a type
-system precise without tying it to one implementation [@pierce2002].
+A page of typing rules can look forbidding the first time you see one. The
+notation is mostly there to save us from repeating the same sentences. Each
+rule explains one piece of syntax. Start below the bar to see what we're trying
+to establish, then look above it to see what we need to know about the parts.
+Pierce uses this style throughout his treatment of type systems [@pierce2002].
 
 $$
 \Gamma \vdash e : \tau
@@ -89,7 +93,7 @@ inferencer's mutable metavariables are an implementation technique for finding
 which types satisfy the rules.
 
 The horizontal bar means “if everything above holds, then the statement below
-holds.” It is not division. A rule with an empty top has no premises: integer
+holds.” It is not division. A rule with an empty top has no premises. Integer
 literals have type `Int` without consulting a subexpression.
 
 $$
@@ -133,15 +137,21 @@ $$
 
 Here $\lambda x.\;e$ means `\x -> e`. Lam gives our function type `Int -> Int`
 and removes the body's local assumption about `x`. Replacing `1` with `True`
-breaks an Add premise: the attempted derivation cannot be completed.
+breaks an Add premise, so we can't complete the derivation.
 
 ### From monotypes to schemes
 
-A monotype may contain variables, and a scheme quantifies some of them.
-Instantiation replaces quantified variables with fresh metavariables.
-Generalization quantifies the variables of a binding's type that are not free
-in its environment. A lambda parameter is stored as a scheme with no quantified
-variables [@damas1982].
+The interesting part of `let id = \x -> x in ...` is that each use of `id`
+gets to choose its own argument type. We record that permission in a _scheme_.
+A monotype describes one type, perhaps with variables we haven't solved yet.
+A scheme marks which variables a caller may choose afresh. Making those fresh
+copies is _instantiation_. Deciding which variables can safely be offered to
+callers is _generalization_ [@damas1982].
+
+We can't generalize a variable that the surrounding scope still depends on.
+Otherwise a local function could pretend to accept any type while quietly using
+an outer value whose type was already fixed. A lambda parameter therefore starts
+with one monotype shared by all its uses.
 
 $$
 \frac{\Gamma \vdash e_1 : \tau \quad
@@ -151,8 +161,8 @@ $$
 \;\text{(Let)}
 $$
 
-Read Let in three steps: infer the binding's right-hand side, generalize its
-type, and check the body with the resulting scheme in scope. The equation for
+Read Let in three steps. First infer the binding's right-hand side, then
+generalize its type. Finally check the body with that scheme in scope. The equation for
 $\sigma$ is a side condition defining that scheme, rather than another program
 to evaluate. A variable is _free_ in a type or environment when it is not bound
 by a scheme's quantifier. Only variables absent from the environment's free
@@ -161,7 +171,7 @@ variables may be generalized.
 For `let id = \x -> x in ...`, the right-hand side has type
 $\alpha \to \alpha$. If $\alpha$ is independent of the surrounding environment,
 we bind `id` to $\forall \alpha.\;\alpha \to \alpha$. Each lookup instantiates
-this scheme afresh: `id 1` chooses `Int`. `id True` chooses `Bool`. By contrast,
+this scheme afresh. `id 1` chooses `Int`. `id True` chooses `Bool`. By contrast,
 the parameter `f` in `\f -> ...` receives one monotype from Lam. All its uses
 must satisfy that same type. Quantification belongs to the let rule, not to
 every name that happens to denote a function.
@@ -182,6 +192,21 @@ rule and its efficient level-based form are developed in the cited accounts
 Poly has no mutable state, so a `let` right-hand side need not be a syntactic
 value to generalize. For example, applying an identity to another identity still
 produces a polymorphic binding. This unrestricted rule will also apply to Fun.
+
+### A Small Payoff
+
+Composition is a lovely example of how much a short definition can say.
+
+```fun
+let compose = \f -> \g -> \x -> f (g x) in
+compose (\x -> x + 1) (\x -> x * 2) 20
+```
+
+The result is `41`. More interestingly, `compose` itself knows nothing about
+integers. Its principal type is `(b -> c) -> (a -> b) -> a -> c`. The output of
+`g` is the input of `f`, so those two positions share `b`. Nothing requires `a`,
+`b`, and `c` to be the same type. Two applications in the definition give us
+that whole story. This is the kind of thing that makes inference worth building.
 
 ## Implementation
 
@@ -251,14 +276,14 @@ Unquantified variables retain their identities and therefore their constraints.
 {{#include ../../crates/ch06_poly/src/union_find.rs:let}}
 ```
 
-Tests target the distinction directly. In `\x -> let y = \z -> x z in ...`,
-`y` cannot acquire a type independent of `x`. Using it at both `Int` and `Bool`
-must fail. Other tests cover unrestricted generalization, recursive bindings,
-occurs checks, and principal types for composition and Church numerals. The
-algorithms agree on the whole corpus and on 1,000 deterministic generated terms,
-including ill-typed terms.
+Try `\x -> let y = \z -> x z in ...`. The type of `y` depends on `x`, so
+we mustn't let two calls choose unrelated types for it. Calling `y` with both
+an integer and a boolean should fail. This is a useful example to keep beside
+the level-lowering code. It shows exactly what goes wrong if we generalize too
+much. We compare both inferencers on examples like this, including programs
+that should be rejected.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch06_poly
@@ -287,7 +312,7 @@ machine by default. Changing inference does not change its runtime values.
 3. **Medium.** Explain why `\f -> let a = f 1 in f True` fails while the opening `id` example succeeds.
 4. **Hard.** Draw the metavariable cells and levels for an inner function that captures an outer lambda parameter. Identify the unification that lowers a level.
 
-## Further reading
+## Further Reading
 
 Damas and Milner establish principal type schemes [@damas1982]. Kiselyov explains
 levels through the OCaml implementation [@kiselyov2013], building on Rémy's work

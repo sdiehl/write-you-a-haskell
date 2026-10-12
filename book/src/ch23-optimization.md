@@ -30,19 +30,21 @@
 
 ## Motivation
 
-Our execution engines agree on answers. That gives us a useful starting point
-for optimization, but it does not tell us whether a transformation evaluates a
-function twice, retains an unused dictionary, or allocates a box between every
-pair of arithmetic instructions. Agreement on results is only part of the
-optimizer's obligation.
+Getting the right answer is a good start for an optimizer. We'd also like it
+to avoid doing the same calculation twice or allocating a fresh box between
+every pair of arithmetic instructions. A faster-looking expression can turn
+out to be a rather expensive way to get the same result.
 
-There are two mistakes to guard against. A rewrite can duplicate or reorder work.
-It can also act on a fact the compiler never established, such as treating a
-polymorphic word as an unboxed integer. This chapter makes both obligations
-visible: traces and machine steps test work preservation, a graph explains which
-globals survive, and type evidence survives erasure to guide native arithmetic.
+We'll make a few focused improvements and inspect what they actually change.
+Traces and machine steps help us catch duplicated or reordered work. A dependency
+graph tells us which globals we still need. Type information tells codegen when
+it can use native arithmetic instead of repeatedly boxing intermediate values.
 
-## The language, now
+These are small optimizations, but they expose the questions a larger optimizer
+must answer too. What do we know about this expression? What does the rewrite
+save? And what happens to evaluation order?
+
+## The Language, Now
 
 The only new source function is `trace :: String -> a -> a`. It writes its first
 argument and a newline to stderr, then returns its second argument unchanged.
@@ -64,7 +66,7 @@ before writing a trace, preserving the ordering of preceding output.
 
 In a strict language, `let x = f y in x + x` evaluates `f y` once. Substituting
 `f y` for both occurrences of `x` would evaluate it twice. That changes cost and
-may repeat a trace. A failing expression is observable too: an unused division
+may repeat a trace. A failing expression is observable too. An unused division
 by zero cannot simply disappear.
 
 Our simplifier can substitute atoms because reading an atom does no work. It can
@@ -73,18 +75,18 @@ body into its sole call site, preserving the already evaluated arguments. It
 cannot use that rule for a lambda called twice. These restrictions make the
 small transformation understandable without a global cost analysis [@appel1992].
 
-The work oracle runs each successful ANF fixture with and without simplification.
-It compares stdout, complete stderr, exit status, and machine transitions. The
-simplified execution must take no more transitions. This is a regression check
-for our chosen machine, not a theorem about wall-clock time or every possible
-input. Trace fixtures additionally run through all five engines.
+We can ask the ANF machine to count its steps with simplification switched
+on and off. The results, errors, and traces must agree, and the simplified
+program must take no more steps. This gives us a useful way to catch a rewrite
+that accidentally duplicates work. It doesn't prove a wall-clock speedup, but
+it tests a claim we can actually measure without depending on a particular CPU.
 
 ### Keep Reachable Globals
 
 A global reference gives us an edge in a dependency graph. Starting from `main`,
 a worklist follows those edges and retains a predecessor for each newly reached
 global. This resembles Chapter 9's dependency analysis, but answers a different
-question: which definitions can this execution need?
+question. Which definitions can this execution need?
 
 Strict initialization adds roots. An unused initializer may print a trace, fail,
 or diverge before `main`. We retain any initializer whose harmlessness the local
@@ -121,12 +123,14 @@ restores Fun's range before any later use. Adding $2^{62}$ to itself instead
 wraps to zero, not a negative number.
 
 Double arithmetic can keep intermediate results in floating-point registers.
-Crossing a word boundary still requires a box. A primitive Double accumulation
-loop therefore allocates one accumulator box per iteration at its tail call.
-Our contract counts that box and rejects intermediate arithmetic boxes. Source
-operators may still invoke dictionaries, so this chapter does not promise that
-all overloaded source loops have that primitive shape. Dictionary specialization
-would be a separate optimization.
+Passing the result to another function still requires a box because our calling
+convention passes words. So a primitive Double accumulation loop still boxes
+its accumulator once per iteration at the tail call. The improvement is that
+it doesn't box every arithmetic intermediate along the way.
+
+We'll check that distinction by counting allocations. Overloaded source
+operators can still make dictionary calls, so they may not produce this direct
+primitive loop. Specializing those dictionaries is a separate opportunity.
 
 ## Implementation
 
@@ -137,7 +141,7 @@ use it, so even an arbitrary closure can be the returned value:
 #![function!("../../crates/ch23_optimize/rt/src/primitives.rs", trace)]
 ```
 
-The simplifier records its local contract beside the code:
+The simplifier states what its rewrites are allowed to do beside the code.
 
 ```rust
 {{#include ../../crates/ch23_optimize/src/anf_simplify.rs:rewrite-contract}}
@@ -177,14 +181,13 @@ arithmetic calls the normalization helper before storing its native result:
 {{#include ../../crates/ch23_optimize/src/llvm/primitives.rs:normalize-int}}
 ```
 
-The codegen contract builds explicit primitive Flat loops, optimizes them with
-LLVM, and counts runtime calls within each function. The integer loop has none.
-The Double loop has exactly one 16-byte atomic allocation for its call-boundary
-box. Separate source fixtures check overloaded loops and mixed values against
-the reference interpreter. This separates a local code-generation guarantee
-from optimizations the compiler has not implemented.
+To isolate this codegen change, we construct Flat loops that use primitives
+directly and count runtime calls in the optimized LLVM. The integer loop needs
+none. The Double loop needs one atomic allocation for the value crossing its
+call boundary. We separately compare overloaded source programs with the
+interpreter. That keeps us honest about which improvement we've implemented.
 
-## Running it
+## Running It
 
 From the repository root:
 
@@ -216,18 +219,18 @@ trace corpus. `cargo test --test native` includes the allocation-count contract.
 
 ## Exercises
 
-1. **Warm-up:** predict the trace order when the second argument to `trace` is
+1. **Warm-up.** Predict the trace order when the second argument to `trace` is
    another traced expression. Confirm it on all engines.
-2. **Intermediate:** extend the reachability dump to show the complete path from
+2. **Intermediate.** Extend the reachability dump to show the complete path from
    a root rather than one predecessor.
-3. **Intermediate:** add `Bool` evidence and keep comparison results untagged until
+3. **Intermediate.** Add `Bool` evidence and keep comparison results untagged until
    they cross a word boundary.
-4. **Advanced:** carry native integers through join parameters. State the new
+4. **Advanced.** Carry native integers through join parameters. State the new
    storage invariant and extend lint before changing code generation.
-5. **Advanced:** extend the work oracle with a counter for dead stores. Construct
+5. **Advanced.** Extend the work oracle with a counter for dead stores. Construct
    a rewrite that preserves transition counts but performs an unnecessary store.
 
-## Further reading
+## Further Reading
 
 - Transformation and cost reasoning in a compiler [@appel1992].
 - Value representation in a strict functional implementation [@leroy1990].

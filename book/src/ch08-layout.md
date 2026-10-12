@@ -19,17 +19,17 @@
 
 ## Motivation
 
-A small grammar is useful while learning inference. It becomes cumbersome once
-programs contain several functions. Braces obscure the structure already visible
-in indentation, and helper functions deserve a scope smaller than the whole file.
-This chapter makes those programs easier to write without enlarging the evaluator.
+The braces were useful while we were getting started. By now they're mostly
+making us type punctuation for structure we can already see in the indentation.
+Let's make Fun a little nicer to write.
 
-The central separation is between tokens, syntax, and meaning. Indentation inserts
-punctuation before parsing. Parsing preserves operator chains until declarations
-have supplied their fixities. Comments accompany the tokens but do not participate
-in inference. Each of these decisions has a distinct place in the pipeline.
+We'll add layout, local helpers with `where`, type signatures, and user-defined
+operators. Much of this can happen before evaluation. Indentation becomes
+punctuation, sections become lambdas, and operator chains acquire their grouping
+once we know the declared fixities. It's a satisfying compiler trick. We can
+make the source language more expressive while keeping its evaluator small.
 
-## The language, now
+## The Language, Now
 
 Braces and semicolons become optional when indentation supplies their boundaries.
 A `where` block belongs to its equation. The equation's parameters remain visible
@@ -62,18 +62,17 @@ a %% b = a * 10 + b
 main = 1 %% 2 %% 3
 ```
 
-This program prints `33`: it means `1 %% (2 %% 3)`. Sections supply one argument:
+This program prints `33` because it means `1 %% (2 %% 3)`. Sections supply one argument:
 `(40 +)` and `(+ 2)` are functions. `(- 2)` instead means negation. Unary minus
 has precedence 6, so `-2 * 3 + 4` means `(-(2 * 3)) + 4`. Write parentheses around
 negation used after an operator of precedence 6 or greater.
 
 ## Theory
 
-The Haskell layout translation introduces virtual braces after `let`, `where`,
-`of`, and `do`, and at the beginning of an unbraced file. Equal indentation inserts
-a separator. Smaller indentation closes blocks. Explicit delimiters protect their
-contents from enclosing indentation. The restricted parse-error rule closes an
-implicit `let` when `in` arrives, including on the same line [@haskell2010].
+Layout is easier to understand once we stop treating whitespace as mysterious.
+We're going to translate indentation into the braces and semicolons our parser
+already knows. The Haskell Report describes this translation [@haskell2010].
+Let's do it by hand before looking at the adapter.
 
 ### See the Invisible Delimiters
 
@@ -139,15 +138,21 @@ characters.
 
 Fixity resolution compares adjacent operators before constructing applications.
 A greater precedence binds first. Equal precedences require compatible
-associativities: two left-associative operators reduce from the left, and two
+associativities. Two left-associative operators reduce from the left, and two
 right-associative operators from the right. Non-associative operators and mixed
 associativities at the same precedence require parentheses [@haskell2010].
 
-Signature checking distinguishes flexible inference variables from rigid skolems.
-Given an inferred scheme, instantiate its quantified variables freshly and replace
-the declared scheme's quantified variables with rigid identities. Unification must
-succeed without letting a skolem escape into the surrounding environment. This is
-the instance test behind ordinary HM annotations [@damas1982; @pierce2002].
+A signature makes a promise. If we write `a -> a`, we mean the function works
+for any `a` its caller chooses. The checker mustn't make that promise true by
+quietly choosing `a = Int`.
+
+We enforce this by replacing the signature's quantified variables with rigid
+identities, called _skolems_. Inference variables can be solved, but a skolem
+stands for an arbitrary type and must stay arbitrary. We instantiate the inferred
+scheme with fresh flexible variables and try to unify it with the rigid signature.
+We also check that no skolem escapes into the surrounding scope. Together these
+checks tell us whether the inferred type supports the promise
+[@damas1982; @pierce2002].
 
 ## Implementation
 
@@ -193,7 +198,7 @@ expression forms.
 Declarations are collected before signatures are attached to bindings. The checker
 first infers and generalizes a binding, then tests its signature in a trial store.
 A successful check specializes the live scheme used by subsequent occurrences.
-Recursive calls remain monomorphic during inference: signature-guided polymorphic
+Recursive calls remain monomorphic during inference. Signature-guided polymorphic
 recursion arrives with the later signature checker.
 
 ```rust
@@ -216,7 +221,7 @@ results of evaluation. Every syntactically valid corpus program must round-trip,
 and formatting the output again must produce exactly the same bytes. Dedicated
 cases retain nested block comments and comments beside `where`.
 
-## Running it
+## Running It
 
 ```text
 $ cd crates/ch08_layout
@@ -230,24 +235,24 @@ $ cargo run -q -- fmt example.fun
 $ cargo run -q -- fmt example.fun --check
 ```
 
-`--dump=layout` shows inserted braces with their zero-width spans. `--dump=parse`
-shows the unresolved chains. `--dump=fixity` shows their resolved grouping. The
-chapter inherits all 80 earlier programs unchanged and adds 21 programs, including
-eight error cases. Ten additional snapshots cover the new passes.
+The three dumps make a useful little tour. `--dump=layout` reveals the inserted
+punctuation, `--dump=parse` shows operator chains before grouping, and
+`--dump=fixity` shows the chosen grouping. Try changing only the indentation or
+a fixity declaration and watch which stage first changes.
 
 ## Exercises
 
-1. **Introductory:** predict the grouping of three operators with distinct fixities,
+1. **Introductory.** predict the grouping of three operators with distinct fixities,
    then compare the fixity dump with your answer.
-2. **Intermediate:** explain why `(1 + 2 *)` is rejected and repair it with parentheses.
-3. **Intermediate:** add a formatter test with nested comments between an operator
+2. **Intermediate.** Explain why `(1 + 2 *)` is rejected and repair it with parentheses.
+3. **Intermediate.** Add a formatter test with nested comments between an operator
    and its operand. Check both tree equality and comment retention.
-4. **Advanced:** construct a local signature whose skolem would escape through a
+4. **Advanced.** Construct a local signature whose skolem would escape through a
    captured lambda parameter. Trace the trial-store check that rejects it.
-5. **Advanced:** compare the restricted `in` rule with the Report's general
+5. **Advanced.** Compare the restricted `in` rule with the Report's general
    `parse-error(t)` rule. Identify syntax for which the latter would do more work.
 
-## Further reading
+## Further Reading
 
 The Report specifies layout and fixity resolution precisely [@haskell2010].
 Damas and Milner establish the principal-type property used by signature checks

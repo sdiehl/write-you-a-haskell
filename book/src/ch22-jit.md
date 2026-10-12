@@ -23,23 +23,21 @@
 
 ## Motivation
 
-An object file lets a program outlive its compiler. A JIT makes the opposite
-arrangement: generated code lives inside the compiler process. LLVM already
-knows how to translate our module into machine instructions. The new problem is
-keeping that code, its constants, and the values referring to it alive together.
+An executable can run after its compiler has exited. With a JIT, we keep the
+compiler around and run the generated code inside its process. This gives us
+something rather fun to build next, a REPL that compiles the definitions we type.
 
-A REPL makes this problem visible. Enter `saved = make 40`, then call `saved 2`
-on the next line. The closure may contain both a captured integer and an address
-in the previous input's code. Collecting its environment or releasing that code
-would break a well-typed program. Each accepted definition therefore extends two
-linked environments: one used to check source, and one holding executable values.
+LLVM already knows how to produce machine instructions. The tricky part is
+keeping them alive for as long as the program needs them. Enter `saved = make 40`,
+then call `saved 2` on the next line. That closure might hold both a captured
+integer and an address in the previous input's code. We must retain both.
 
-We retain the compiler pipeline and runtime ABI from Chapter 21. This chapter
-adds a small execution boundary and a transactional command loop. The same
-language now supports standalone binaries, interpreter runs, and interactive
-native execution.
+We'll keep the compiler pipeline and calling convention from Chapter 21. Around
+them we'll build a session that remembers accepted definitions and leaves them
+intact when a new input fails. A typo on the next line shouldn't destroy the
+work we've already done.
 
-## The language, now
+## The Language, Now
 
 There is no new Fun syntax. The REPL accepts expressions and declarations.
 Explicit braces put several declarations into one input. A file loaded with
@@ -76,7 +74,7 @@ definition in the same input.
 
 A closure is a pair of code and environment, even when our representation stores
 several captured fields [@marlow2004]. Reachability of the environment is only
-half its lifetime condition: the code address must remain executable too. The
+half the lifetime problem. The code address must remain executable too. The
 Boehm collector understands heap reachability, but does not own LLVM's machine
 code or know when an execution engine can be discarded [@boehm1988].
 
@@ -86,12 +84,12 @@ Earlier modules can therefore remain immutable, and later modules import their
 values through external global declarations. Reset destroys the engines before
 unregistering the slots. The enclosing LLVM Context outlives both.
 
-The source environment follows a transactional rule. Checking a candidate may
-construct types, evidence, and IR, but does not publish the candidate. Only after
-successful preparation and execution do we retain its definitions. Inspection runs only the static passes. It must not initialize globals or
-execute an action. In particular, inspecting the type of `error "x"`
-is safe. Evaluating it is not. The boundary between static reasoning and
-execution remains the one established by the typed compiler [@pierce2002].
+Typing a bad definition shouldn't destroy the good ones we've already entered.
+We therefore prepare a candidate separately and retain it only after checking
+and initialization succeed. Inspection commands stop before initialization.
+Asking for the type of `error "x"` is safe. Running it is another matter.
+Keeping those paths separate lets us explore programs without accidentally
+executing them [@pierce2002].
 
 ## Implementation
 
@@ -146,13 +144,13 @@ A global slot uses the runtime's `GlobalRoot` owner. Its boxed storage stays
 at a stable address and is registered with Boehm. `UnsafeCell` permits generated
 code to write the slot without conflicting with Rust's reference rules. Mapping an LLVM global to that
 address makes both generated loads and the collector see the same word. A Rust
-container alone would not provide this guarantee: Boehm does not scan Rust's
+container alone would not provide this guarantee. Boehm does not scan Rust's
 ordinary heap transitively.
 
 The source group order distinguishes Prelude globals from user globals that
 shadow their spelling. Session-local renamer uniques identify LLVM declarations
-within a compilation, but cannot serve as persistent keys: adding declarations
-may change their numbers. Accepted slots are reused and their initializers are
+within a compilation, but adding declarations may change their numbers. We
+need something else for persistent keys. Accepted slots are reused and their initializers are
 skipped. Before importing a value, an alpha-normalized type fingerprint checks that
 rechecking has not changed its type, and the saved syntactic arity checks the
 fast entry's argument count. Erasure preserves this flat metadata. The
@@ -160,8 +158,8 @@ fingerprint traversal uses an explicit worklist. Query slots are fresh and retai
 relocation points into freed storage.
 
 `Jit::run` finishes all mappings before retrieving a typed callable. Its unsafe
-call is justified by a checked contract: the backend emits exactly the C
-signature requested from Inkwell, all runtime imports are resolved, and the
+call relies on a few facts we check beforehand. The backend emits exactly the C
+signature requested from Inkwell. All runtime imports are resolved, and the
 engine and roots remain alive throughout the call. The callable is used
 immediately. We never add code to that engine afterward. Inkwell documents that
 later additions can invalidate a previously retrieved function pointer.
@@ -204,7 +202,7 @@ dependency and lifetime machinery.
 > the REPL selects Flat. Verifier failures are reported rather than hidden by
 > fallback. Explicit `run --engine=jit` reports setup failure.
 
-## Running it
+## Running It
 
 Build with the LLVM 22 and Boehm setup from Chapter 21:
 
@@ -239,33 +237,30 @@ engine. The REPL defaults to JIT. `--fuel` and the test-only `--print-value`
 remain interpreter facilities. Redirected REPL input omits prompts and the
 banner so transcripts can be compared byte for byte.
 
-The 422-program corpus now includes JIT execution alongside Core, ANF, Flat, and
-native binaries, subject to each fixture's engine header. The 1,000 generated
-integer programs use all five. Separate JIT checks cover the ten-million-call
-acceptance and mutual-recursion programs and allocation stress under a bounded
-Boehm heap. Known calls retain Chapter 21's tail-call guarantee. Unknown calls
-through C apply retain its limitation.
+The JIT should give the same answers as the interpreters and standalone
+executables. It also needs to survive long known-call recursion and allocation
+under a bounded heap. Known calls keep Chapter 21's tail-call guarantee. Calls
+through C apply still have the limitation we discussed there.
 
-The REPL tests check persistence, loaded actions, type and kind queries, engine
-switches, reset, and recovery from rejected input. A lifetime regression forces
-collections between modules, verifies that saved global addresses stay unchanged,
-and calls an earlier captured closure from later code. Those tests exercise the
-ownership argument directly, beyond LLVM's structural verification.
+Try defining a closure, entering more definitions, and then calling the old
+closure again. The lifetime tests push this further by forcing collections
+between modules. A value remaining in scope isn't enough on its own. Both the
+captured data and the machine code it points to must still be there.
 
 ## Exercises
 
-1. **Warm-up:** trace the owners of `saved = make 40` across two inputs. Identify
+1. **Warm-up.** Trace the owners of `saved = make 40` across two inputs. Identify
    which owner protects its environment and which protects its code address.
-2. **Intermediate:** remove one runtime mapping and inspect the failure. Explain
+2. **Intermediate.** Remove one runtime mapping and inspect the failure. Explain
    why it must be detected before calling the generated entry.
-3. **Intermediate:** add a regression where a user definition shadows a Prelude
+3. **Intermediate.** Add a regression where a user definition shadows a Prelude
    name. Show why spelling alone cannot identify its persistent slot.
-4. **Advanced:** design an isolated worker protocol that recovers from runtime
+4. **Advanced.** Design an isolated worker protocol that recovers from runtime
    errors while retaining accepted definitions. Specify what must be replayed.
-5. **Advanced:** propose a module-reclamation scheme. Account for closures inside
+5. **Advanced.** Propose a module-reclamation scheme. Account for closures inside
    constructors, partial applications, global values, and captured environments.
 
-## Further reading
+## Further Reading
 
 - [Inkwell ExecutionEngine documentation](https://thedan64.github.io/inkwell/inkwell/execution_engine/struct.ExecutionEngine.html),
   particularly symbol mappings and the safety contract of `get_function`.
