@@ -23,8 +23,10 @@ jobs:
       matrix:
         include:
           - { os: ubuntu-24.04, from: "02", to: "17" }
-          - { os: ubuntu-24.04, from: "18", to: "19" }
-          - { os: ubuntu-24.04, from: "20", to: "21" }
+          - { os: ubuntu-24.04, from: "18", to: "18" }
+          - { os: ubuntu-24.04, from: "19", to: "19" }
+          - { os: ubuntu-24.04, from: "20", to: "20" }
+          - { os: ubuntu-24.04, from: "21", to: "21" }
           - { os: ubuntu-24.04, from: "22", to: "22" }
           - { os: ubuntu-24.04, from: "23", to: "23" }
           - { os: ubuntu-24.04, from: "24", to: "24" }

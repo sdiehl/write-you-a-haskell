@@ -1,6 +1,8 @@
 use std::{
     path::{Path, PathBuf},
     process::Command,
+    sync::atomic::{AtomicUsize, Ordering},
+    thread,
     time::Duration,
 };
 use testkit::{Engine, Fixture, Outcome};
@@ -45,28 +47,49 @@ fn run(fixture: &Fixture, simplify: bool) -> (Outcome, usize) {
 }
 #[test]
 fn simplification_preserves_observations_and_does_not_increase_work() {
-    let mut checked = 0;
-    for path in testkit::discover(&programs()).unwrap() {
-        let f = Fixture::read(path).unwrap();
-        if f.exit != 0
-            || f.engines
-                .as_ref()
-                .is_some_and(|es| !es.iter().any(|e| e == "anf"))
-        {
-            continue;
-        }
-        let (before, old_steps) = run(&f, false);
-        let (after, new_steps) = run(&f, true);
-        assert_eq!(before, after, "{}", f.path.display());
-        f.compare(&after)
-            .unwrap_or_else(|e| panic!("{}: {e}", f.path.display()));
-        assert!(
-            new_steps <= old_steps,
-            "{}: {new_steps} > {old_steps}",
-            f.path.display()
-        );
-        checked += 1;
-    }
+    let fixtures: Vec<Fixture> = testkit::discover(&programs())
+        .unwrap()
+        .into_iter()
+        .map(|path| Fixture::read(path).unwrap())
+        .filter(|f| {
+            f.exit == 0
+                && f.engines
+                    .as_ref()
+                    .is_none_or(|es| es.iter().any(|e| e == "anf"))
+        })
+        .collect();
+    // Each fixture runs the compiler twice, so share the work across workers.
+    let workers = thread::available_parallelism()
+        .map_or(1, usize::from)
+        .min(4);
+    let next = AtomicUsize::new(0);
+    let checked: usize = thread::scope(|scope| {
+        let handles: Vec<_> = (0..workers)
+            .map(|_| {
+                scope.spawn(|| {
+                    let mut checked = 0;
+                    while let Some(f) =
+                        fixtures.get(next.fetch_add(1, Ordering::Relaxed))
+                    {
+                        let (before, old_steps) = run(f, false);
+                        let (after, new_steps) = run(f, true);
+                        assert_eq!(before, after, "{}", f.path.display());
+                        f.compare(&after).unwrap_or_else(|e| {
+                            panic!("{}: {e}", f.path.display())
+                        });
+                        assert!(
+                            new_steps <= old_steps,
+                            "{}: {new_steps} > {old_steps}",
+                            f.path.display()
+                        );
+                        checked += 1;
+                    }
+                    checked
+                })
+            })
+            .collect();
+        handles.into_iter().map(|h| h.join().unwrap()).sum()
+    });
     assert!(
         checked > 200,
         "unexpectedly small oracle coverage: {checked}"
