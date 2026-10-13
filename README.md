@@ -1,12 +1,18 @@
 <p align="center">
   <a href="https://sdiehl.github.io/write-you-a-haskell/">
-    <img src="https://github.com/sdiehl/write-you-a-haskell/raw/main/img/Haskell-Logo.png"/>
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="img/logo-dark.svg">
+      <img src="img/logo.svg" alt="Haskell logo"/>
+    </picture>
   </a>
 </p>
 
 <p align="center">
   <a href="https://sdiehl.github.io/write-you-a-haskell/">
-    <img src="https://github.com/sdiehl/write-you-a-haskell/raw/main/img/cover.png"/>
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="img/title-dark.svg">
+      <img src="img/title.svg" alt="Write You a Haskell"/>
+    </picture>
   </a>
   <br/>
   <em>Building a modern functional compiler from first principles.</em>
