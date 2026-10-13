@@ -7,6 +7,7 @@ use crate::{
     types::Predicate,
 };
 use std::collections::BTreeMap;
+
 /// Each wanted at a variable occurrence has an identity independent of its type.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 // ANCHOR: evidence-variable
@@ -15,6 +16,7 @@ pub struct EvVar {
     pub index: usize,
 }
 // ANCHOR_END: evidence-variable
+
 /// Record proofs for every source occurrence before any Core is constructed.
 pub fn record(
     program: &TypedProgram,

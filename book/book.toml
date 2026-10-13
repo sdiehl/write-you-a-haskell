@@ -14,6 +14,10 @@ command = "python3 ../scripts/include-rs.py"
 command = "python3 ../scripts/fun-spacing.py"
 after = ["include-rs", "links"]
 
+[preprocessor.rust-dedent]
+command = "python3 ../scripts/rust-dedent.py"
+after = ["include-rs", "links"]
+
 [preprocessor.katex]
 renderers = ["html"]
 

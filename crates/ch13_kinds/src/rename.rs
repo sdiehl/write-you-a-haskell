@@ -8,11 +8,13 @@ use crate::{
     source::Span,
 };
 use std::collections::{BTreeMap, BTreeSet};
+
 struct Renamer<'a> {
     data: crate::data::DataEnv,
     sess: &'a mut Session,
     scopes: Vec<BTreeMap<String, Id>>,
 }
+
 impl Renamer<'_> {
     fn fresh(&mut self, name: &str, span: Span) -> Id {
         if name.starts_with("prim_") {
@@ -385,6 +387,7 @@ impl Renamer<'_> {
         Expr { node, kind, span }
     }
 }
+
 fn is_function(expr: &Expr) -> bool {
     match &expr.kind {
         Kind::Lam(..) | Kind::PatternLam(..) => true,
@@ -397,6 +400,7 @@ fn is_function(expr: &Expr) -> bool {
         _ => false,
     }
 }
+
 /// Resolve lexical scopes, validate definitions, and order every binding block.
 // ANCHOR: rename
 pub fn rename(
@@ -459,6 +463,7 @@ pub fn rename(
     })
 }
 // ANCHOR_END: rename
+
 /// Levenshtein distance uses one previous row, including insertion/deletion/substitution.
 pub fn distance(a: &str, b: &str) -> usize {
     let b: Vec<_> = b.chars().collect();

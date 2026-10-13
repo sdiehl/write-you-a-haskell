@@ -4,7 +4,9 @@ use crate::{
     core::{self, Bind, Expr, Lit},
 };
 use std::rc::Rc;
+
 type Env = Vec<(String, Value)>;
+
 #[derive(Clone, Debug)]
 /// A function captures prior declarations; self is added only when entering a recursive closure.
 pub enum Value {
@@ -16,6 +18,7 @@ pub enum Value {
         recursive: Option<String>,
     },
 }
+
 impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -24,9 +27,11 @@ impl std::fmt::Display for Value {
         }
     }
 }
+
 pub fn normalize(n: i64) -> i64 {
     (n << 1) >> 1
 }
+
 fn bind(
     binding: &Bind,
     env: &Env,
@@ -42,6 +47,7 @@ fn bind(
     }
     Ok(value)
 }
+
 fn evaluate(
     expr: &Expr,
     env: &Env,
@@ -107,6 +113,7 @@ fn evaluate(
         }
     }
 }
+
 fn primitive(op: Op, args: &[Value]) -> Result<Value, String> {
     if let [Value::Lit(Lit::String(a)), Value::Lit(Lit::String(b))] = args
         && op == Op::Append
@@ -140,6 +147,7 @@ fn primitive(op: Op, args: &[Value]) -> Result<Value, String> {
     };
     Ok(Value::Lit(value))
 }
+
 /// Evaluate top-level values exactly once in source order, then select main's value.
 pub fn run(
     program: &core::Program,

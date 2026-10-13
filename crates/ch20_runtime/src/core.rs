@@ -1,17 +1,20 @@
 //! System F Core keeps typed constructors and nested matches separate from source sugar.
 pub use crate::core_type::Type;
 use crate::{ast::Op, source::Span};
+
 /// A Core identifier carries its independently checkable type.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Id {
     pub name: crate::names::Id,
     pub ty: Type,
 }
+
 impl std::fmt::Display for Id {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{} : {}", self.name, self.ty)
     }
 }
+
 // ANCHOR: core
 #[derive(Clone, Debug, PartialEq, Eq)]
 /// Immediate source values; strings are primitive UTF-8 values, not character lists.
@@ -21,6 +24,7 @@ pub enum Lit {
     Char(char),
     String(String),
 }
+
 #[derive(Clone, Debug)]
 /// System F Core makes type abstraction and instantiation explicit.
 pub enum Expr {
@@ -40,6 +44,7 @@ pub enum Expr {
     PatternFail(Span, Type),
     Prim(Op, Vec<Type>, Vec<Expr>, Span),
 }
+
 /// Flat alternatives inspect one constructor or literal, never nested patterns.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum AltCon {
@@ -47,6 +52,7 @@ pub enum AltCon {
     Lit(Lit),
     Default,
 }
+
 /// Constructor slots become typed binders scoped over the alternative body.
 #[derive(Clone, Debug)]
 pub struct Alt {
@@ -54,18 +60,21 @@ pub struct Alt {
     pub binders: Vec<Id>,
     pub rhs: Expr,
 }
+
 #[derive(Clone, Debug)]
 /// A recursive binding is guaranteed to have a lambda right-hand side.
 pub struct Bind {
     pub name: Id,
     pub rhs: Box<Expr>,
 }
+
 #[derive(Clone, Debug)]
 /// An ordered component; recursive members are in scope in every right-hand side.
 pub struct BindGroup {
     pub recursive: bool,
     pub binds: Vec<Bind>,
 }
+
 #[derive(Clone, Debug)]
 /// Globals are initialized in dependency order, with explicit recursive components.
 pub struct Program {
@@ -77,6 +86,7 @@ pub struct Program {
     pub locations: Vec<(Span, String)>,
 }
 // ANCHOR_END: core
+
 impl std::fmt::Display for Expr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -144,6 +154,7 @@ impl std::fmt::Display for Expr {
         }
     }
 }
+
 impl std::fmt::Display for Lit {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -160,6 +171,7 @@ impl std::fmt::Display for Lit {
         }
     }
 }
+
 impl std::fmt::Display for BindGroup {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{} {{", if self.recursive { "rec" } else { "nonrec" })?;
@@ -169,6 +181,7 @@ impl std::fmt::Display for BindGroup {
         write!(f, " }}")
     }
 }
+
 /// Independently typecheck System F Core after each Core-producing pass.
 pub fn lint(program: &Program) -> Result<(), String> {
     crate::core_lint::lint(program)
@@ -190,6 +203,7 @@ pub struct ConDecl {
     pub fields: Vec<Type>,
     pub result: Type,
 }
+
 // ANCHOR: nested-match
 /// Nested patterns remain until the decision-tree compiler in Chapter 16.
 #[derive(Clone, Debug)]
@@ -200,12 +214,14 @@ pub enum Pat {
     Con(crate::data::ConId, Vec<Pat>),
     Lit(Lit),
 }
+
 /// A guarded row falls through when all its Boolean tests fail.
 #[derive(Clone, Debug)]
 pub enum RowBody {
     Plain(Box<Expr>),
     Guarded(Vec<(Expr, Expr)>),
 }
+
 /// Row-local declarations run after patterns match and are shared by the guards.
 #[derive(Clone, Debug)]
 pub struct Row {
@@ -214,6 +230,7 @@ pub struct Row {
     pub body: RowBody,
     pub span: Span,
 }
+
 /// Scrutinees name strict preceding lets; the match records its result type and failure site.
 #[derive(Clone, Debug)]
 pub struct Match {
@@ -223,6 +240,7 @@ pub struct Match {
     pub span: Span,
 }
 // ANCHOR_END: nested-match
+
 impl std::fmt::Display for Pat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -240,6 +258,7 @@ impl std::fmt::Display for Pat {
         }
     }
 }
+
 impl std::fmt::Display for Row {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[ ")?;
@@ -268,6 +287,7 @@ pub fn is_function(mut e: &Expr) -> bool {
     }
     matches!(e, Expr::Lam(..))
 }
+
 /// Dictionary calls introduce global dependencies absent from the source graph.
 pub fn order(groups: Vec<BindGroup>) -> Vec<BindGroup> {
     fn refs(e: &Expr, out: &mut std::collections::BTreeSet<u32>) {

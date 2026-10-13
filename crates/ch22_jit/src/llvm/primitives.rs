@@ -2,6 +2,7 @@
 use super::*;
 use crate::{ast::Op, primitives::Prim};
 use inkwell::{FloatPredicate, IntPredicate};
+
 impl<'ctx> Backend<'ctx, '_> {
     fn untag(&self, v: IntValue<'ctx>) -> Result<IntValue<'ctx>> {
         Ok(self

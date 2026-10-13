@@ -6,11 +6,13 @@ use crate::{
     source::Span,
 };
 use std::collections::{BTreeMap, BTreeSet};
+
 #[derive(Clone, Copy)]
 struct Fix {
     precedence: u8,
     assoc: Assoc,
 }
+
 fn default_fixity(op: &str) -> Fix {
     let (precedence, assoc) = match op {
         "." => (9, Assoc::Right),
@@ -28,11 +30,13 @@ fn default_fixity(op: &str) -> Fix {
     };
     Fix { precedence, assoc }
 }
+
 struct Resolver {
     table: BTreeMap<String, Fix>,
     shadowed: BTreeSet<String>,
     supply: usize,
 }
+
 impl Resolver {
     fn fix(&self, op: &str) -> Fix {
         self.table
@@ -245,6 +249,7 @@ impl Resolver {
         Ok(Expr { kind, span })
     }
 }
+
 /// Resolve all chains only after collecting the file's fixity declarations.
 pub fn resolve(
     sess: &mut Session,

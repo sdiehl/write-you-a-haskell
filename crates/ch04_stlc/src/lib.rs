@@ -6,6 +6,7 @@ pub mod lexer;
 pub mod names;
 pub mod normal;
 pub mod types;
+
 use ast::Expr;
 use diagnostic::Diagnostic;
 use lalrpop_util::{ParseError, lalrpop_mod};
@@ -37,6 +38,7 @@ pub fn parse(source: &str) -> Result<Expr, Vec<Diagnostic>> {
     }
 }
 // ANCHOR_END: parse
+
 fn parse_error(error: ParseError<usize, Token, Diagnostic>) -> Diagnostic {
     let (span, message) = match error {
         ParseError::InvalidToken { location } => {

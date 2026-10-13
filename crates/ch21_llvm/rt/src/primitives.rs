@@ -1,5 +1,6 @@
 //! One implementation of observable primitive behavior for every execution engine.
 use crate::layout::normalize;
+
 #[derive(Clone, Debug, PartialEq)]
 /// Only primitive input/output types: arbitrary algebraic values stay in each engine.
 pub enum Value {
@@ -12,21 +13,25 @@ pub enum Value {
     MaybeInt(Option<i64>),
     Unit,
 }
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Failure {
     Runtime(String),
     Exit(i32),
 }
+
 impl From<String> for Failure {
     fn from(s: String) -> Self {
         Self::Runtime(s)
     }
 }
+
 impl From<&str> for Failure {
     fn from(s: &str) -> Self {
         Self::Runtime(s.into())
     }
 }
+
 impl std::fmt::Display for Failure {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -35,6 +40,7 @@ impl std::fmt::Display for Failure {
         }
     }
 }
+
 /// Optional surrounding whitespace and sign; decimal digits only, within signed 63 bits.
 pub fn read_int(source: &str) -> Option<i64> {
     let s = source.trim();
@@ -46,11 +52,13 @@ pub fn read_int(source: &str) -> Option<i64> {
         (crate::layout::INT_MIN..=crate::layout::INT_MAX).contains(n)
     })
 }
+
 macro_rules! primitives {($($variant:ident => $name:literal),* $(,)?)=>{
     #[derive(Clone,Copy,Debug,PartialEq,Eq)] pub enum Prim {$($variant),*}
     pub const ALL:&[Prim]=&[$(Prim::$variant),*];
     impl Prim {pub fn name(self)->&'static str {match self {$(Self::$variant=>$name),*}}}
 };}
+
 primitives! {
     IntAdd=>"prim_intAdd",IntSub=>"prim_intSub",IntMul=>"prim_intMul",IntNeg=>"prim_intNeg",IntQuot=>"prim_intQuot",IntRem=>"prim_intRem",IntDiv=>"prim_intDiv",IntMod=>"prim_intMod",IntEq=>"prim_intEq",IntLt=>"prim_intLt",IntLe=>"prim_intLe",
     DblAdd=>"prim_dblAdd",DblSub=>"prim_dblSub",DblMul=>"prim_dblMul",DblDiv=>"prim_dblDiv",DblNeg=>"prim_dblNeg",DblSqrt=>"prim_dblSqrt",DblExp=>"prim_dblExp",DblLog=>"prim_dblLog",DblSin=>"prim_dblSin",DblCos=>"prim_dblCos",DblPow=>"prim_dblPow",DblEq=>"prim_dblEq",DblLt=>"prim_dblLt",DblLe=>"prim_dblLe",
@@ -58,6 +66,7 @@ primitives! {
     StrAppend=>"prim_strAppend",StrLength=>"prim_strLength",StrEq=>"prim_strEq",StrCompare=>"prim_strCompare",StrUnpack=>"prim_strUnpack",StrPack=>"prim_strPack",
     ShowInt=>"prim_showInt",ShowDouble=>"prim_showDouble",ShowChar=>"prim_showChar",ShowString=>"prim_showString",ReadInt=>"prim_readInt",Error=>"prim_error",PutStr=>"prim_putStr",GetLine=>"prim_getLine",Exit=>"prim_exit"
 }
+
 /// Formatting starts from Rust's shortest round-trip digits, then normalizes notation.
 pub fn show_double(n: f64) -> String {
     if n.is_nan() {
@@ -113,6 +122,7 @@ pub fn show_double(n: f64) -> String {
         body
     }
 }
+
 /// Quote Unicode text using Fun escapes.
 pub fn quote(text: &str, delimiter: char) -> String {
     let mut result = String::from(delimiter);
@@ -135,6 +145,7 @@ pub fn quote(text: &str, delimiter: char) -> String {
     result.push(delimiter);
     result
 }
+
 /// Execute a checked primitive, returning errors without terminating the host.
 pub fn evaluate(p: Prim, args: &[Value]) -> Result<Value, Failure> {
     use Prim::*;

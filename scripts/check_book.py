@@ -28,3 +28,5 @@ print('Chapter citations and source anchors checked.')
 subprocess.run([sys.executable, str(root / "scripts/fun-spacing.py"), "--check"], check=True)
 
 subprocess.run([sys.executable, str(root / "scripts/error-index.py"), "--check"], check=True)
+
+subprocess.run([sys.executable, str(root / "scripts/rust-dedent.py"), "--check"], check=True)

@@ -13,11 +13,13 @@ pub enum Type {
     Bool,
     Arrow(Box<Type>, Box<Type>),
 }
+
 impl Type {
     pub fn arrow(domain: Self, codomain: Self) -> Self {
         Self::Arrow(Box::new(domain), Box::new(codomain))
     }
 }
+
 impl fmt::Display for Type {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -35,6 +37,7 @@ impl fmt::Display for Type {
     }
 }
 // ANCHOR_END: types
+
 fn mismatch(
     expr: &Expr,
     expected: impl fmt::Display,
@@ -46,6 +49,7 @@ fn mismatch(
         expr.span.clone(),
     )
 }
+
 fn expect(
     expr: &Expr,
     found: Type,
@@ -57,10 +61,12 @@ fn expect(
         Err(mismatch(expr, expected, &found))
     }
 }
+
 /// Check a closed term, reporting the source span of the first type error.
 pub fn check(expr: &Expr) -> Result<Type, Diagnostic> {
     infer(expr, &mut vec![])
 }
+
 // ANCHOR: infer
 fn infer(
     expr: &Expr,

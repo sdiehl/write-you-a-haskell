@@ -56,6 +56,7 @@ pub enum Token {
     Ident(String),
 }
 // ANCHOR_END: tokens
+
 pub type Spanned = (usize, Token, usize);
 
 /// Return every lexical error rather than disguising invalid input as a token.

@@ -5,17 +5,20 @@ use crate::{
     types::{self, Scheme, Type},
 };
 use std::collections::{BTreeMap, BTreeSet};
+
 // ANCHOR: store
 #[derive(Clone)]
 struct Meta {
     level: u32,
     solution: Option<Type>,
 }
+
 #[derive(Default)]
 struct Infer {
     level: u32,
     metas: Vec<Meta>,
 }
+
 impl Infer {
     fn fresh(&mut self) -> Type {
         let n = self.metas.len() as u32;
@@ -223,6 +226,7 @@ impl Infer {
         }
     }
 }
+
 /// Infer using mutable union-find solutions and generalization by levels.
 pub fn check(expr: &Expr) -> Result<Type, Diagnostic> {
     let mut infer = Infer {

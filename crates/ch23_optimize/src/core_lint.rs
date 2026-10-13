@@ -4,6 +4,7 @@ use crate::core::{
     BindGroup, ConDecl, Expr, Id, Lit, Pat, Program, RowBody, Type,
 };
 use std::collections::{BTreeMap, BTreeSet};
+
 #[derive(Default)]
 struct Checker {
     checked_children: BTreeMap<usize, Type>,
@@ -17,6 +18,7 @@ struct Checker {
     seen_types: BTreeSet<u32>,
     globals: BTreeSet<u32>,
 }
+
 impl Checker {
     fn well_formed(&self, ty: &Type) -> Result<(), String> {
         self.kind(ty)?;
@@ -583,6 +585,7 @@ impl Checker {
         Ok(())
     }
 }
+
 /// Check kinds, scope, applications, and every binding's declared Core type.
 // ANCHOR: core-lint
 pub fn lint(program: &Program) -> Result<(), String> {

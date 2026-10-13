@@ -7,6 +7,7 @@ use std::{
     ffi::{CStr, c_char},
     io::Write,
 };
+
 #[derive(Clone, Copy)]
 enum Input {
     Int,
@@ -16,6 +17,7 @@ enum Input {
     Chars,
     Unit,
 }
+
 fn inputs(p: Prim) -> &'static [Input] {
     use Input::*;
     match p {
@@ -70,6 +72,7 @@ fn inputs(p: Prim) -> &'static [Input] {
         Prim::Trace => unreachable!("trace preserves an opaque word"),
     }
 }
+
 unsafe fn decode(kind: Input, w: Word) -> Value {
     // SAFETY: ABI arguments have the specified source types; heap accessors check object kinds.
     unsafe {
@@ -106,6 +109,7 @@ unsafe fn decode(kind: Input, w: Word) -> Value {
         }
     }
 }
+
 fn encode(v: Value) -> Word {
     match v {
         Value::Int(n) => layout::integer(n),
@@ -136,6 +140,7 @@ fn encode(v: Value) -> Word {
         }
     }
 }
+
 unsafe fn invoke(p: Prim, args: &[Word]) -> Word {
     assert_eq!(inputs(p).len(), args.len());
     // SAFETY: each export promises correctly typed live words for its primitive.
@@ -150,6 +155,7 @@ unsafe fn invoke(p: Prim, args: &[Word]) -> Word {
         Err(Failure::Exit(n)) => rt_exit(n),
     }
 }
+
 macro_rules! export { ($name:ident, $op:ident; $($arg:ident),+) => {
     /// Typed primitive entry, using the shared interpreter semantics.
     /// # Safety
@@ -160,53 +166,101 @@ macro_rules! export { ($name:ident, $op:ident; $($arg:ident),+) => {
         unsafe { invoke(Prim::$op,&[$($arg),+]) }
     }
 }; }
+
 export!(rt_prim_intAdd, IntAdd; a,b);
+
 export!(rt_prim_intSub, IntSub; a,b);
+
 export!(rt_prim_intMul, IntMul; a,b);
+
 export!(rt_prim_intNeg, IntNeg; a);
+
 export!(rt_prim_intQuot, IntQuot; a,b);
+
 export!(rt_prim_intRem, IntRem; a,b);
+
 export!(rt_prim_intDiv, IntDiv; a,b);
+
 export!(rt_prim_intMod, IntMod; a,b);
+
 export!(rt_prim_intEq, IntEq; a,b);
+
 export!(rt_prim_intLt, IntLt; a,b);
+
 export!(rt_prim_intLe, IntLe; a,b);
+
 export!(rt_prim_dblAdd, DblAdd; a,b);
+
 export!(rt_prim_dblSub, DblSub; a,b);
+
 export!(rt_prim_dblMul, DblMul; a,b);
+
 export!(rt_prim_dblDiv, DblDiv; a,b);
+
 export!(rt_prim_dblNeg, DblNeg; a);
+
 export!(rt_prim_dblSqrt, DblSqrt; a);
+
 export!(rt_prim_dblExp, DblExp; a);
+
 export!(rt_prim_dblLog, DblLog; a);
+
 export!(rt_prim_dblSin, DblSin; a);
+
 export!(rt_prim_dblCos, DblCos; a);
+
 export!(rt_prim_dblPow, DblPow; a,b);
+
 export!(rt_prim_dblEq, DblEq; a,b);
+
 export!(rt_prim_dblLt, DblLt; a,b);
+
 export!(rt_prim_dblLe, DblLe; a,b);
+
 export!(rt_prim_intToDbl, IntToDbl; a);
+
 export!(rt_prim_dblFloor, DblFloor; a);
+
 export!(rt_prim_dblRound, DblRound; a);
+
 export!(rt_prim_dblTruncate, DblTruncate; a);
+
 export!(rt_prim_chrOrd, ChrOrd; a);
+
 export!(rt_prim_chrChr, ChrChr; a);
+
 export!(rt_prim_chrEq, ChrEq; a,b);
+
 export!(rt_prim_chrLt, ChrLt; a,b);
+
 export!(rt_prim_strAppend, StrAppend; a,b);
+
 export!(rt_prim_strLength, StrLength; a);
+
 export!(rt_prim_strEq, StrEq; a,b);
+
 export!(rt_prim_strCompare, StrCompare; a,b);
+
 export!(rt_prim_strUnpack, StrUnpack; a);
+
 export!(rt_prim_strPack, StrPack; a);
+
 export!(rt_prim_showInt, ShowInt; a);
+
 export!(rt_prim_showDouble, ShowDouble; a);
+
 export!(rt_prim_showChar, ShowChar; a);
+
 export!(rt_prim_showString, ShowString; a);
+
 export!(rt_prim_readInt, ReadInt; a);
+
 export!(rt_prim_error, Error; a);
+
 export!(rt_prim_putStr, PutStr; a);
+
 export!(rt_prim_getLine, GetLine; a);
+
 export!(rt_prim_exit, Exit; a);
 
 fn die(message: &str) -> ! {
@@ -215,6 +269,7 @@ fn die(message: &str) -> ! {
     let _ = writeln!(std::io::stderr().lock(), "fun: {message}");
     std::process::exit(1)
 }
+
 /// Flush buffered output and terminate with the language's exit status.
 #[unsafe(no_mangle)]
 pub extern "C" fn rt_exit(code: i32) -> ! {
@@ -223,6 +278,7 @@ pub extern "C" fn rt_exit(code: i32) -> ! {
     }
     std::process::exit(code)
 }
+
 /// # Safety
 /// message must be a live STRING object.
 #[unsafe(no_mangle)]
@@ -230,6 +286,7 @@ pub unsafe extern "C" fn rt_error(message: Word) -> ! {
     // SAFETY: caller supplies a rooted immutable STRING for this non-returning call.
     unsafe { die(heap::text(message)) }
 }
+
 /// # Safety
 /// file must address a live NUL-terminated UTF-8 file name.
 #[unsafe(no_mangle)]
@@ -242,6 +299,7 @@ pub unsafe extern "C" fn rt_pattern_fail(
     let file = unsafe { CStr::from_ptr(file) }.to_string_lossy();
     die(&format!("pattern match failure at {file}:{line}:{col}"))
 }
+
 #[unsafe(no_mangle)]
 pub extern "C" fn rt_div_zero() -> ! {
     die("divide by zero")

@@ -17,11 +17,13 @@ pub enum Engine {
     Anf,
     Flat,
 }
+
 #[derive(Clone)]
 struct Input {
     name: String,
     source: String,
 }
+
 /// Source definitions and executable definitions commit together after a successful input.
 pub struct Repl<'ctx> {
     inputs: Vec<Input>,
@@ -31,6 +33,7 @@ pub struct Repl<'ctx> {
     lint: bool,
     fuel: usize,
 }
+
 impl<'ctx> Repl<'ctx> {
     pub fn new(context: &'ctx Context, lint: bool, fuel: usize) -> Self {
         Self {
@@ -230,6 +233,7 @@ impl<'ctx> Repl<'ctx> {
         Ok(())
     }
 }
+
 /// Both display and IO sequencing are ordinary, type-checked Prelude operations.
 fn action_query(expression: &str, ty: &crate::types::Type) -> String {
     if matches!(ty, crate::types::Type::Con(id, _) if id.name == "IO") {
@@ -238,6 +242,7 @@ fn action_query(expression: &str, ty: &crate::types::Type) -> String {
         format!("print ({expression})")
     }
 }
+
 fn diagnostics(sess: &Session) -> String {
     let mut bytes = vec![];
     for diagnostic in &sess.diagnostics {
@@ -245,6 +250,7 @@ fn diagnostics(sess: &Session) -> String {
     }
     String::from_utf8_lossy(&bytes).trim_end().into()
 }
+
 fn append(to: &mut ast::Program, mut from: ast::Program) {
     to.bindings.append(&mut from.bindings);
     to.fixities.append(&mut from.fixities);
@@ -253,6 +259,7 @@ fn append(to: &mut ast::Program, mut from: ast::Program) {
     to.classes.append(&mut from.classes);
     to.instances.append(&mut from.instances);
 }
+
 fn prepare(
     inputs: &[Input],
     query: &str,
@@ -325,6 +332,7 @@ fn prepare(
     }
     Ok((sess, typed))
 }
+
 fn lower_core(
     sess: &mut Session,
     typed: TypedProgram,
@@ -342,6 +350,7 @@ fn lower_core(
     }
     Ok(core)
 }
+
 fn lower_anf(
     sess: &mut Session,
     core: core::Program,
@@ -354,6 +363,7 @@ fn lower_anf(
     }
     Ok(anf)
 }
+
 /// Terminal input uses rustyline; redirected input has deterministic, prompt-free output.
 pub fn run(
     lint: bool,

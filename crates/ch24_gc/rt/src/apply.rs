@@ -3,8 +3,10 @@ use crate::{
     heap::{self, Roots},
     layout::{self, Word},
 };
+
 /// The slow entry receives its closure word and exactly its syntactic arity of arguments.
 pub type Slow = unsafe extern "C" fn(Word, *const Word) -> Word;
+
 /// Store a code address, syntactic arity, then captured values.
 pub fn closure(code: Slow, arity: usize, captures: &[Word]) -> Word {
     assert!(arity > 0);
@@ -12,6 +14,7 @@ pub fn closure(code: Slow, arity: usize, captures: &[Word]) -> Word {
     fields.extend_from_slice(captures);
     heap::object(layout::CLOSURE, 0, &fields)
 }
+
 /// # Safety
 /// Arguments must be valid live words of the callee's source types, rooted by the caller.
 /// args must point to n readable words (or may be null when n is zero).
@@ -29,6 +32,7 @@ pub unsafe extern "C" fn rt_make_pap(
         heap::object(layout::PAP, 0, &fields)
     }
 }
+
 unsafe fn arguments<'a>(n: usize, args: *const Word) -> &'a [Word] {
     if n == 0 {
         &[]
@@ -37,6 +41,7 @@ unsafe fn arguments<'a>(n: usize, args: *const Word) -> &'a [Word] {
         unsafe { std::slice::from_raw_parts(args, n) }
     }
 }
+
 /// # Safety
 /// clo must be a live CLOSURE and index a capture slot; value must be live and well typed.
 /// Patching is confined to unpublished letrec initialization; no concurrent readers exist.
@@ -57,6 +62,7 @@ pub unsafe extern "C" fn rt_closure_set(
         (clo as *mut Word).add(i + 1).write(value);
     }
 }
+
 /// # Safety
 /// clo is a live closure or PAP; args is n valid, rooted, correctly typed words.
 /// Every slow entry must obey the runtime ABI and return a live word of its result type.
@@ -111,6 +117,7 @@ pub unsafe extern "C" fn rt_apply(
         }
     }
 }
+
 macro_rules! apply_n { ($name:ident; $($arg:ident),+) => {
     /// Fixed-size apply entry point.
     /// # Safety
@@ -122,7 +129,11 @@ macro_rules! apply_n { ($name:ident; $($arg:ident),+) => {
         unsafe { rt_apply(clo, args.len(), args.as_ptr()) }
     }
 }; }
+
 apply_n!(rt_apply1; a);
+
 apply_n!(rt_apply2; a,b);
+
 apply_n!(rt_apply3; a,b,c);
+
 apply_n!(rt_apply4; a,b,c,d);

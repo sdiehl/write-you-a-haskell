@@ -20,6 +20,7 @@ pub enum Engine {
     Jit,
     Native,
 }
+
 impl Engine {
     pub fn name(self) -> &'static str {
         match self {
@@ -50,6 +51,7 @@ pub struct Outcome {
     pub stderr: Vec<u8>,
     pub exit: i32,
 }
+
 impl Outcome {
     fn first_error(&self) -> &[u8] {
         self.stderr.split(|b| *b == b'\n').next().unwrap_or(&[])
@@ -73,6 +75,7 @@ pub struct Fixture {
     pub engines: Option<Vec<String>>,
     pub exact_stderr: bool,
 }
+
 impl Fixture {
     pub fn read(path: PathBuf) -> io::Result<Self> {
         let source = fs::read_to_string(&path)?;
@@ -216,6 +219,7 @@ fn engines_for(config: &Config<'_>, fixture: &Fixture) -> Vec<Engine> {
         .into_iter()
         .collect()
 }
+
 fn is_inherited(path: &Path) -> bool {
     let Some(previous) = std::env::var_os(INHERITED_CRATE) else {
         return false;
@@ -235,6 +239,7 @@ fn is_inherited(path: &Path) -> bool {
             == optional_read(&previous.with_extension(extension)).ok()
     })
 }
+
 fn optional_read(path: &Path) -> io::Result<Option<Vec<u8>>> {
     match fs::read(path) {
         Ok(bytes) => Ok(Some(bytes)),
@@ -266,6 +271,7 @@ pub fn discover(root: &Path) -> io::Result<Vec<PathBuf>> {
 pub fn capture(command: &mut Command, timeout: Duration) -> io::Result<Outcome> {
     capture_with_input(command, timeout, None)
 }
+
 /// Feed optional fixture input while draining both output pipes independently.
 pub fn capture_with_input(
     command: &mut Command,
@@ -344,10 +350,12 @@ pub fn capture_with_input(
 pub fn run_corpus(config: &Config<'_>) -> Result<usize, String> {
     corpus(config, false)
 }
+
 /// Repeat native-eligible fixtures with relocation forced at every allocation.
 pub fn run_copying_corpus(config: &Config<'_>) -> Result<usize, String> {
     corpus(config, true)
 }
+
 fn corpus(config: &Config<'_>, copying: bool) -> Result<usize, String> {
     if config.engines.is_empty() {
         return Err("no engines configured".into());
@@ -390,6 +398,7 @@ fn corpus(config: &Config<'_>, copying: bool) -> Result<usize, String> {
     }
     Ok(paths.len())
 }
+
 fn run_fixture(
     config: &Config<'_>,
     scratch: &Scratch,
@@ -478,6 +487,7 @@ fn run_fixture(
 }
 
 struct Scratch(PathBuf);
+
 impl Scratch {
     fn new() -> io::Result<Self> {
         for i in 0..1000 {
@@ -491,6 +501,7 @@ impl Scratch {
         Err(io::Error::other("cannot allocate test directory"))
     }
 }
+
 impl Drop for Scratch {
     fn drop(&mut self) {
         let _ = fs::remove_dir_all(&self.0);
@@ -500,6 +511,7 @@ impl Drop for Scratch {
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
     fn fixture_checks_bytes_exit_and_primary_location() {
         let dir = Scratch::new().unwrap();
@@ -520,6 +532,7 @@ mod tests {
         actual.exit = 0;
         assert!(fixture.compare(&actual).is_err());
     }
+
     #[test]
     fn exact_stderr_checks_every_trace_line() {
         let fixture = Fixture {
@@ -550,6 +563,7 @@ mod tests {
                 .is_err()
         );
     }
+
     #[test]
     fn file_marker_expands_only_expected_diagnostics() {
         let fixture = Fixture {
@@ -573,6 +587,7 @@ mod tests {
         };
         assert!(fixture.compare(&wrong).is_err());
     }
+
     #[test]
     fn discovery_is_recursive_and_sorted() {
         let dir = Scratch::new().unwrap();
@@ -584,6 +599,7 @@ mod tests {
         assert_eq!(found.len(), 2);
         assert!(found[0].ends_with("nested/a.fun"));
     }
+
     #[test]
     fn process_drains_large_pipes_and_times_out() {
         let mut command = Command::new("sh");

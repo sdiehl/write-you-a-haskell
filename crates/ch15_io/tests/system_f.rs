@@ -4,6 +4,7 @@ use ch15_io::{
     session::Session,
     typecheck,
 };
+
 fn program(rhs: Expr, ty: Type) -> Program {
     let mut sess = Session::default();
     let main = Id {
@@ -25,6 +26,7 @@ fn program(rhs: Expr, ty: Type) -> Program {
         main,
     }
 }
+
 fn identity(variable: u32, unique: u32) -> Expr {
     let id = Id {
         name: ch15_io::names::Id {
@@ -41,12 +43,14 @@ fn identity(variable: u32, unique: u32) -> Expr {
         Box::new(Expr::Lam(id.clone(), Box::new(Expr::Var(id)))),
     )
 }
+
 fn identity_type(variable: u32) -> Type {
     Type::Forall(
         variable,
         Box::new(Type::arrow(Type::Var(variable), Type::Var(variable))),
     )
 }
+
 #[test]
 fn substitution_avoids_capture_and_types_compare_up_to_alpha() {
     let ty =
@@ -62,6 +66,7 @@ fn substitution_avoids_capture_and_types_compare_up_to_alpha() {
         Box::new(Type::arrow(Type::Var(1), Type::Var(2)))
     )));
 }
+
 #[test]
 fn lint_accepts_system_f_including_polymorphic_type_arguments() {
     core::lint(&program(identity(0, 1), identity_type(12))).unwrap();
@@ -71,6 +76,7 @@ fn lint_accepts_system_f_including_polymorphic_type_arguments() {
     );
     core::lint(&program(rhs, identity_type(4))).unwrap();
 }
+
 #[test]
 fn lint_rejects_malformed_core_without_surface_inference() {
     let int = || Expr::Lit(Lit::Int(1));
@@ -138,6 +144,7 @@ fn lint_rejects_malformed_core_without_surface_inference() {
             .contains("duplicate Core binder")
     );
 }
+
 #[test]
 fn generated_hm_programs_elaborate_to_well_typed_core() {
     for n in 0..200 {

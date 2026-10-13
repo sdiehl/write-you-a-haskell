@@ -10,6 +10,7 @@ use std::collections::BTreeSet;
 struct Builder {
     span: Span,
 }
+
 impl Builder {
     fn expr(&self, kind: Kind) -> Expr {
         Expr {
@@ -203,6 +204,7 @@ impl Builder {
         vec![show, self.binding("_showsPrec", rows)]
     }
 }
+
 fn variables(ty: &TypeSyntax, out: &mut BTreeSet<String>) {
     match ty {
         TypeSyntax::Name(n) => {
@@ -215,6 +217,7 @@ fn variables(ty: &TypeSyntax, out: &mut BTreeSet<String>) {
         TypeSyntax::Qualified(_, t) => variables(t, out),
     }
 }
+
 /// Generate only Eq, Ord and Show. Generated terms retain the declaration span.
 pub fn derive(
     sess: &mut Session,

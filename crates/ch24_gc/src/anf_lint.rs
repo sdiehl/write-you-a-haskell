@@ -1,11 +1,13 @@
 //! Structural checks after types have been erased.
 use crate::anf::{Anf, Atom, Body, Program, Rhs, Var};
 use std::collections::{BTreeMap, BTreeSet};
+
 struct Check<'a> {
     program: &'a Program,
     globals: BTreeSet<Var>,
     seen: BTreeSet<Var>,
 }
+
 impl Check<'_> {
     fn bind(&mut self, v: &Var) -> Result<(), String> {
         crate::rep::get(&self.program.reps, v)?;
@@ -138,6 +140,7 @@ impl Check<'_> {
         Ok(())
     }
 }
+
 /// Check lexical scope, unique binders and fully applied local transfers.
 pub fn lint(program: &Program) -> Result<(), String> {
     crate::rep::lint_anf(program)?;

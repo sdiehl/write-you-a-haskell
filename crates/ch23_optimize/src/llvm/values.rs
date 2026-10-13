@@ -9,6 +9,7 @@ use inkwell::{
     types::BasicMetadataTypeEnum,
     values::{BasicMetadataValueEnum, PointerValue},
 };
+
 /// Storage is local to codegen. All ABI boundaries still carry tagged words.
 #[derive(Clone, Copy)]
 pub(super) enum Loc<'ctx> {
@@ -16,6 +17,7 @@ pub(super) enum Loc<'ctx> {
     Int(IntValue<'ctx>),
     Double(inkwell::values::FloatValue<'ctx>),
 }
+
 impl<'ctx> Backend<'ctx, '_> {
     pub(super) fn n(&self, n: u64) -> IntValue<'ctx> {
         self.word.const_int(n, false)

@@ -6,6 +6,7 @@ use ch10_core::{
     source::Span,
     typecheck,
 };
+
 fn compile(source: &str) -> Result<(String, core::Program), String> {
     let mut sess = Session::default();
     let file = sess.sources.add("test.fun", source.into());
@@ -21,6 +22,7 @@ fn compile(source: &str) -> Result<(String, core::Program), String> {
         Err(_) => Err(sess.diagnostics[0].code.as_str().into()),
     }
 }
+
 #[test]
 fn source_maps_use_file_identity_byte_offsets_and_scalar_columns() {
     let mut sess = Session::default();
@@ -45,6 +47,7 @@ fn source_maps_use_file_identity_byte_offsets_and_scalar_columns() {
     assert_eq!(sess.interner.resolve(symbol), "x");
     assert_ne!(sess.supply.fresh(symbol), sess.supply.fresh(symbol));
 }
+
 #[test]
 fn literals_comments_and_operator_maximal_munch() {
     let source = r#"{ {- outer {- nested -} -} main = "λ\n" ++ "\u{1f642}"; } -- end"#;
@@ -63,6 +66,7 @@ fn literals_comments_and_operator_maximal_munch() {
     assert_eq!(tokens.len(), 1);
     assert_eq!(ast::quote("'\n\0", '\''), "'\\'\\n\\0'");
 }
+
 #[test]
 fn ordered_recursion_scoping_and_initialization() {
     for (source, expected) in [
@@ -81,6 +85,7 @@ fn ordered_recursion_scoping_and_initialization() {
     let (_, program) = compile("{ unused = div 1 0; main = 42; }").unwrap();
     assert_eq!(eval::run(&program, 10000).unwrap_err(), "divide by zero");
 }
+
 #[test]
 fn floor_division_and_wrapping() {
     for (expression, expected) in [
@@ -97,6 +102,7 @@ fn floor_division_and_wrapping() {
         assert_eq!(eval::run(&program, 1000).unwrap(), expected);
     }
 }
+
 #[test]
 fn core_lint_rejects_an_unbound_compiler_generated_variable() {
     let (_, mut program) = compile("{ main = 1; }").unwrap();
@@ -108,6 +114,7 @@ fn core_lint_rejects_an_unbound_compiler_generated_variable() {
         });
     assert!(core::lint(&program).is_err());
 }
+
 #[test]
 fn golden_corpus() {
     testkit::run_corpus(&testkit::Config {
@@ -119,6 +126,7 @@ fn golden_corpus() {
     })
     .unwrap();
 }
+
 #[test]
 fn core_snapshots() {
     for (name, source) in [

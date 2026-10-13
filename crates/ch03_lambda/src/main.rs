@@ -10,24 +10,28 @@ use std::{
     path::PathBuf,
     process::ExitCode,
 };
+
 #[derive(Clone, Copy, ValueEnum)]
 enum Pass {
     Tokens,
     Parse,
     Debruijn,
 }
+
 #[derive(Clone, Copy, Default, ValueEnum)]
 enum Engine {
     #[default]
     Core,
     Normal,
 }
+
 #[derive(Clone, Copy, ValueEnum)]
 enum Color {
     Auto,
     Always,
     Never,
 }
+
 #[derive(Parser)]
 #[command(
     name = "fun-ch03",
@@ -45,6 +49,7 @@ struct Cli {
     #[arg(long, global = true, value_enum)]
     dump: Option<Pass>,
 }
+
 #[derive(Subcommand)]
 enum Command {
     Check {
@@ -62,6 +67,7 @@ enum Command {
     },
     Repl,
 }
+
 fn report(errors: &[Diagnostic], file: &str, source: &str, color: Color) {
     let color = matches!(color, Color::Always)
         || matches!(color, Color::Auto) && io::stderr().is_terminal();
@@ -69,6 +75,7 @@ fn report(errors: &[Diagnostic], file: &str, source: &str, color: Color) {
         let _ = error.render(file, source, color, io::stderr().lock());
     }
 }
+
 fn process(
     source: &str,
     file: &str,
@@ -140,6 +147,7 @@ fn process(
         }
     }
 }
+
 fn repl(cli: &Cli) -> Result<(), Box<dyn std::error::Error>> {
     let mut editor = DefaultEditor::new()?;
     println!("Lambda: :quit, :parse EXPR, :trace EXPR.");
@@ -182,6 +190,7 @@ fn repl(cli: &Cli) -> Result<(), Box<dyn std::error::Error>> {
     }
     Ok(())
 }
+
 fn main() -> ExitCode {
     let cli = Cli::parse();
     let (path, engine, dump) = match &cli.command {

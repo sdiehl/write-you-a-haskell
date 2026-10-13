@@ -9,17 +9,20 @@ use crate::{
     types::{self, Scheme},
 };
 use std::collections::BTreeMap;
+
 #[derive(Clone)]
 struct Binder {
     id: Id,
     quantifiers: Vec<(u32, u32)>,
     global: bool,
 }
+
 struct Elaborator<'a> {
     typed: &'a TypedProgram,
     next_type: u32,
     binders: BTreeMap<names::Id, Binder>,
 }
+
 /// Unsolved inference variables absent from every enclosing scheme have no
 /// observable type identity. Int is a closed witness for those internal holes.
 fn convert(ty: &types::Type, variables: &BTreeMap<u32, u32>) -> Type {
@@ -39,6 +42,7 @@ fn convert(ty: &types::Type, variables: &BTreeMap<u32, u32>) -> Type {
         }
     }
 }
+
 impl Elaborator<'_> {
     fn binder(
         &mut self,
@@ -209,6 +213,7 @@ impl Elaborator<'_> {
         }
     }
 }
+
 fn primitive(
     sess: &mut Session,
     name: names::Id,
@@ -257,6 +262,7 @@ fn primitive(
         }],
     }
 }
+
 /// Elaborate zonked inference evidence into explicitly typed Core.
 pub fn elaborate(
     sess: &mut Session,

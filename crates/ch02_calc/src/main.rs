@@ -17,15 +17,18 @@ enum ParserChoice {
     Lalrpop,
     Pratt,
 }
+
 #[derive(Clone, Copy, ValueEnum)]
 enum Pass {
     Tokens,
     Parse,
 }
+
 #[derive(Clone, Copy, ValueEnum)]
 enum Engine {
     Core,
 }
+
 #[derive(Clone, Copy, Default, ValueEnum)]
 enum Color {
     #[default]
@@ -33,6 +36,7 @@ enum Color {
     Always,
     Never,
 }
+
 #[derive(Parser)]
 #[command(
     name = "fun-ch02",
@@ -51,6 +55,7 @@ struct Cli {
     #[arg(long, global = true, value_enum)]
     dump: Option<Pass>,
 }
+
 #[derive(Subcommand)]
 enum Command {
     Check {
@@ -68,6 +73,7 @@ enum Command {
     },
     Repl,
 }
+
 fn parsed(
     source: &str,
     parser: ParserChoice,
@@ -77,6 +83,7 @@ fn parsed(
         ParserChoice::Pratt => pratt::parse(source),
     }
 }
+
 fn report(errors: &[Diagnostic], file: &str, source: &str, color: Color) {
     let color = matches!(color, Color::Always)
         || matches!(color, Color::Auto) && io::stderr().is_terminal();
@@ -84,6 +91,7 @@ fn report(errors: &[Diagnostic], file: &str, source: &str, color: Color) {
         let _ = error.render(file, source, color, io::stderr().lock());
     }
 }
+
 fn process(
     source: &str,
     file: &str,
@@ -129,6 +137,7 @@ fn process(
         }
     }
 }
+
 fn file(path: &Path, cli: &Cli, execute: bool, dump: Option<Pass>) -> bool {
     match fs::read_to_string(path) {
         Ok(source) => process(
@@ -144,6 +153,7 @@ fn file(path: &Path, cli: &Cli, execute: bool, dump: Option<Pass>) -> bool {
         }
     }
 }
+
 fn repl(cli: &Cli) -> Result<(), Box<dyn std::error::Error>> {
     let mut editor = DefaultEditor::new()?;
     println!("Calc: :quit to exit, :parse EXPR to inspect the AST.");
@@ -173,6 +183,7 @@ fn repl(cli: &Cli) -> Result<(), Box<dyn std::error::Error>> {
     }
     Ok(())
 }
+
 fn main() -> ExitCode {
     let cli = Cli::parse();
     let success = match &cli.command {

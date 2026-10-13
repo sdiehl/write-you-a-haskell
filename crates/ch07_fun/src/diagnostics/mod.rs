@@ -1,17 +1,20 @@
 //! Passes produce structured diagnostics; rendering happens only at the driver boundary.
 pub mod codes;
+
 use crate::source::{SourceMap, Span};
 use ariadne::{
     Config, IndexType, Label as AriadneLabel, Report, ReportKind,
 };
 pub use codes::ErrorCode;
 use std::io::{self, Write};
+
 /// Errors stop a pipeline; warnings describe accepted programs.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Severity {
     Error,
     Warning,
 }
+
 #[derive(Clone, Debug)]
 /// One source location, with an explicit primary-label designation.
 pub struct Label {
@@ -19,6 +22,7 @@ pub struct Label {
     pub msg: String,
     pub primary: bool,
 }
+
 #[derive(Clone, Debug)]
 /// Stable identity plus contextual prose and source labels.
 pub struct Diagnostic {
@@ -28,6 +32,7 @@ pub struct Diagnostic {
     pub labels: Vec<Label>,
     pub notes: Vec<String>,
 }
+
 impl Diagnostic {
     pub fn error(
         code: ErrorCode,

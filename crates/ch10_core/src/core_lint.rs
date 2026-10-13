@@ -5,6 +5,7 @@ use crate::{
     core::{BindGroup, Expr, Id, Lit, Program, Type},
 };
 use std::collections::{BTreeMap, BTreeSet};
+
 #[derive(Default)]
 struct Checker {
     terms: BTreeMap<u32, Type>,
@@ -13,6 +14,7 @@ struct Checker {
     seen_types: BTreeSet<u32>,
     globals: BTreeSet<u32>,
 }
+
 impl Checker {
     fn well_formed(&self, ty: &Type) -> Result<(), String> {
         if let Some(v) = ty.free().difference(&self.types).next() {
@@ -174,6 +176,7 @@ impl Checker {
         Ok(())
     }
 }
+
 /// Check kinds, scope, applications, and every binding's declared Core type.
 // ANCHOR: core-lint
 pub fn lint(program: &Program) -> Result<(), String> {

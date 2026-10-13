@@ -17,12 +17,14 @@ pub enum Expr {
     Jump(Id, Vec<Expr>),
     Fail(Span),
 }
+
 #[derive(Clone, Debug)]
 /// Ordered globals and runtime constructor/location metadata.
 pub struct Program {
     pub globals: Vec<(Id, Expr)>,
     pub metadata: core::Program,
 }
+
 /// Postorder erasure uses an explicit worklist, including long constructor spines.
 fn expr(root: &core::Expr) -> Expr {
     use core::Expr as C;
@@ -111,6 +113,7 @@ fn expr(root: &core::Expr) -> Expr {
     }
     results.pop().unwrap()
 }
+
 /// Erase executable types only; read-only metadata supports diagnostics and printers.
 pub fn erase(mut program: core::Program) -> Program {
     program.global_types = program
@@ -286,6 +289,7 @@ impl std::fmt::Display for Expr {
         Ok(())
     }
 }
+
 /// Destroy an owned erased tree without recursively following Box edges.
 pub fn discard(root: Expr) {
     let mut todo = vec![root];

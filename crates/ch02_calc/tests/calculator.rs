@@ -5,6 +5,7 @@ fn run(source: &str) -> i64 {
     eval::check(&expression).unwrap();
     eval::evaluate(&expression, &mut Vec::new()).unwrap()
 }
+
 #[test]
 fn precedence_associativity_and_scope() {
     for (source, expected) in [
@@ -23,6 +24,7 @@ fn precedence_associativity_and_scope() {
     }
     assert_eq!(parse("1 + 2 * 3").unwrap().to_string(), "(+ 1 (* 2 3))");
 }
+
 #[test]
 fn errors_have_precise_spans_and_recovery_continues() {
     let errors = parse("(1 + ) * (2 + )").unwrap_err();
@@ -46,6 +48,7 @@ fn errors_have_precise_spans_and_recovery_continues() {
         assert!(pratt::parse(source).is_err(), "{source}");
     }
 }
+
 #[test]
 fn restoring_scope_on_failure_and_checking_without_evaluation() {
     let expr = parse("let x = 1 in 1 / 0").unwrap();
@@ -63,6 +66,7 @@ fn next(seed: &mut u64) -> u64 {
     *seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1);
     *seed
 }
+
 fn generated(seed: &mut u64, depth: u8) -> String {
     if depth == 0 {
         return (next(seed) % 100).to_string();
@@ -84,6 +88,7 @@ fn generated(seed: &mut u64, depth: u8) -> String {
         }
     }
 }
+
 #[test]
 fn two_parsers_agree_on_200_generated_expressions() {
     let mut seed = 20261010;
@@ -105,6 +110,7 @@ fn two_parsers_agree_on_200_generated_expressions() {
         assert_eq!(parse(source).unwrap(), pratt::parse(source).unwrap());
     }
 }
+
 #[test]
 fn golden_programs() {
     testkit::run_corpus(&testkit::Config {

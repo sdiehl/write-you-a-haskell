@@ -2,6 +2,7 @@
 use crate::{
     ast::Op, data::DataEnv, names::Id, renamed::BindGroup, source::Span,
 };
+
 /// Only the simple expression and pattern forms remain in these groups.
 #[derive(Clone, Debug)]
 pub struct Program {

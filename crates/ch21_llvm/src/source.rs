@@ -1,9 +1,11 @@
 //! Stable file identities and byte spans, independent of diagnostics rendering.
 use std::ops::Range;
+
 // ANCHOR: source
 /// Index of a source file in a session's source map.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct FileId(pub u32);
+
 /// Half-open byte offsets within one source file.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Span {
@@ -11,6 +13,7 @@ pub struct Span {
     pub start: u32,
     pub end: u32,
 }
+
 impl Span {
     pub fn new(file: FileId, start: usize, end: usize) -> Self {
         Self {
@@ -30,17 +33,20 @@ impl Span {
         }
     }
 }
+
 /// Original text and line starts; columns count Unicode scalar values.
 pub struct SourceFile {
     pub name: String,
     pub text: String,
     lines: Vec<usize>,
 }
+
 #[derive(Default)]
 /// Owns every source used by this compilation, including future Prelude input.
 pub struct SourceMap {
     pub files: Vec<SourceFile>,
 }
+
 impl SourceMap {
     pub fn add(&mut self, name: impl Into<String>, text: String) -> FileId {
         assert!(u32::try_from(text.len()).is_ok(), "source exceeds 4 GiB");

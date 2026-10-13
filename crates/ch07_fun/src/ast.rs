@@ -9,6 +9,7 @@ pub struct Expr {
     pub kind: Kind,
     pub span: Span,
 }
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 /// The forms of the extended lambda calculus.
 pub enum Kind {
@@ -25,6 +26,7 @@ pub enum Kind {
     Binary(Op, Box<Expr>, Box<Expr>),
     Error,
 }
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 /// Monomorphic integer arithmetic and comparisons.
 pub enum Op {
@@ -39,6 +41,7 @@ pub enum Op {
     Le,
 }
 // ANCHOR_END: ast
+
 impl Op {
     pub fn text(self) -> &'static str {
         match self {
@@ -62,6 +65,7 @@ impl Op {
         }
     }
 }
+
 impl Expr {
     pub fn new(kind: Kind, file: FileId, start: usize, end: usize) -> Self {
         Self {
@@ -145,6 +149,7 @@ impl Expr {
         Ok(())
     }
 }
+
 impl fmt::Display for Expr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)
@@ -158,12 +163,14 @@ pub struct Binding {
     pub rhs: Expr,
     pub span: Span,
 }
+
 /// A single source file with declarations in source order.
 #[derive(Clone, Debug)]
 pub struct Program {
     pub bindings: Vec<Binding>,
     pub span: Span,
 }
+
 impl Program {
     /// Preserve source order: each declaration scopes over only itself and later declarations.
     pub fn expression(&self) -> Expr {
@@ -184,6 +191,7 @@ impl Program {
         body
     }
 }
+
 /// Haskell-style quoted characters and primitive UTF-8 strings.
 pub fn quote(text: &str, delimiter: char) -> String {
     let mut result = String::from(delimiter);
@@ -206,6 +214,7 @@ pub fn quote(text: &str, delimiter: char) -> String {
     result.push(delimiter);
     result
 }
+
 /// Free names account for lexical shadowing and recursive local binding scope.
 pub fn free(expr: &Expr) -> std::collections::BTreeSet<String> {
     use std::collections::BTreeSet;

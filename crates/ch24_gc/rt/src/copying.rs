@@ -15,7 +15,9 @@ struct Heap {
     collections: usize,
     copied_words: usize,
 }
+
 thread_local! { static HEAP: RefCell<Heap> = RefCell::new(Heap::default()); }
+
 /// Select the precise heap once, before program initialization.
 #[unsafe(no_mangle)]
 pub extern "C" fn rt_use_copying() {
@@ -28,9 +30,11 @@ pub extern "C" fn rt_use_copying() {
         h.spare = vec![0; 8192];
     });
 }
+
 pub fn enabled() -> bool {
     HEAP.with_borrow(|h| h.enabled)
 }
+
 /// # Safety
 /// The range must be writable, initialized tagged words until unregistered.
 pub unsafe fn register(p: *mut Word, len: usize) {
@@ -38,11 +42,13 @@ pub unsafe fn register(p: *mut Word, len: usize) {
         assert!(h.roots.insert(p as usize, len).is_none());
     });
 }
+
 pub fn unregister(p: *mut Word) {
     HEAP.with_borrow_mut(|h| {
         assert!(h.roots.remove(&(p as usize)).is_some());
     });
 }
+
 /// # Safety
 /// Generated code supplies a distinct stable stack array, initialized to zero.
 #[unsafe(no_mangle)]
@@ -53,6 +59,7 @@ pub unsafe extern "C" fn rt_roots_push(p: *mut Word, len: usize) {
     }
     HEAP.with_borrow_mut(|h| h.frames.push(p as usize));
 }
+
 /// Remove the current frame before return or a known tail transfer.
 #[unsafe(no_mangle)]
 pub extern "C" fn rt_roots_pop() {
@@ -61,6 +68,7 @@ pub extern "C" fn rt_roots_pop() {
         assert!(h.roots.remove(&p).is_some());
     });
 }
+
 /// # Safety
 /// p is a static writable word, live until process exit.
 #[unsafe(no_mangle)]
@@ -70,6 +78,7 @@ pub unsafe extern "C" fn rt_global_root(p: *mut Word) {
         register(p, 1);
     }
 }
+
 // ANCHOR: evacuate
 fn evacuate(
     from: &mut [Word],
@@ -104,6 +113,7 @@ fn evacuate(
     pointer
 }
 // ANCHOR_END: evacuate
+
 impl Heap {
     // ANCHOR: cheney
     fn collect(&mut self, reserve: usize) {
@@ -166,6 +176,7 @@ impl Heap {
     }
     // ANCHOR_END: cheney
 }
+
 pub fn allocate(words: usize) -> *mut Word {
     HEAP.with_borrow_mut(|h| {
         assert!(h.enabled);
@@ -193,9 +204,11 @@ pub fn allocate(words: usize) -> *mut Word {
         p
     })
 }
+
 pub fn collect() {
     HEAP.with_borrow_mut(|h| h.collect(0));
 }
+
 /// Observable counters for collector contract tests, not source primitives.
 pub fn statistics() -> (usize, usize, usize) {
     HEAP.with_borrow(|h| (h.collections, h.used, h.frames.len()))

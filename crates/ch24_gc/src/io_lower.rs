@@ -1,5 +1,6 @@
 //! IO is opaque in source types and the unit-to-result function constructor in Core.
 use crate::core::{self, Expr, Type};
+
 /// Rewrite every occurrence, including higher-kinded IO arguments and dictionary fields.
 pub fn lower(program: &mut core::Program) {
     let Some((unit, _)) =

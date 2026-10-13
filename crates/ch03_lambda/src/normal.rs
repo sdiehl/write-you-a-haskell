@@ -4,9 +4,11 @@ use crate::{
     eval::{self, Value},
     names::substitute,
 };
+
 fn rewrap(original: &Expr, kind: Kind) -> Expr {
     Expr::new(kind, original.span.start, original.span.end)
 }
+
 /// Perform at most one reduction; `None` means a normal form, possibly open.
 pub fn step(expr: &Expr) -> Result<Option<Expr>, String> {
     let kind = match &expr.kind {
@@ -80,6 +82,7 @@ pub fn step(expr: &Expr) -> Result<Option<Expr>, String> {
     };
     Ok(Some(rewrap(expr, kind)))
 }
+
 /// Reduce with a trace callback; bounded fuel also makes divergent examples inspectable.
 pub fn reduce(
     mut expr: Expr,

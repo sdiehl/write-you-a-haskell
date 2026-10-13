@@ -2,6 +2,7 @@
 use super::*;
 use crate::{ast::Op, primitives::Prim};
 use inkwell::{FloatPredicate, IntPredicate};
+
 impl<'ctx> Backend<'ctx, '_> {
     pub(super) fn untag(
         &self,

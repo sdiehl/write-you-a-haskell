@@ -4,11 +4,14 @@ use crate::{
     names::Id,
 };
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
+
 pub type Live = BTreeSet<Id>;
+
 /// Pointer identities name immutable nodes only during one backend invocation.
 pub fn key(node: &Flat) -> usize {
     std::ptr::from_ref(node) as usize
 }
+
 /// Live-in sets, named slot candidates, and a bound on per-operation scratch roots.
 #[derive(Default)]
 pub struct Liveness {
@@ -16,20 +19,24 @@ pub struct Liveness {
     pub binders: Live,
     pub scratch: usize,
 }
+
 struct Node {
     uses: Live,
     edges: Vec<(usize, Live)>,
 }
+
 fn atom(a: &Atom, uses: &mut Live) {
     if let Atom::Var(v) = a {
         uses.insert(v.clone());
     }
 }
+
 fn atoms(args: &[Atom], uses: &mut Live) {
     for a in args {
         atom(a, uses);
     }
 }
+
 /// Compute the least fixed point with a predecessor worklist, without recursive traversal.
 pub fn analyze(body: &Body) -> Liveness {
     let mut result = Liveness::default();

@@ -1,9 +1,11 @@
 use ch05_eval::{cbn, cek, eval, parse, types};
+
 fn checked(source: &str) -> ch05_eval::ast::Expr {
     let expr = parse(source).unwrap();
     types::check(&expr).unwrap();
     expr
 }
+
 #[test]
 fn a_million_tail_calls_use_bounded_continuations() {
     let source = r"let rec go : Int -> Int -> Int = \(acc : Int) -> \(n : Int) -> if n == 0 then acc else go (acc + 1) (n - 1) in go 0 1000000";
@@ -27,6 +29,7 @@ fn a_million_tail_calls_use_bounded_continuations() {
         .join()
         .unwrap();
 }
+
 #[test]
 fn non_tail_work_is_retained_on_the_explicit_stack() {
     let expr = checked(
@@ -36,6 +39,7 @@ fn non_tail_work_is_retained_on_the_explicit_stack() {
     assert_eq!(result.value.to_string(), "500500");
     assert!(result.max_continuations >= 1000);
 }
+
 #[test]
 fn call_by_name_discards_unused_errors_and_does_not_enter_lambdas() {
     for source in [r"(\(x : Int) -> 42) (1 / 0)", "let x = 1 / 0 in 42"] {
@@ -56,6 +60,7 @@ fn call_by_name_discards_unused_errors_and_does_not_enter_lambdas() {
     let expr = checked(r"\(x : Int) -> 1 / 0");
     assert!(cbn::evaluate(&expr, &mut 100).is_ok());
 }
+
 #[test]
 fn fixed_points_unfold_and_fuel_bounds_divergence() {
     let expr = checked(r"fix (\(x : Int) -> x)");
@@ -83,6 +88,7 @@ fn fixed_points_unfold_and_fuel_bounds_divergence() {
         "720"
     );
 }
+
 #[test]
 fn left_to_right_order_is_observable_before_divergence() {
     let expr = checked(r"(1 / 0) + fix (\(x : Int) -> x)");

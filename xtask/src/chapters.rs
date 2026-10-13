@@ -21,6 +21,7 @@ fn chapter(root: &Path, number: u8) -> Result<PathBuf> {
         _ => Err(format!("multiple chapter {number:02} paths").into()),
     }
 }
+
 fn files(root: &Path) -> Result<Vec<PathBuf>> {
     let mut result = Vec::new();
     for entry in fs::read_dir(root)? {
@@ -161,6 +162,7 @@ fn verify_inheritance(previous: &Path, current: &Path, breaking: &str) -> Result
     }
     Ok(count)
 }
+
 fn read_optional(path: &Path) -> Result<Option<Vec<u8>>> {
     match fs::read(path) {
         Ok(bytes) => Ok(Some(bytes)),
@@ -168,6 +170,7 @@ fn read_optional(path: &Path) -> Result<Option<Vec<u8>>> {
         Err(e) => Err(e.into()),
     }
 }
+
 /// Inherited programs run on the default engine in the chapters between their
 /// introduction and the last chapter; `full` runs every engine everywhere.
 pub fn check_inherit(root: &Path, number: u8, full: bool) -> Result<()> {
@@ -195,6 +198,7 @@ pub fn check_inherit(root: &Path, number: u8, full: bool) -> Result<()> {
     println!("chapter {number:02}: {count} inherited programs verified and chapter tests passed");
     Ok(())
 }
+
 /// nextest runs a chapter's test binaries concurrently; cargo test is the fallback.
 fn test_command() -> Command {
     let nextest = Command::new("cargo")
@@ -215,6 +219,7 @@ fn test_command() -> Command {
     }
     command
 }
+
 /// Report implementation files, ordered by their role in the chapter.
 pub fn book_diff(root: &Path, number: u8) -> Result<()> {
     print!("{}", source_diff(root, number)?);
@@ -344,6 +349,7 @@ fn source_priority(number: u8, path: &Path) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
     fn source_summary_filters_noise_and_prioritizes_chapter_modules() {
         let root = std::env::temp_dir().join(format!("fun-source-diff-{}", std::process::id()));
@@ -408,6 +414,7 @@ mod tests {
         assert!(new_chapter(&root, 8, "layout").is_err());
         fs::remove_dir_all(root).unwrap();
     }
+
     #[test]
     fn snapshot_accepts_formatted_member_arrays() {
         let root = std::env::temp_dir().join(format!("fun-formatted-copy-{}", std::process::id()));
@@ -429,6 +436,7 @@ mod tests {
         assert!(manifest.contains("crates/ch08_layout"));
         fs::remove_dir_all(root).unwrap();
     }
+
     #[test]
     fn sidecar_changes_require_breaking_entry() {
         let root = std::env::temp_dir().join(format!("fun-inherit-{}", std::process::id()));

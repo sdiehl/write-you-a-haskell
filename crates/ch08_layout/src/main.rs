@@ -13,6 +13,7 @@ use std::{
     path::PathBuf,
     process::ExitCode,
 };
+
 #[derive(Clone, Copy, Debug, ValueEnum)]
 enum Pass {
     Tokens,
@@ -22,16 +23,19 @@ enum Pass {
     Types,
     Core,
 }
+
 #[derive(Clone, Copy, ValueEnum)]
 enum Color {
     Auto,
     Always,
     Never,
 }
+
 #[derive(Clone, Copy, ValueEnum)]
 enum Engine {
     Core,
 }
+
 #[derive(Parser)]
 #[command(
     name = "fun-ch08",
@@ -51,6 +55,7 @@ struct Cli {
     #[arg(long, global = true, default_value_t = 1000000)]
     fuel: usize,
 }
+
 #[derive(Subcommand)]
 enum Command {
     Check {
@@ -73,6 +78,7 @@ enum Command {
     },
     Repl,
 }
+
 fn compile(
     sess: &mut Session,
     file: FileId,
@@ -145,6 +151,7 @@ fn compile(
         }
     }
 }
+
 fn process(
     source: String,
     name: String,
@@ -170,6 +177,7 @@ fn process(
     }
     success
 }
+
 fn repl(cli: &Cli) -> Result<(), Box<dyn std::error::Error>> {
     let mut editor = DefaultEditor::new()?;
     println!("Fun: expressions, :type EXPR, :core EXPR, :quit.");
@@ -203,6 +211,7 @@ fn repl(cli: &Cli) -> Result<(), Box<dyn std::error::Error>> {
     }
     Ok(())
 }
+
 fn main() -> ExitCode {
     let cli = Cli::parse();
     let (file, run, pass) = match &cli.command {

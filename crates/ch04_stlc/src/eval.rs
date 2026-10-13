@@ -8,6 +8,7 @@ use std::{fmt, rc::Rc};
 // ANCHOR: value
 /// Lexical bindings retained by a closure.
 pub type Env = Vec<(String, Value)>;
+
 #[derive(Clone, Debug)]
 /// Runtime integers, booleans, and code paired with its lexical environment.
 pub enum Value {
@@ -16,6 +17,7 @@ pub enum Value {
     Closure(String, Rc<Expr>, Rc<Env>),
 }
 // ANCHOR_END: value
+
 impl fmt::Display for Value {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -27,9 +29,11 @@ impl fmt::Display for Value {
         }
     }
 }
+
 pub fn normalize(n: i64) -> i64 {
     (n << 1) >> 1
 }
+
 pub fn primitive(op: Op, a: i64, b: i64) -> Result<Value, String> {
     let (a, b) = (normalize(a), normalize(b));
     Ok(match op {
@@ -43,6 +47,7 @@ pub fn primitive(op: Op, a: i64, b: i64) -> Result<Value, String> {
         Op::Div => Value::Int(normalize(a / b)),
     })
 }
+
 fn integer(value: Value) -> Result<i64, String> {
     if let Value::Int(n) = value {
         Ok(n)
@@ -50,6 +55,7 @@ fn integer(value: Value) -> Result<i64, String> {
         Err("expected Int".into())
     }
 }
+
 /// Each visit consumes fuel, including visits that precede a recursive call.
 pub fn evaluate(
     expr: &Expr,
@@ -106,6 +112,7 @@ pub fn evaluate(
         Kind::Error => Err("internal error: recovery node".into()),
     }
 }
+
 /// Scope checking is separate from evaluation; this untyped language has dynamic type errors.
 pub fn check(expr: &Expr) -> Result<(), Vec<Diagnostic>> {
     fn visit(

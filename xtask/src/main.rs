@@ -2,7 +2,9 @@
 mod chapters;
 mod pdf;
 mod syntax;
+
 use std::{env, path::PathBuf, process::ExitCode};
+
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 fn run() -> Result<()> {
@@ -23,6 +25,7 @@ fn run() -> Result<()> {
         _ => Err("usage: cargo xtask {new-chapter NN name | check-inherit NN [--full] | book-diff NN | syntax [--check] | pdf-collect}".into()),
     }
 }
+
 fn main() -> ExitCode {
     match run() {
         Ok(()) => ExitCode::SUCCESS,

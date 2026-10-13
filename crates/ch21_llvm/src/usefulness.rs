@@ -4,12 +4,15 @@ use crate::{
     diagnostics::{Diagnostic, ErrorCode, Severity},
     session::Session,
 };
+
 fn peel(p: &Pat) -> &Pat {
     if let Pat::As(_, p) = p { peel(p) } else { p }
 }
+
 fn wild(p: &Pat) -> bool {
     matches!(peel(p), Pat::Wild | Pat::Var(_))
 }
+
 fn same(a: &Pat, b: &Pat) -> bool {
     match (peel(a), peel(b)) {
         (Pat::Con(a, _), Pat::Con(b, _)) => a == b,
@@ -20,6 +23,7 @@ fn same(a: &Pat, b: &Pat) -> bool {
         _ => false,
     }
 }
+
 fn specialize(
     matrix: &[Vec<Pat>],
     head: &Pat,
@@ -43,6 +47,7 @@ fn specialize(
         })
         .collect()
 }
+
 fn fields(head: &Pat, ty: &Type, cons: &[ConDecl]) -> Vec<Type> {
     match peel(head) {
         Pat::Con(id, _) => {
@@ -61,6 +66,7 @@ fn fields(head: &Pat, ty: &Type, cons: &[ConDecl]) -> Vec<Type> {
         _ => vec![],
     }
 }
+
 fn family(ty: &Type, cons: &[ConDecl]) -> Vec<Pat> {
     cons.iter()
         .filter(|c| match (&c.result, ty) {
@@ -71,6 +77,7 @@ fn family(ty: &Type, cons: &[ConDecl]) -> Vec<Pat> {
         .map(|c| Pat::Con(c.id.clone(), vec![Pat::Wild; c.fields.len()]))
         .collect()
 }
+
 /// Return a witness matched by the query but not by any covering row.
 pub fn useful(
     matrix: &[Vec<Pat>],
@@ -162,6 +169,7 @@ pub fn useful(
         Some(witness)
     }
 }
+
 fn covers(
     body: &RowBody,
     truths: &std::collections::BTreeSet<u32>,
@@ -175,6 +183,7 @@ fn covers(
         }),
     }
 }
+
 /// Warnings do not alter the decision tree; unmatched execution still fails at runtime.
 pub fn warn(
     sess: &mut Session,

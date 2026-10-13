@@ -6,6 +6,7 @@ use crate::{
     source::Span,
 };
 use std::collections::{BTreeMap, BTreeSet};
+
 /// Kind metavariables exist only while checking a declaration component.
 #[derive(Clone, Debug, PartialEq, Eq)]
 // ANCHOR: kind
@@ -15,6 +16,7 @@ pub enum Kind {
     Meta(u32),
 }
 // ANCHOR_END: kind
+
 impl Kind {
     pub fn arrow(a: Self, b: Self) -> Self {
         Self::Arrow(Box::new(a), Box::new(b))
@@ -29,6 +31,7 @@ impl Kind {
         result
     }
 }
+
 impl std::fmt::Display for Kind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -44,11 +47,13 @@ impl std::fmt::Display for Kind {
         }
     }
 }
+
 /// Cells use path compression and an occurs check, independently of type inference.
 #[derive(Default)]
 pub struct Store {
     solutions: Vec<Option<Kind>>,
 }
+
 impl Store {
     pub fn fresh(&mut self) -> Kind {
         let n = self.solutions.len();
@@ -167,6 +172,7 @@ impl Store {
     }
 }
 // ANCHOR_END: kind-application
+
 fn references(ty: &TypeSyntax, out: &mut BTreeSet<String>) {
     match ty {
         TypeSyntax::Qualified(_, t) => references(t, out),
@@ -179,6 +185,7 @@ fn references(ty: &TypeSyntax, out: &mut BTreeSet<String>) {
         }
     }
 }
+
 pub fn builtins() -> BTreeMap<String, Kind> {
     let mut env = ["Int", "Double", "Bool", "Char", "String"]
         .into_iter()
@@ -191,6 +198,7 @@ pub fn builtins() -> BTreeMap<String, Kind> {
     );
     env
 }
+
 /// Infer each SCC before defaulting unconstrained parameters in that component.
 pub fn declarations(
     data: &[DataDecl],
@@ -286,6 +294,7 @@ pub fn declarations(
     }
     Ok(heads)
 }
+
 /// Expand fully applied synonyms before kind checking. A stack detects cycles.
 pub fn expand(
     ty: &TypeSyntax,

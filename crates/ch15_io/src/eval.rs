@@ -4,22 +4,26 @@ use crate::{
     core::{self, Bind, BindGroup, Expr, Id, Lit},
 };
 use std::{cell::RefCell, rc::Rc};
+
 /// Language termination is separate from an ordinary runtime failure.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Failure {
     Runtime(String),
     Exit(i32),
 }
+
 impl From<String> for Failure {
     fn from(s: String) -> Self {
         Self::Runtime(s)
     }
 }
+
 impl From<&str> for Failure {
     fn from(s: &str) -> Self {
         Self::Runtime(s.into())
     }
 }
+
 impl std::fmt::Display for Failure {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -28,7 +32,9 @@ impl std::fmt::Display for Failure {
         }
     }
 }
+
 type Env = Vec<(Id, Value)>;
+
 #[derive(Clone, Debug)]
 /// A closure captures outer declarations and an optional immutable recursive-group recipe.
 pub enum Value {
@@ -41,11 +47,13 @@ pub enum Value {
         recursive: Option<Rc<Vec<Bind>>>,
     },
 }
+
 impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.print(f, 0)
     }
 }
+
 impl Value {
     fn print(
         &self,
@@ -140,6 +148,7 @@ impl Value {
 pub fn normalize(n: i64) -> i64 {
     (n << 1) >> 1
 }
+
 /// Rebuild a recursive group's closures from a shared immutable recipe. The
 /// recipe captures the outer environment, never the closures themselves.
 // ANCHOR: recursive-closures
@@ -164,6 +173,7 @@ fn recursive_values(bindings: Rc<Vec<Bind>>, env: Rc<Env>) -> Env {
     values
 }
 // ANCHOR_END: recursive-closures
+
 fn bind_group(
     group: &BindGroup,
     env: &mut Env,
@@ -185,6 +195,7 @@ fn bind_group(
     }
     Ok(())
 }
+
 fn evaluate(
     expr: &Expr,
     env: &Env,
@@ -318,6 +329,7 @@ fn evaluate(
         }
     }
 }
+
 fn primitive(
     op: Op,
     args: &[Value],
@@ -374,6 +386,7 @@ fn primitive(
     };
     Ok(Value::Lit(value))
 }
+
 /// Evaluate top-level values exactly once in dependency order, then select main's value.
 fn execute(
     program: &core::Program,
@@ -431,10 +444,12 @@ fn execute(
         Ok(value.to_string())
     }
 }
+
 /// Evaluate a pure fragment; retained for compiler tests and REPL inspection.
 pub fn run(program: &core::Program, fuel: usize) -> Result<String, String> {
     execute(program, fuel, false).map_err(|e| e.to_string())
 }
+
 /// Initialize globals, then run the checked IO action exactly once.
 pub fn run_io(program: &core::Program, fuel: usize) -> Result<(), Failure> {
     execute(program, fuel, true).map(|_| ())
@@ -449,6 +464,7 @@ fn failure(program: &core::Program, span: crate::source::Span) -> String {
         .unwrap_or("<unknown>:1:1");
     format!("pattern match failure at {site}")
 }
+
 // ANCHOR: match-pattern
 fn matches_pattern(p: &core::Pat, v: &Value, env: &mut Env) -> bool {
     match p {

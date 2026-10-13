@@ -20,6 +20,7 @@ pub struct Jit<'ctx> {
     types: BTreeMap<GlobalKey, Vec<String>>,
     context: &'ctx Context,
 }
+
 impl<'ctx> Jit<'ctx> {
     pub fn new(context: &'ctx Context) -> Self {
         fun_rt::rt_init();
@@ -147,6 +148,7 @@ impl<'ctx> Jit<'ctx> {
             .map(|(_, root)| root.get())
     }
 }
+
 /// One explicit symbol table links the JIT to the very same ABI as native objects.
 pub fn runtime_symbols() -> Vec<(&'static str, usize)> {
     macro_rules! entries {

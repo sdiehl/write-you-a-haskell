@@ -17,12 +17,14 @@ enum Frame {
     Right(Op, i64),
     Fix,
 }
+
 /// Control alternates between evaluating an expression and returning a value.
 enum Control {
     Expr(Rc<Expr>, Rc<Env>),
     Value(Value),
     Apply(Value, Value),
 }
+
 /// Statistics make tail-space behavior testable without relying on timing.
 pub struct ResultValue {
     pub value: Value,
@@ -30,9 +32,11 @@ pub struct ResultValue {
     pub max_continuations: usize,
 }
 // ANCHOR_END: machine
+
 fn expression(expr: &Expr, env: &Rc<Env>) -> Control {
     Control::Expr(Rc::new(expr.clone()), env.clone())
 }
+
 /// Run with bounded transitions and constant Rust stack, including tail calls.
 pub fn evaluate(expr: &Expr, fuel: usize) -> Result<ResultValue, String> {
     let mut control = expression(expr, &Rc::new(vec![]));

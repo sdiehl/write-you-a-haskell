@@ -6,9 +6,12 @@ use crate::{
     types::{self, Scheme, Type},
 };
 use std::collections::{BTreeMap, BTreeSet};
+
 type Env = BTreeMap<String, Scheme>;
+
 #[derive(Default, Clone)]
 struct Subst(BTreeMap<u32, Type>);
+
 // ANCHOR: substitution
 impl Subst {
     fn apply(&self, ty: &Type) -> Type {
@@ -48,6 +51,7 @@ impl Subst {
     }
 }
 // ANCHOR_END: substitution
+
 fn free(ty: &Type) -> BTreeSet<u32> {
     match ty {
         Type::Var(n) => BTreeSet::from([*n]),
@@ -55,6 +59,7 @@ fn free(ty: &Type) -> BTreeSet<u32> {
         _ => BTreeSet::new(),
     }
 }
+
 fn generalize(env: &Env, ty: Type) -> Scheme {
     let bound: BTreeSet<_> = env
         .values()
@@ -70,6 +75,7 @@ fn generalize(env: &Env, ty: Type) -> Scheme {
         ty,
     }
 }
+
 fn unify(a: &Type, b: &Type, expr: &Expr) -> Result<Subst, Diagnostic> {
     match (a, b) {
         _ if a == b => Ok(Subst::default()),
@@ -88,10 +94,12 @@ fn unify(a: &Type, b: &Type, expr: &Expr) -> Result<Subst, Diagnostic> {
         _ => Err(types::mismatch(expr, a, b)),
     }
 }
+
 #[derive(Default)]
 struct Infer {
     next: u32,
 }
+
 impl Infer {
     fn fresh(&mut self) -> Type {
         let n = self.next;
@@ -189,6 +197,7 @@ impl Infer {
         }
     }
 }
+
 /// Infer a closed term and return its principal type with canonical variable names.
 pub fn check(expr: &Expr) -> Result<Type, Diagnostic> {
     let (s, t) = Infer::default().infer(&Env::new(), expr)?;

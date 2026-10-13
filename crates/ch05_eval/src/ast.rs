@@ -9,6 +9,7 @@ pub struct Expr {
     pub kind: Kind,
     pub span: Range<usize>,
 }
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 /// The forms of the extended lambda calculus.
 pub enum Kind {
@@ -24,6 +25,7 @@ pub enum Kind {
     Fix(Box<Expr>),
     Error,
 }
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 /// Monomorphic integer arithmetic and comparisons.
 pub enum Op {
@@ -36,6 +38,7 @@ pub enum Op {
     Le,
 }
 // ANCHOR_END: ast
+
 impl Op {
     pub fn text(self) -> &'static str {
         match self {
@@ -56,6 +59,7 @@ impl Op {
         }
     }
 }
+
 impl Expr {
     pub fn new(kind: Kind, start: usize, end: usize) -> Self {
         Self {
@@ -136,6 +140,7 @@ impl Expr {
         Ok(())
     }
 }
+
 impl fmt::Display for Expr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)

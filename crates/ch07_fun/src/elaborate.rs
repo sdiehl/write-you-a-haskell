@@ -6,6 +6,7 @@ use crate::{
     source::Span,
     typecheck::TypedProgram,
 };
+
 fn expression(expr: &ast::Expr) -> Expr {
     let boxed = |e: &ast::Expr| Box::new(expression(e));
     match &expr.kind {
@@ -31,6 +32,7 @@ fn expression(expr: &ast::Expr) -> Expr {
         }
     }
 }
+
 fn binding(name: &str, rhs: &ast::Expr) -> Bind {
     Bind {
         name: name.into(),
@@ -38,6 +40,7 @@ fn binding(name: &str, rhs: &ast::Expr) -> Bind {
         recursive: ast::free(rhs).contains(name),
     }
 }
+
 fn primitive(name: &str, op: ast::Op, span: Span) -> Bind {
     Bind {
         name: name.into(),
@@ -55,6 +58,7 @@ fn primitive(name: &str, op: ast::Op, span: Span) -> Bind {
         )),
     }
 }
+
 /// Lower only after checking; recursive and lexical-scope invariants already hold.
 pub fn elaborate(
     sess: &mut Session,

@@ -21,11 +21,13 @@ pub fn parse(source: &str) -> Result<Expr, Vec<Diagnostic>> {
     });
     result.map_err(|e| vec![e])
 }
+
 struct Parser {
     tokens: Vec<Spanned>,
     at: usize,
     eof: usize,
 }
+
 impl Parser {
     fn peek(&self) -> Option<&Token> {
         self.tokens.get(self.at).map(|(_, t, _)| t)

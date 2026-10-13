@@ -4,22 +4,26 @@ use crate::{
     core::{self, Bind, BindGroup, Expr, Id, Lit},
 };
 use std::{cell::RefCell, rc::Rc};
+
 /// Language termination is separate from an ordinary runtime failure.
 #[derive(Debug, Clone)]
 pub enum Failure {
     Runtime(String),
     Exit(i32),
 }
+
 impl From<String> for Failure {
     fn from(s: String) -> Self {
         Self::Runtime(s)
     }
 }
+
 impl From<&str> for Failure {
     fn from(s: &str) -> Self {
         Self::Runtime(s.into())
     }
 }
+
 impl std::fmt::Display for Failure {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -28,25 +32,30 @@ impl std::fmt::Display for Failure {
         }
     }
 }
+
 #[derive(Debug)]
 enum Transfer {
     Failure(Failure),
 }
+
 impl From<Failure> for Transfer {
     fn from(e: Failure) -> Self {
         Self::Failure(e)
     }
 }
+
 impl From<String> for Transfer {
     fn from(s: String) -> Self {
         Self::Failure(s.into())
     }
 }
+
 impl From<&str> for Transfer {
     fn from(s: &str) -> Self {
         Self::Failure(s.into())
     }
 }
+
 impl Transfer {
     fn failure(self) -> Failure {
         match self {
@@ -54,8 +63,10 @@ impl Transfer {
         }
     }
 }
+
 #[derive(Clone, Debug, Default)]
 pub struct Env(crate::env::Env<u32, Value>);
+
 impl Env {
     fn new() -> Self {
         Self::default()
@@ -78,6 +89,7 @@ impl Env {
         self.0.drain_unique(values);
     }
 }
+
 #[derive(Clone, Debug)]
 /// A closure captures a shared outer scope and an optional machine-owned recursive group.
 pub enum Value {
@@ -90,6 +102,7 @@ pub enum Value {
         recursive: Option<usize>,
     },
 }
+
 // Releasing a long list or a captured environment must not recurse through Rc.
 impl Drop for Value {
     fn drop(&mut self) {
@@ -123,11 +136,13 @@ impl Drop for Value {
         }
     }
 }
+
 impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.print(f, 0)
     }
 }
+
 impl Value {
     fn print(
         &self,
@@ -222,6 +237,7 @@ impl Value {
 pub fn normalize(n: i64) -> i64 {
     (n << 1) >> 1
 }
+
 /// Continuations make source calls independent of the Rust stack. Code is
 /// borrowed from the immutable program and closures store stable code indices.
 struct Machine<'a> {
@@ -232,6 +248,7 @@ struct Machine<'a> {
     indices: std::collections::BTreeMap<usize, usize>,
     fuel: usize,
 }
+
 enum Frame<'a> {
     Function(&'a Expr, Env),
     Argument(Value),
@@ -241,12 +258,14 @@ enum Frame<'a> {
     Bind(&'a [Bind], usize, Env, Next<'a>),
     Guard(&'a core::Match, usize, usize, Env, Env),
 }
+
 #[derive(Clone)]
 enum Next<'a> {
     Expr(&'a Expr),
     Row(&'a core::Match, usize, Env),
     Locals(&'a core::Match, usize, usize, Env),
 }
+
 enum State<'a> {
     Eval(&'a Expr, Env),
     Return(Value),
@@ -255,6 +274,7 @@ enum State<'a> {
     Row(&'a core::Match, usize, Env),
     Guard(&'a core::Match, usize, usize, Env, Env),
 }
+
 impl<'a> Machine<'a> {
     fn code(&mut self, expr: &'a Expr) -> usize {
         let key = expr as *const Expr as usize;
@@ -600,6 +620,7 @@ impl<'a> Machine<'a> {
         }
     }
 }
+
 fn primitive(
     op: Op,
     args: &[Value],
@@ -662,6 +683,7 @@ fn primitive(
     };
     Ok(Value::Lit(value))
 }
+
 /// Evaluate top-level values exactly once in dependency order, then select main's value.
 fn execute(
     program: &core::Program,
@@ -724,10 +746,12 @@ fn execute(
         Ok(value.to_string())
     }
 }
+
 /// Evaluate a pure fragment; retained for compiler tests and REPL inspection.
 pub fn run(program: &core::Program, fuel: usize) -> Result<String, String> {
     execute_checked(program, fuel, false).map_err(|e| e.to_string())
 }
+
 /// Initialize globals, then run the checked IO action exactly once.
 pub fn run_io(program: &core::Program, fuel: usize) -> Result<(), Failure> {
     execute_checked(program, fuel, true).map(|_| ())
@@ -750,6 +774,7 @@ fn failure(program: &core::Program, span: crate::source::Span) -> String {
         .unwrap_or("<unknown>:1:1");
     format!("pattern match failure at {site}")
 }
+
 // ANCHOR: match-pattern
 fn matches_pattern(p: &core::Pat, v: &Value, env: &mut Env) -> bool {
     match p {

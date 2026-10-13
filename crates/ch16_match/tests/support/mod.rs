@@ -1,4 +1,5 @@
 use ch16_match::{core, parse, session::Session};
+
 /// Inherited snapshots focus on the program; class-specific tests cover the Prelude.
 pub fn dump(source: &str, program: &core::Program) -> String {
     let mut sess = Session::default();

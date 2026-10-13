@@ -10,6 +10,7 @@ use std::{
     collections::BTreeMap, path::PathBuf, process::Command, rc::Rc,
     time::Duration,
 };
+
 fn program(
     sess: &mut Session,
     body: flat::Body,
@@ -44,6 +45,7 @@ fn program(
         },
     }
 }
+
 #[test]
 fn deeply_nested_ir_uses_a_worklist_including_lint_and_drop() {
     std::thread::Builder::new()
@@ -87,11 +89,13 @@ fn deeply_nested_ir_uses_a_worklist_including_lint_and_drop() {
         .join()
         .unwrap();
 }
+
 fn source(name: &str) -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("tests/programs/native")
         .join(format!("{name}.fun"))
 }
+
 fn build(name: &str, level: u8, out: &std::path::Path) {
     let result = testkit::capture(
         Command::new(env!("CARGO_BIN_EXE_fun-ch22"))
@@ -106,6 +110,7 @@ fn build(name: &str, level: u8, out: &std::path::Path) {
     .unwrap();
     assert_eq!(result.exit, 0, "{result:?}");
 }
+
 #[test]
 fn native_tail_calls_and_gc_survive_a_small_stack() {
     let dir = std::env::temp_dir()
@@ -132,6 +137,7 @@ fn native_tail_calls_and_gc_survive_a_small_stack() {
     }
     std::fs::remove_dir_all(dir).unwrap();
 }
+
 #[test]
 fn all_optimization_levels_preserve_representations_and_errors() {
     let dir = std::env::temp_dir()

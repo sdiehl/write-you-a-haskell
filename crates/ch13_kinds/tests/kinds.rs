@@ -1,6 +1,7 @@
 use ch13_kinds::{
     core, elaborate, kinds::Kind, parse, session::Session, typecheck,
 };
+
 fn compile(source: &str) -> core::Program {
     let mut sess = Session::default();
     let file = sess.sources.add("kinds.fun", source.into());
@@ -10,6 +11,7 @@ fn compile(source: &str) -> core::Program {
     core::lint(&core).unwrap();
     core
 }
+
 #[test]
 fn kinded_core_snapshots() {
     for name in [
@@ -44,6 +46,7 @@ fn kinded_core_snapshots() {
         insta::assert_snapshot!(name, format!("{kinds}\n{groups}"));
     }
 }
+
 #[test]
 fn declaration_components_infer_before_defaulting() {
     let core = compile(
@@ -63,6 +66,7 @@ fn declaration_components_infer_before_defaulting() {
     assert_eq!(lookup("B"), higher);
     assert_eq!(lookup("Phantom"), Kind::arrow(Kind::Star, Kind::Star));
 }
+
 #[test]
 fn lint_independently_rejects_wrong_parameter_kinds() {
     let mut core =
@@ -75,6 +79,7 @@ fn lint_independently_rejects_wrong_parameter_kinds() {
     core.type_kinds.insert(con.parameters[0], Kind::Star);
     assert!(core::lint(&core).unwrap_err().contains("kind"));
 }
+
 #[test]
 fn kind_occurs_check_terminates() {
     let mut store = ch13_kinds::kinds::Store::default();

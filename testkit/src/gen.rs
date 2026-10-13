@@ -1,16 +1,20 @@
 //! Reproducible, well-typed integer programs with an independent numeric oracle.
 use crate::{Engine, Scratch, capture};
 use std::{path::Path, process::Command, time::Duration};
+
 #[derive(Clone, Debug)]
 pub struct Case {
     pub source: String,
     pub expected: i64,
 }
+
 struct Generator(u64);
+
 fn wrap(n: i128) -> i64 {
     let n = (n as u128 & ((1_u128 << 63) - 1)) as i64;
     (n << 1) >> 1
 }
+
 impl Generator {
     fn next(&mut self) -> u64 {
         self.0 = self
@@ -82,11 +86,13 @@ impl Generator {
         }
     }
 }
+
 /// Fixed seeds make a failing case reproducible without a property-test dependency.
 pub fn cases(seed: u64, count: usize) -> Vec<Case> {
     let mut g = Generator(seed);
     (0..count).map(|_| g.expr(3)).collect()
 }
+
 /// Batch independent expressions to amortize Prelude compilation; every result
 /// is checked against both the numeric oracle and every preceding engine.
 pub fn check(binary: &Path, engines: &[Engine], seed: u64, count: usize) -> Result<(), String> {

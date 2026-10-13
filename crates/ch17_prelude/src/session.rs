@@ -4,9 +4,11 @@ use crate::{
     names::{Interner, Supply},
     source::SourceMap,
 };
+
 /// A pass failed after recording one or more diagnostics in the session.
 #[derive(Debug)]
 pub struct Stop;
+
 /// Driver options shared by every compiler pass.
 #[derive(Default)]
 pub struct Options {
@@ -15,6 +17,7 @@ pub struct Options {
     pub no_prelude: bool,
     pub dump: Option<String>,
 }
+
 // ANCHOR: session
 #[derive(Default)]
 /// No pass needs a global interner, source map, or diagnostic sink.
@@ -28,6 +31,7 @@ pub struct Session {
     pub prelude_file: Option<crate::source::FileId>,
     pub exit_code: i32,
 }
+
 impl Session {
     pub fn fresh_node(&mut self) -> u32 {
         let node = self.next_node;

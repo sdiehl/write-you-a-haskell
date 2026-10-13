@@ -11,6 +11,7 @@ pub struct Diagnostic {
     pub message: String,
     pub span: Range<usize>,
 }
+
 impl Diagnostic {
     pub fn new(
         code: &'static str,

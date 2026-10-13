@@ -1,6 +1,7 @@
 //! Both book highlighters are generated from the compiler's lexical tables.
 use crate::Result;
 use std::{fs, path::Path};
+
 /// Write generated syntax definitions, or verify checked-in outputs in CI.
 pub fn generate(root: &Path, check: bool) -> Result<()> {
     let lexer = fs::read_to_string(root.join("crates/ch07_fun/src/lexer.rs"))?;

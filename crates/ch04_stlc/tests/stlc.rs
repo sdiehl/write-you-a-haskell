@@ -2,9 +2,11 @@ use ch04_stlc::{
     eval, names, normal, parse,
     types::{self, Type},
 };
+
 fn ty(source: &str) -> Type {
     types::check(&parse(source).unwrap()).unwrap()
 }
+
 #[test]
 fn higher_order_types_and_shadowing() {
     assert_eq!(
@@ -17,6 +19,7 @@ fn higher_order_types_and_shadowing() {
         "((Int -> Bool) -> Int) -> (Int -> Bool) -> Int"
     );
 }
+
 #[test]
 fn errors_point_to_the_expression_with_the_wrong_type() {
     for (source, span, message) in [
@@ -43,6 +46,7 @@ fn errors_point_to_the_expression_with_the_wrong_type() {
         assert_eq!(error.message, message);
     }
 }
+
 #[test]
 fn lambdas_need_annotations_and_let_does_not_generalize() {
     assert!(parse(r"\x -> x").is_err());
@@ -52,6 +56,7 @@ fn lambdas_need_annotations_and_let_does_not_generalize() {
     assert_eq!(types::check(&expr).unwrap_err().code, "E0201");
     assert!(types::check(&parse(r"\(x : Int) -> x x").unwrap()).is_err());
 }
+
 #[test]
 fn reduction_preserves_types_and_annotations() {
     for source in [
@@ -74,6 +79,7 @@ fn reduction_preserves_types_and_annotations() {
         );
     }
 }
+
 #[test]
 fn checked_programs_reuse_strict_closures() {
     let expr = parse(
@@ -94,6 +100,7 @@ fn checked_programs_reuse_strict_closures() {
         "divide by zero"
     );
 }
+
 #[test]
 fn golden_corpus() {
     testkit::run_corpus(&testkit::Config {
@@ -105,6 +112,7 @@ fn golden_corpus() {
     })
     .unwrap();
 }
+
 #[test]
 fn type_snapshots() {
     for (name, source) in [

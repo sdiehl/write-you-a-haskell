@@ -8,17 +8,20 @@ use crate::{
     types::{self, Scheme, Type},
 };
 use std::collections::{BTreeMap, BTreeSet};
+
 // ANCHOR: store
 #[derive(Clone)]
 struct Meta {
     level: u32,
     solution: Option<Type>,
 }
+
 #[derive(Clone, Default)]
 struct Infer {
     level: u32,
     metas: Vec<Meta>,
 }
+
 impl Infer {
     fn fresh(&mut self) -> Type {
         let n = self.metas.len() as u32;
@@ -356,6 +359,7 @@ pub struct TypedProgram {
     pub surface: Program,
     pub main_type: Type,
 }
+
 /// Check dependency-ordered groups; each recursive component generalizes together.
 pub fn check(
     sess: &mut Session,
@@ -364,6 +368,7 @@ pub fn check(
     let program = crate::rename::rename(sess, program)?;
     check_renamed(sess, program)
 }
+
 /// Type inference consumes only unique identifiers and explicit dependency groups.
 pub fn check_renamed(
     sess: &mut Session,

@@ -5,11 +5,13 @@ use crate::{
     liveness,
 };
 use inkwell::values::PointerValue;
+
 pub(super) struct Frame<'ctx> {
     array: PointerValue<'ctx>,
     slots: BTreeMap<Id, u64>,
     live: liveness::Liveness,
 }
+
 impl<'ctx> Backend<'ctx, '_> {
     pub(super) fn root_frame(
         &mut self,

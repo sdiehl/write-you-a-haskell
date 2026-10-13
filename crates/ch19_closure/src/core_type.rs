@@ -1,6 +1,7 @@
 // adapted from sdiehl/typechecker-zoo/system-f/src/typecheck.rs (substitution structure)
 //! Closed System F types are separate from mutable inference metavariables.
 use std::collections::BTreeSet;
+
 /// Core type applications retain kinds in the program's binder table.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Type {
@@ -15,6 +16,7 @@ pub enum Type {
     Arrow(Box<Type>, Box<Type>),
     Forall(u32, Box<Type>),
 }
+
 impl Type {
     pub fn apply(f: Self, a: Self) -> Self {
         match f {
@@ -139,6 +141,7 @@ impl Type {
         go(self, other, &mut Vec::new())
     }
 }
+
 impl std::fmt::Display for Type {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {

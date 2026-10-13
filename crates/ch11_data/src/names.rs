@@ -1,20 +1,24 @@
 //! Compact spellings and session-local unique names.
 use std::collections::HashMap;
+
 /// An interned spelling, independent of binding identity.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Symbol(pub u32);
+
 /// A spelling paired with a distinct binding identity.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Name {
     pub sym: Symbol,
     pub unique: u32,
 }
+
 #[derive(Default)]
 /// A small handwritten interner with stable vector indices.
 pub struct Interner {
     strings: Vec<String>,
     symbols: HashMap<String, Symbol>,
 }
+
 impl Interner {
     pub fn intern(&mut self, text: &str) -> Symbol {
         if let Some(symbol) = self.symbols.get(text) {
@@ -31,11 +35,13 @@ impl Interner {
         &self.strings[symbol.0 as usize]
     }
 }
+
 #[derive(Default)]
 /// Allocates distinct names without global mutable state.
 pub struct Supply {
     next: u32,
 }
+
 impl Supply {
     pub fn fresh(&mut self, sym: Symbol) -> Name {
         let unique = self.next;
@@ -51,33 +57,40 @@ pub struct Id {
     pub name: Name,
     pub text: String,
 }
+
 // The spelling is diagnostic metadata, never part of map-key comparison.
 impl PartialEq for Id {
     fn eq(&self, other: &Self) -> bool {
         self.name == other.name
     }
 }
+
 impl Eq for Id {}
+
 impl PartialOrd for Id {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
     }
 }
+
 impl Ord for Id {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.name.cmp(&other.name)
     }
 }
+
 impl std::hash::Hash for Id {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         self.name.hash(state);
     }
 }
+
 impl std::fmt::Display for Id {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}#{}", self.text, self.name.unique)
     }
 }
+
 impl crate::session::Session {
     pub fn fresh_id(&mut self, text: &str) -> Id {
         let sym = self.interner.intern(text);

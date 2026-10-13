@@ -7,10 +7,12 @@ use crate::{
     source::{FileId, Span},
 };
 use lalrpop_util::{ParseError, lalrpop_mod};
+
 lalrpop_mod!(
     #[allow(clippy::all)]
     parser
 );
+
 /// Equations retain patterns and where scopes until the desugaring pass.
 pub fn equation(
     file: FileId,
@@ -37,6 +39,7 @@ pub fn equation(
         span,
     }
 }
+
 /// Parse an explicit-brace program from a session's source file.
 pub fn parse(sess: &mut Session, file: FileId) -> Result<Program, Stop> {
     let tokens = crate::layout::layout(sess, file)?;
@@ -62,6 +65,7 @@ pub fn parse(sess: &mut Session, file: FileId) -> Result<Program, Stop> {
         }
     }
 }
+
 fn diagnostic(
     file: FileId,
     error: ParseError<usize, Token, Diagnostic>,
@@ -231,6 +235,7 @@ pub fn declarations(
     }
     Ok(bindings)
 }
+
 /// Separate global fixities from ordinary declarations before resolving chains.
 pub fn program(
     decls: Vec<crate::ast::Declaration>,
@@ -262,6 +267,7 @@ pub fn program(
         span,
     })
 }
+
 pub fn fixity(
     associativity: crate::ast::Associativity,
     precedence: i64,
@@ -316,6 +322,7 @@ pub fn lhs(
     }
     Ok(Declaration::Pattern(head, body, locals, span))
 }
+
 fn pattern_binding(
     pat: crate::ast::Pat,
     body: crate::ast::RowBody,
@@ -465,6 +472,7 @@ pub fn qualified(
     };
     Ok(T::Qualified(ps, Box::new(body)))
 }
+
 fn context_head(
     t: crate::ast::TypeSyntax,
 ) -> (Vec<crate::ast::PredicateSyntax>, crate::ast::TypeSyntax) {
@@ -473,6 +481,7 @@ fn context_head(
         t => (vec![], t),
     }
 }
+
 pub fn class(
     t: crate::ast::TypeSyntax,
     members: Vec<crate::ast::Declaration>,
@@ -500,6 +509,7 @@ pub fn class(
         span,
     ))
 }
+
 pub fn instance(
     t: crate::ast::TypeSyntax,
     methods: Vec<Binding>,

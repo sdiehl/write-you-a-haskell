@@ -5,13 +5,16 @@ use crate::{
     source::{FileId, Span},
 };
 use logos::{FilterResult, Lexer, Logos};
+
 /// The final reserved-word table also generates both book syntax definitions.
 pub const KEYWORDS: &[&str] = &[
     "case", "class", "data", "deriving", "do", "else", "if", "in", "infix",
     "infixl", "infixr", "instance", "let", "of", "then", "type", "where",
 ];
+
 /// Operator characters use maximal munch, even for syntax introduced in later snapshots.
 pub const SYMBOLS: &str = "!#$%&*+./<=>?@\\^|~:-";
+
 #[derive(Logos, Clone, Debug, PartialEq, Eq)]
 #[logos(skip r"[ \t\r\n]+")]
 pub enum Token {
@@ -120,6 +123,7 @@ pub enum Token {
     Proj,
     ProjSection,
 }
+
 fn integer(lex: &mut Lexer<Token>) -> Option<i64> {
     let text = lex.slice().replace('_', "");
     let value = if let Some(hex) = text.strip_prefix("0x") {
@@ -140,6 +144,7 @@ fn character(lex: &mut Lexer<Token>) -> Option<char> {
         None
     }
 }
+
 /// Decode exactly the escape forms specified for Fun, rejecting invalid scalar values.
 pub fn decode(quoted: &str) -> Option<String> {
     let mut out = String::new();
@@ -178,6 +183,7 @@ pub fn decode(quoted: &str) -> Option<String> {
     }
     Some(out)
 }
+
 fn block_comment(lex: &mut Lexer<Token>) -> FilterResult<String, ()> {
     let text = lex.remainder();
     let bytes = text.as_bytes();
@@ -202,6 +208,7 @@ fn block_comment(lex: &mut Lexer<Token>) -> FilterResult<String, ()> {
     lex.bump(text.len());
     FilterResult::Error(())
 }
+
 fn line_comment(lex: &mut Lexer<Token>) -> FilterResult<String, ()> {
     if lex
         .remainder()
@@ -215,7 +222,9 @@ fn line_comment(lex: &mut Lexer<Token>) -> FilterResult<String, ()> {
     lex.bump(end);
     FilterResult::Emit(lex.slice().to_owned())
 }
+
 pub type Spanned = (usize, Token, usize);
+
 /// Lex one session source and collect all invalid-token diagnostics before stopping.
 pub fn raw(sess: &mut Session, file: FileId) -> Result<Vec<Spanned>, Stop> {
     let source = &sess.sources.get(file).text;
@@ -260,6 +269,7 @@ impl marginalia::Classify for Token {
         }
     }
 }
+
 /// Capture trivia before handing semantic tokens to layout.
 pub fn trivia(
     sess: &mut Session,
@@ -273,6 +283,7 @@ pub fn trivia(
     let tokens = lexer.by_ref().map(Result::unwrap).collect();
     Ok((tokens, lexer.into_table()))
 }
+
 /// Lex semantic tokens without inserting layout punctuation.
 pub fn lex(sess: &mut Session, file: FileId) -> Result<Vec<Spanned>, Stop> {
     Ok(trivia(sess, file)?.0)

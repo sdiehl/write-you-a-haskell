@@ -7,17 +7,20 @@ use crate::{
     types::{self, Scheme, Type},
 };
 use std::collections::{BTreeMap, BTreeSet};
+
 // ANCHOR: store
 #[derive(Clone)]
 struct Meta {
     level: u32,
     solution: Option<Type>,
 }
+
 #[derive(Default)]
 struct Infer {
     level: u32,
     metas: Vec<Meta>,
 }
+
 impl Infer {
     fn fresh(&mut self) -> Type {
         let n = self.metas.len() as u32;
@@ -281,6 +284,7 @@ pub struct TypedProgram {
     pub surface: Program,
     pub main_type: Type,
 }
+
 /// Check ordered declarations using lexical scope maps and level-based HM.
 pub fn check(
     sess: &mut Session,

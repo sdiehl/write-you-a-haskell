@@ -9,10 +9,13 @@ use crate::{
     source::Span,
 };
 use std::{collections::BTreeMap, rc::Rc};
+
 /// An erased binder keeps its unique identity and diagnostic spelling.
 pub type Var = Id;
+
 /// Syntax is immutable and shared between closures and machine states.
 pub type Body = Rc<Anf>;
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 /// Atoms cannot perform work or fail when read from a well-scoped environment.
 pub enum Atom {
@@ -20,12 +23,14 @@ pub enum Atom {
     Global(Id),
     Lit(Lit),
 }
+
 #[derive(Clone, Debug)]
 /// Lambda parameters are merged only across syntactically adjacent lambdas.
 pub struct Lambda {
     pub params: Vec<Var>,
     pub body: Body,
 }
+
 #[derive(Clone, Debug)]
 /// One strict computation whose operands have already been evaluated.
 pub enum Rhs {
@@ -36,6 +41,7 @@ pub enum Rhs {
     Lambda(Lambda),
     Field(Atom, u32),
 }
+
 #[derive(Clone, Debug)]
 /// Jumps transfer within a function; tail calls replace its activation.
 pub enum Anf {
@@ -48,22 +54,26 @@ pub enum Anf {
     TailCall(Atom, Vec<Atom>),
     Fail(Span),
 }
+
 #[derive(Clone, Debug)]
 /// Global initialization order is preserved from typed Core.
 pub struct Program {
     pub globals: Vec<(Id, Body)>,
     pub metadata: core::Program,
 }
+
 #[derive(Clone)]
 enum Context {
     Return,
     Jump(Id),
     Bind(Var, Body),
 }
+
 struct Convert<'a> {
     sess: &'a mut Session,
     arities: BTreeMap<Id, usize>,
 }
+
 fn arity(mut e: &erase::Expr) -> usize {
     let mut n = 0;
     while let erase::Expr::Lam(_, b) = e {
@@ -72,6 +82,7 @@ fn arity(mut e: &erase::Expr) -> usize {
     }
     n
 }
+
 fn collect(e: &erase::Expr, out: &mut BTreeMap<Id, usize>) {
     use erase::Expr as E;
     let mut todo = vec![e];
@@ -103,6 +114,7 @@ fn collect(e: &erase::Expr, out: &mut BTreeMap<Id, usize>) {
         }
     }
 }
+
 impl Convert<'_> {
     fn fresh(&mut self) -> Var {
         self.sess.fresh_id("$a")
@@ -385,6 +397,7 @@ impl Convert<'_> {
         results.pop().unwrap()
     }
 }
+
 /// Normalize left-to-right, sharing every non-tail continuation exactly once.
 pub fn convert(sess: &mut Session, program: erase::Program) -> Program {
     let mut arities = BTreeMap::new();
@@ -415,6 +428,7 @@ impl std::fmt::Display for Atom {
         }
     }
 }
+
 fn list<T: std::fmt::Display>(items: &[T]) -> String {
     items
         .iter()
@@ -422,6 +436,7 @@ fn list<T: std::fmt::Display>(items: &[T]) -> String {
         .collect::<Vec<_>>()
         .join(", ")
 }
+
 impl std::fmt::Display for Rhs {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -438,6 +453,7 @@ impl std::fmt::Display for Rhs {
         }
     }
 }
+
 impl std::fmt::Display for Anf {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         enum Work<'a> {

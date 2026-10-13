@@ -6,6 +6,7 @@ use crate::{
     source::Span,
 };
 use std::collections::BTreeMap;
+
 #[derive(Clone)]
 struct Row {
     pats: Vec<Pat>,
@@ -13,11 +14,13 @@ struct Row {
     target: names::Id,
     params: Vec<Id>,
 }
+
 struct Compiler<'a> {
     sess: &'a mut Session,
     constructors: Vec<core::ConDecl>,
     truths: std::collections::BTreeSet<u32>,
 }
+
 impl Compiler<'_> {
     fn fresh(&mut self, ty: Type) -> Id {
         Id {
@@ -315,6 +318,7 @@ impl Compiler<'_> {
         }
     }
 }
+
 fn binders(p: &Pat, out: &mut Vec<Id>) {
     match p {
         Pat::Var(i) => out.push(i.clone()),
@@ -330,6 +334,7 @@ fn binders(p: &Pat, out: &mut Vec<Id>) {
         _ => {}
     }
 }
+
 /// Compile every nested match; generated binders come from the shared unique supply.
 pub fn compile(
     sess: &mut Session,

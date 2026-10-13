@@ -1,5 +1,6 @@
 //! Untyped lambda Core keeps runtime operations separate from source syntax.
 use crate::{ast::Op, source::Span};
+
 // ANCHOR: core
 #[derive(Clone, Debug, PartialEq, Eq)]
 /// Immediate source values; strings are primitive UTF-8 values, not character lists.
@@ -9,6 +10,7 @@ pub enum Lit {
     Char(char),
     String(String),
 }
+
 #[derive(Clone, Debug)]
 /// The initial lambda Core; types, data constructors, and compiled cases arrive later.
 pub enum Expr {
@@ -20,6 +22,7 @@ pub enum Expr {
     If(Box<Expr>, Box<Expr>, Box<Expr>),
     Prim(Op, Vec<Expr>, Span),
 }
+
 #[derive(Clone, Debug)]
 /// A recursive binding is guaranteed to have a lambda right-hand side.
 pub struct Bind {
@@ -27,6 +30,7 @@ pub struct Bind {
     pub rhs: Box<Expr>,
     pub recursive: bool,
 }
+
 #[derive(Clone, Debug)]
 /// Globals retain source order in this chapter; SCC ordering arrives in Chapter 9.
 pub struct Program {
@@ -34,6 +38,7 @@ pub struct Program {
     pub main: String,
 }
 // ANCHOR_END: core
+
 impl std::fmt::Display for Expr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -59,6 +64,7 @@ impl std::fmt::Display for Expr {
         }
     }
 }
+
 impl std::fmt::Display for Lit {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -73,6 +79,7 @@ impl std::fmt::Display for Lit {
         }
     }
 }
+
 /// Check untyped Core's lexical scope, primitive arity, and recursive-lambda invariant.
 /// Chapter 10 replaces these structural checks with full System F lint.
 pub fn lint(program: &Program) -> Result<(), String> {

@@ -7,10 +7,12 @@ use fun_rt_21::{
     layout::{self as l, Word},
 };
 use std::process::{Command, Stdio};
+
 unsafe extern "C" fn identity(_: Word, args: *const Word) -> Word {
     // SAFETY: this entry has exactly one argument.
     unsafe { *args }
 }
+
 unsafe extern "C" fn sum3(_: Word, args: *const Word) -> Word {
     // SAFETY: the closure's declared arity is three, and apply supplies three live words.
     unsafe {
@@ -21,6 +23,7 @@ unsafe extern "C" fn sum3(_: Word, args: *const Word) -> Word {
         )
     }
 }
+
 unsafe extern "C" fn add_capture(env: Word, args: *const Word) -> Word {
     heap::collect();
     // SAFETY: this closure has one capture and two arguments, as constructed below.
@@ -32,10 +35,12 @@ unsafe extern "C" fn add_capture(env: Word, args: *const Word) -> Word {
         )
     }
 }
+
 unsafe extern "C" fn make_adder(_: Word, args: *const Word) -> Word {
     // SAFETY: arity one guarantees the captured argument exists.
     unsafe { apply::closure(add_capture, 2, &[*args]) }
 }
+
 unsafe extern "C" fn parity(env: Word, args: *const Word) -> Word {
     heap::collect();
     // SAFETY: a parity closure has the partner closure and base result as its two captures.
@@ -48,6 +53,7 @@ unsafe extern "C" fn parity(env: Word, args: *const Word) -> Word {
         }
     }
 }
+
 fn main() {
     rt::rt_init();
     let args: Vec<String> = std::env::args().skip(1).collect();

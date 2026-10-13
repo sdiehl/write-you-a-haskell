@@ -1,6 +1,7 @@
 //! Immutable types shared at the boundary of two independent inferencers.
 use crate::diagnostics::{Diagnostic, ErrorCode};
 use std::{collections::BTreeMap, fmt};
+
 // ANCHOR: types
 /// Variables are fresh identities; algorithms choose their own representation of solutions.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -16,6 +17,7 @@ pub enum Type {
     App(Box<Type>, Box<Type>),
     Arrow(Box<Type>, Box<Type>),
 }
+
 /// Quantified variables are freshened independently at every occurrence.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Scheme {
@@ -24,6 +26,7 @@ pub struct Scheme {
     pub kinds: Vec<crate::kinds::Kind>,
     pub ty: Type,
 }
+
 impl Scheme {
     pub fn mono(ty: Type) -> Self {
         Self {
@@ -34,6 +37,7 @@ impl Scheme {
         }
     }
 }
+
 impl Type {
     pub fn apply(f: Self, a: Self) -> Self {
         match f {
@@ -74,6 +78,7 @@ impl Type {
     }
 }
 // ANCHOR_END: types
+
 impl fmt::Display for Type {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -127,6 +132,7 @@ impl fmt::Display for Type {
         }
     }
 }
+
 pub(crate) fn mismatch_at(
     span: crate::source::Span,
     a: &Type,
@@ -138,6 +144,7 @@ pub(crate) fn mismatch_at(
         span,
     )
 }
+
 pub(crate) fn occurs_at(span: crate::source::Span) -> Diagnostic {
     Diagnostic::error(
         ErrorCode::Occurs,
@@ -152,6 +159,7 @@ pub struct Predicate {
     pub class: String,
     pub ty: Type,
 }
+
 impl Type {
     pub fn replace(&self, map: &BTreeMap<u32, Type>) -> Type {
         match self {
@@ -182,6 +190,7 @@ impl Type {
         }
     }
 }
+
 impl Predicate {
     pub fn replace(&self, map: &BTreeMap<u32, Type>) -> Self {
         Self {

@@ -7,10 +7,13 @@ use crate::{
     source::Span,
 };
 use std::rc::Rc;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 /// An index into this program's lifted function table.
 pub struct FuncId(pub u32);
+
 pub type Body = Rc<Flat>;
+
 #[derive(Clone, Debug)]
 /// Only lifted local lambdas receive an environment parameter.
 pub struct Func {
@@ -21,6 +24,7 @@ pub struct Func {
     pub body: Body,
     pub captures: Vec<Var>,
 }
+
 #[derive(Clone, Debug)]
 /// Function globals are installed before ordered strict value initializers run.
 pub struct GlobalInit {
@@ -28,12 +32,14 @@ pub struct GlobalInit {
     pub function: Option<FuncId>,
     pub body: Body,
 }
+
 #[derive(Clone, Debug)]
 pub struct Program {
     pub funcs: Vec<Func>,
     pub globals: Vec<GlobalInit>,
     pub metadata: core::Program,
 }
+
 #[derive(Clone, Debug)]
 /// PatchClosure is a compiler-only operation used after all letrec allocations.
 pub enum Rhs {
@@ -47,6 +53,7 @@ pub enum Rhs {
     Prim(Op, Vec<Atom>, Span),
     PatchClosure(Atom, u32, Atom),
 }
+
 #[derive(Clone, Debug)]
 /// Control transfers are explicit and joins remain local to each function.
 pub enum Flat {
@@ -59,17 +66,20 @@ pub enum Flat {
     TailCallUnknown(Atom, Vec<Atom>),
     Fail(Span),
 }
+
 impl std::fmt::Display for FuncId {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "f{}", self.0)
     }
 }
+
 fn list<T: std::fmt::Display>(xs: &[T]) -> String {
     xs.iter()
         .map(ToString::to_string)
         .collect::<Vec<_>>()
         .join(", ")
 }
+
 impl std::fmt::Display for Rhs {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -100,6 +110,7 @@ impl std::fmt::Display for Rhs {
         }
     }
 }
+
 impl std::fmt::Display for Flat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         enum Visit<'a> {

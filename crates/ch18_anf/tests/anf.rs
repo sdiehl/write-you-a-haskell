@@ -2,6 +2,7 @@ use ch18_anf::{
     anf, anf_lint, anf_machine, anf_simplify, core, elaborate, erase, eval,
     match_compile, parse, session::Session, typecheck,
 };
+
 fn compile(source: &str) -> (Session, core::Program) {
     let mut sess = Session::default();
     let file = sess.sources.add("anf.fun", source.into());
@@ -14,6 +15,7 @@ fn compile(source: &str) -> (Session, core::Program) {
     core::lint(&p).unwrap();
     (sess, p)
 }
+
 #[test]
 fn anf_matches_core_before_and_after_simplification() {
     for (name, source) in [
@@ -65,6 +67,7 @@ fn anf_matches_core_before_and_after_simplification() {
         insta::assert_snapshot!(name, text);
     }
 }
+
 #[test]
 fn one_million_tail_calls_use_bounded_continuations() {
     let (mut sess, core) = compile(
@@ -77,6 +80,7 @@ fn one_million_tail_calls_use_bounded_continuations() {
     assert_eq!(value.to_string(), "500000500000");
     assert!(stats.max_continuations < 32, "{stats:?}");
 }
+
 #[test]
 fn one_thousand_generated_programs_agree() {
     testkit::generate::check(

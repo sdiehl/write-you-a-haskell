@@ -9,12 +9,14 @@ use crate::{
     types::{self, Scheme},
 };
 use std::collections::BTreeMap;
+
 #[derive(Clone)]
 struct Binder {
     id: Id,
     quantifiers: Vec<(u32, u32)>,
     global: bool,
 }
+
 struct Elaborator<'a> {
     sess: &'a mut Session,
     constructors: Vec<core::ConDecl>,
@@ -25,11 +27,13 @@ struct Elaborator<'a> {
     type_kinds: BTreeMap<u32, crate::kinds::Kind>,
     binders: BTreeMap<names::Id, Binder>,
 }
+
 /// Unsolved inference variables absent from every enclosing scheme have no
 /// observable type identity. Closed, kind-correct witnesses fill those holes.
 fn convert(ty: &types::Type, variables: &BTreeMap<u32, u32>) -> Type {
     convert_with(ty, variables, &BTreeMap::new())
 }
+
 fn convert_with(
     ty: &types::Type,
     variables: &BTreeMap<u32, u32>,
@@ -63,6 +67,7 @@ fn convert_with(
         }
     }
 }
+
 impl Elaborator<'_> {
     fn convert(
         &self,
@@ -543,6 +548,7 @@ impl Elaborator<'_> {
         }
     }
 }
+
 fn primitive(
     sess: &mut Session,
     name: names::Id,
@@ -591,6 +597,7 @@ fn primitive(
         }],
     }
 }
+
 /// Elaborate zonked inference evidence into explicitly typed Core.
 pub fn elaborate(
     sess: &mut Session,
@@ -689,6 +696,7 @@ pub fn elaborate(
     };
     elaborator.sess.finish(program)
 }
+
 /// Instantiate immutable constructor fields; the checker uses the same ABI type order.
 pub fn instantiate(
     ty: &Type,

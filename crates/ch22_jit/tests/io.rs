@@ -1,5 +1,7 @@
 mod support;
+
 use ch22_jit::{core, elaborate, parse, session::Session, typecheck};
+
 #[test]
 fn io_core_snapshots_lower_actions_to_unit_functions() {
     for name in [
@@ -31,6 +33,7 @@ fn io_core_snapshots_lower_actions_to_unit_functions() {
         insta::assert_snapshot!(name, support::dump(&source, &program));
     }
 }
+
 #[test]
 fn prompt_is_flushed_before_waiting_for_input() {
     use std::{

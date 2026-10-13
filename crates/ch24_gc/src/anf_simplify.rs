@@ -9,6 +9,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     rc::Rc,
 };
+
 fn atom(a: &Atom, aliases: &BTreeMap<Var, Atom>) -> Atom {
     match a {
         Atom::Var(v) => {
@@ -17,14 +18,17 @@ fn atom(a: &Atom, aliases: &BTreeMap<Var, Atom>) -> Atom {
         _ => a.clone(),
     }
 }
+
 fn atoms(args: &[Atom], aliases: &BTreeMap<Var, Atom>) -> Vec<Atom> {
     args.iter().map(|a| atom(a, aliases)).collect()
 }
+
 fn mark(a: &Atom, free: &mut BTreeSet<Var>) {
     if let Atom::Var(v) = a {
         free.insert(v.clone());
     }
 }
+
 /// Unique binders let us collect uses and definitions in one iterative walk.
 pub fn free_vars(body: &Body) -> BTreeSet<Var> {
     let mut used = BTreeSet::new();
@@ -92,6 +96,7 @@ pub fn free_vars(body: &Body) -> BTreeSet<Var> {
     used.retain(|v| !bound.contains(v));
     used
 }
+
 fn rhs_free(rhs: &Rhs, free: &mut BTreeSet<Var>) {
     match rhs {
         Rhs::Atom(a) | Rhs::Field(a, _) => mark(a, free),
@@ -115,6 +120,7 @@ fn rhs_free(rhs: &Rhs, free: &mut BTreeSet<Var>) {
         }
     }
 }
+
 /// Each result carries its free variables, avoiding a scan of every let suffix.
 /// Binder identities are globally unique, so substitutions never need scope copies.
 fn rewrite(sess: &mut crate::session::Session, body: &Body) -> Body {
@@ -326,6 +332,7 @@ fn rewrite(sess: &mut crate::session::Session, body: &Body) -> Body {
     }
     out.pop().unwrap().0
 }
+
 /// Calls and potentially failing/effectful primitives are never discarded.
 pub fn simplify(sess: &mut crate::session::Session, program: &mut Program) {
     for (_, body) in &mut program.globals {
@@ -358,6 +365,7 @@ pub fn discardable(rhs: &Rhs) -> bool {
             )
     )
 }
+
 // Replace returns with one shared continuation; lambda bodies keep their own returns.
 fn plug(
     sess: &mut crate::session::Session,

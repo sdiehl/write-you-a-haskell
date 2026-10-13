@@ -1,5 +1,6 @@
 //! Resolved identifiers and dependency groups form the input to inference.
 use crate::{ast::Op, names::Id, source::Span, types::Scheme};
+
 #[derive(Clone, Debug)]
 /// Every variable occurrence refers to exactly one uniquely identified binder.
 pub struct Expr {
@@ -7,6 +8,7 @@ pub struct Expr {
     pub kind: Kind,
     pub span: Span,
 }
+
 #[derive(Clone, Debug)]
 /// The resolved expression forms, after surface operators and signatures are separated.
 pub enum Kind {
@@ -22,6 +24,7 @@ pub enum Kind {
     Neg(Box<Expr>),
     Binary(Op, Box<Expr>, Box<Expr>),
 }
+
 #[derive(Clone, Debug)]
 /// One uniquely named right-hand side and its optional source signature.
 pub struct Binding {
@@ -30,12 +33,14 @@ pub struct Binding {
     pub annotation: Option<Scheme>,
     pub span: Span,
 }
+
 #[derive(Clone, Debug)]
 /// Members of a recursive component are inferred together before generalization.
 pub struct BindGroup {
     pub recursive: bool,
     pub binds: Vec<Binding>,
 }
+
 #[derive(Clone, Debug)]
 /// Dependency-ordered globals, intrinsic identities, and the selected entry point.
 pub struct Program {
@@ -44,6 +49,7 @@ pub struct Program {
     pub main: Id,
     pub span: Span,
 }
+
 impl std::fmt::Display for Expr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self.kind {
@@ -71,6 +77,7 @@ impl std::fmt::Display for Expr {
         }
     }
 }
+
 impl std::fmt::Display for BindGroup {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{} {{", if self.recursive { "rec" } else { "nonrec" })?;
@@ -80,6 +87,7 @@ impl std::fmt::Display for BindGroup {
         write!(f, " }}")
     }
 }
+
 /// Gather referenced unique names. Local binders cannot collide with a group's
 /// names, so SCC construction needs no spelling-based shadowing adjustment.
 pub fn references(expr: &Expr, out: &mut std::collections::BTreeSet<Id>) {

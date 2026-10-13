@@ -7,8 +7,11 @@ use crate::{
     flat::{self, Atom, Body, Flat, FuncId, Rhs, Var},
 };
 use std::{collections::BTreeMap, rc::Rc};
+
 type Env = crate::env::Env<u32, Value>;
+
 type Joins = BTreeMap<u32, Rc<Join>>;
+
 #[derive(Clone, Debug)]
 /// Strict data, lexical closures, and partial applications.
 pub enum Value {
@@ -17,6 +20,7 @@ pub enum Value {
     Closure(usize),
     Pap(Rc<Value>, Vec<Value>),
 }
+
 // A constructor list or a chain of captured environments may be arbitrarily deep.
 impl Drop for Value {
     fn drop(&mut self) {
@@ -50,12 +54,14 @@ impl Drop for Value {
         }
     }
 }
+
 #[derive(Clone, Debug)]
 /// Heap indices permit cyclic letrec environments without Rust reference cycles.
 pub struct Closure {
     function: FuncId,
     captures: Vec<Value>,
 }
+
 #[derive(Clone)]
 struct Join {
     params: Vec<Var>,
@@ -63,22 +69,26 @@ struct Join {
     env: Env,
     joins: Joins,
 }
+
 enum Frame {
     Bind(Var, Body, Env, Joins),
     Apply(Vec<Value>),
 }
+
 enum State {
     Code(Body),
     Apply(Value, Vec<Value>),
     Call(FuncId, Option<Value>, Vec<Value>),
     Return(Value),
 }
+
 #[derive(Clone, Copy, Debug, Default)]
 /// Continuation depth counts pending non-tail calls, not recursive tail transfers.
 pub struct Stats {
     pub steps: usize,
     pub max_continuations: usize,
 }
+
 struct Machine<'a> {
     program: &'a flat::Program,
     heap: Vec<Closure>,
@@ -89,9 +99,11 @@ struct Machine<'a> {
     fuel: usize,
     stats: Stats,
 }
+
 fn key(v: &Var) -> u32 {
     v.name.unique
 }
+
 impl Machine<'_> {
     fn atom(&self, a: &Atom) -> Result<Value, Failure> {
         match a {
@@ -411,6 +423,7 @@ impl Machine<'_> {
         }
     }
 }
+
 /// Independent control flow, with shared monomorphic primitive definitions.
 pub fn run(
     program: &flat::Program,
@@ -466,6 +479,7 @@ pub fn run(
     };
     Ok((value, m.stats))
 }
+
 fn to_core(v: &Value) -> Result<crate::eval::Value, Failure> {
     Ok(match v {
         Value::Lit(l) => crate::eval::Value::Lit(l.clone()),
@@ -482,6 +496,7 @@ fn to_core(v: &Value) -> Result<crate::eval::Value, Failure> {
         }
     })
 }
+
 fn from_core(v: crate::eval::Value) -> Value {
     match &v {
         crate::eval::Value::Lit(l) => Value::Lit(l.clone()),
@@ -499,6 +514,7 @@ impl std::fmt::Display for Value {
         self.print(f, 0)
     }
 }
+
 impl Value {
     fn print(
         &self,

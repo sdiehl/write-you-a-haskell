@@ -1,4 +1,5 @@
 use std::{path::Path, time::Duration};
+
 #[test]
 fn corpus_collects_at_every_allocation() {
     testkit::run_copying_corpus(&testkit::Config {

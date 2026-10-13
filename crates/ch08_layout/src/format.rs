@@ -40,6 +40,7 @@ pub fn format(sess: &mut Session, file: FileId) -> Result<String, Stop> {
     Ok(format!("{}\n", rendered.trim_end()))
 }
 // ANCHOR_END: format
+
 fn token_doc(source: &str, item: &Spanned) -> Doc {
     let (lo, token, hi) = item;
     if lo != hi {
@@ -55,6 +56,7 @@ fn token_doc(source: &str, item: &Spanned) -> Doc {
         _ => unreachable!("virtual punctuation"),
     })
 }
+
 fn document(
     source: &str,
     tokens: &[Spanned],

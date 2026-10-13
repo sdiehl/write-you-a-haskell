@@ -6,12 +6,14 @@
     any(target_os = "linux", target_os = "macos")
 )))]
 compile_error!("Fun supports 64-bit Linux and macOS on x86-64 and AArch64");
+
 pub mod abi;
 pub mod apply;
 pub mod copying;
 pub mod heap;
 pub mod layout;
 mod primitives;
+
 pub use abi::{rt_div_zero, rt_error, rt_exit, rt_pattern_fail};
 pub use apply::{
     rt_apply, rt_apply1, rt_apply2, rt_apply3, rt_apply4, rt_closure_set,

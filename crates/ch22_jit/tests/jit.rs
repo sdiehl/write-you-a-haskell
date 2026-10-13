@@ -92,6 +92,7 @@ fn transcript(input: &str) -> testkit::Outcome {
     )
     .unwrap()
 }
+
 #[test]
 fn golden_repl_sessions() {
     let directory =
@@ -120,6 +121,7 @@ fn golden_repl_sessions() {
         );
     }
 }
+
 #[test]
 fn inspection_does_not_execute_and_includes_the_requested_ir() {
     let outcome = transcript(

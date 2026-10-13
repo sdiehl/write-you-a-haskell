@@ -1,4 +1,5 @@
 use fun_rt_22::{self as rt, Prim, Value};
+
 #[test]
 fn two_hundred_double_formats_and_round_trips() {
     let cases = include_str!("double.tsv").lines().collect::<Vec<_>>();
@@ -17,6 +18,7 @@ fn two_hundred_double_formats_and_round_trips() {
         }
     }
 }
+
 #[test]
 fn read_int_and_unicode_boundaries() {
     for s in [
@@ -59,6 +61,7 @@ fn read_int_and_unicode_boundaries() {
         );
     }
 }
+
 #[test]
 fn signed_division_and_saturating_conversions() {
     for (a, b, q, r, d, m) in [

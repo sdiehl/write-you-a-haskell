@@ -5,6 +5,7 @@ use std::{
     path::{Path, PathBuf},
     process::Command,
 };
+
 /// Runtime archive beside the compiler, or an explicit FUN_RT installation override.
 pub fn runtime() -> Result<PathBuf, String> {
     let path = if let Some(path) = std::env::var_os("FUN_RT") {
@@ -24,6 +25,7 @@ pub fn runtime() -> Result<PathBuf, String> {
     }
     Ok(path)
 }
+
 /// Emit verified host code to a temporary object, then link against fun-rt and Boehm.
 pub fn build(
     program: &flat::Program,
@@ -32,6 +34,7 @@ pub fn build(
 ) -> Result<(), String> {
     build_with_gc(program, output, opt, false)
 }
+
 /// Select precise roots when linking a copying-collector executable.
 pub fn build_with_gc(
     program: &flat::Program,
@@ -120,7 +123,9 @@ pub fn build_with_gc(
     std::fs::rename(executable, output)
         .map_err(|e| format!("cannot install executable: {e}"))
 }
+
 struct Scratch(PathBuf);
+
 impl Drop for Scratch {
     fn drop(&mut self) {
         let _ = std::fs::remove_dir_all(&self.0);

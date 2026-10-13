@@ -7,6 +7,7 @@ use crate::{
     types::{Scheme, Type},
 };
 pub use fun_rt::{ALL, Prim, show_double};
+
 /// Every literal and primitive has a fixed type; only error quantifies a result.
 pub fn signature(op: Op, data: &DataEnv) -> Scheme {
     use Prim::*;
@@ -82,6 +83,7 @@ pub fn signature(op: Op, data: &DataEnv) -> Scheme {
     }
     scheme
 }
+
 /// All interpreters use the same runtime functions; only algebraic values are adapted.
 pub fn evaluate(
     p: Prim,

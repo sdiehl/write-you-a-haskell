@@ -8,6 +8,7 @@ use crate::{
     source::Span,
     typecheck::TypedProgram,
 };
+
 fn expression(expr: &renamed::Expr) -> Expr {
     let boxed = |e: &renamed::Expr| Box::new(expression(e));
     match &expr.kind {
@@ -36,6 +37,7 @@ fn expression(expr: &renamed::Expr) -> Expr {
         ),
     }
 }
+
 fn group(group: &renamed::BindGroup) -> core::BindGroup {
     core::BindGroup {
         recursive: group.recursive,
@@ -49,6 +51,7 @@ fn group(group: &renamed::BindGroup) -> core::BindGroup {
             .collect(),
     }
 }
+
 fn primitive(
     sess: &mut Session,
     id: Id,
@@ -73,6 +76,7 @@ fn primitive(
         }],
     }
 }
+
 /// Lower dependency groups without changing their order or recursive scope.
 pub fn elaborate(
     sess: &mut Session,

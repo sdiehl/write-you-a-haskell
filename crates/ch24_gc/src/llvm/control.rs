@@ -7,11 +7,13 @@ use crate::{
     source::Span,
 };
 use inkwell::IntPredicate;
+
 /// Pending blocks live on a heap worklist, never on the Rust call stack.
 struct Block<'ctx> {
     body: Body,
     block: BasicBlock<'ctx>,
 }
+
 impl<'ctx> Backend<'ctx, '_> {
     pub(super) fn function(&mut self, f: &Func) -> Result<()> {
         let fast = self.fast[f.name.0 as usize];

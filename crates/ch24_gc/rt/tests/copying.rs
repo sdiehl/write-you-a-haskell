@@ -3,6 +3,7 @@ use fun_rt_24::{
     heap::{self, GlobalRoot, Roots},
     layout,
 };
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     // Test runners list a harness before running it; this one holds a single test.

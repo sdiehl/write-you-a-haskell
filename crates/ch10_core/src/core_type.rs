@@ -1,6 +1,7 @@
 // adapted from sdiehl/typechecker-zoo/system-f/src/typecheck.rs (substitution structure)
 //! Closed System F types are separate from mutable inference metavariables.
 use std::collections::BTreeSet;
+
 /// All type binders have kind `*` in this chapter; constructor kinds arrive later.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Type {
@@ -12,6 +13,7 @@ pub enum Type {
     Arrow(Box<Type>, Box<Type>),
     Forall(u32, Box<Type>),
 }
+
 impl Type {
     pub fn arrow(a: Self, b: Self) -> Self {
         Self::Arrow(Box::new(a), Box::new(b))
@@ -99,6 +101,7 @@ impl Type {
         go(self, other, &mut Vec::new())
     }
 }
+
 impl std::fmt::Display for Type {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {

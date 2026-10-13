@@ -4,6 +4,7 @@ use crate::{
     renamed::Expr,
 };
 use std::{collections::BTreeMap, fmt};
+
 // ANCHOR: types
 /// Variables are fresh identities; algorithms choose their own representation of solutions.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -17,12 +18,14 @@ pub enum Type {
     Skolem(u32),
     Arrow(Box<Type>, Box<Type>),
 }
+
 /// Quantified variables are freshened independently at every occurrence.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Scheme {
     pub variables: Vec<u32>,
     pub ty: Type,
 }
+
 impl Scheme {
     pub fn mono(ty: Type) -> Self {
         Self {
@@ -31,6 +34,7 @@ impl Scheme {
         }
     }
 }
+
 impl Type {
     pub fn arrow(a: Self, b: Self) -> Self {
         Self::Arrow(Box::new(a), Box::new(b))
@@ -57,6 +61,7 @@ impl Type {
     }
 }
 // ANCHOR_END: types
+
 impl fmt::Display for Type {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -106,6 +111,7 @@ impl fmt::Display for Type {
         }
     }
 }
+
 pub(crate) fn mismatch(expr: &Expr, a: &Type, b: &Type) -> Diagnostic {
     Diagnostic::error(
         ErrorCode::Mismatch,
@@ -113,6 +119,7 @@ pub(crate) fn mismatch(expr: &Expr, a: &Type, b: &Type) -> Diagnostic {
         expr.span,
     )
 }
+
 pub(crate) fn occurs(expr: &Expr) -> Diagnostic {
     Diagnostic::error(
         ErrorCode::Occurs,

@@ -4,6 +4,7 @@ use crate::{
     eval::{self, Value},
     names::substitute,
 };
+
 /// Evaluate only as far as a literal or lambda; arguments and lets are substituted unevaluated.
 pub fn evaluate(expr: &Expr, fuel: &mut usize) -> Result<Expr, String> {
     *fuel = fuel.checked_sub(1).ok_or("step limit exceeded")?;

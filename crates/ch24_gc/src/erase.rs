@@ -3,12 +3,14 @@ use crate::{
     ast::Op, core, data::ConId, names::Id, rep::Rep, source::Span,
 };
 use std::collections::BTreeMap;
+
 #[derive(Clone, Debug)]
 /// Expression-result evidence supplies the type of fresh ANF temporaries.
 pub struct Expr {
     pub node: Node,
     pub rep: Rep,
 }
+
 #[derive(Clone, Debug)]
 /// Untyped Core retains strict evaluation order and lexical join points.
 pub enum Node {
@@ -25,12 +27,14 @@ pub enum Node {
     Jump(Id, Vec<Expr>),
     Fail(Span),
 }
+
 #[derive(Clone, Debug)]
 pub struct Program {
     pub globals: Vec<(Id, Expr)>,
     pub reps: BTreeMap<Id, Rep>,
     pub metadata: core::Program,
 }
+
 /// This is the single classification point. A type variable proves no numeric representation.
 pub(crate) fn representation(ty: &core::Type) -> Rep {
     match ty {
@@ -39,6 +43,7 @@ pub(crate) fn representation(ty: &core::Type) -> Rep {
         _ => Rep::Word,
     }
 }
+
 /// Postorder erasure uses a worklist so expression depth does not consume host stack.
 fn expression(
     root: &core::Expr,
@@ -189,6 +194,7 @@ fn expression(
     }
     results.pop().unwrap().0
 }
+
 /// Evidence is recorded while types exist. Later passes may only copy established facts.
 pub fn erase(mut program: core::Program) -> Program {
     let mut reps = BTreeMap::new();
@@ -377,6 +383,7 @@ impl std::fmt::Display for Expr {
         Ok(())
     }
 }
+
 /// Destroy an owned erased tree without recursively following Box edges.
 pub fn discard(root: Expr) {
     let mut todo = vec![root];

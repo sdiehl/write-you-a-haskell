@@ -4,6 +4,7 @@ use crate::{
     flat::Flat,
     rep::{Rep, Table},
 };
+
 /// A word-represented type needs no annotation in the teaching dumps.
 pub fn binder(v: &Var, reps: &Table) -> String {
     match reps.get(v).expect("dump binder evidence") {
@@ -11,31 +12,37 @@ pub fn binder(v: &Var, reps: &Table) -> String {
         rep => format!("{v} : {rep}"),
     }
 }
+
 pub fn binders(vs: &[Var], reps: &Table) -> String {
     vs.iter()
         .map(|v| binder(v, reps))
         .collect::<Vec<_>>()
         .join(", ")
 }
+
 fn atoms(vs: &[crate::anf::Atom]) -> String {
     vs.iter()
         .map(ToString::to_string)
         .collect::<Vec<_>>()
         .join(", ")
 }
+
 enum Visit<'a> {
     Anf(&'a Anf),
     Flat(&'a Flat),
     Text(String),
 }
+
 /// Print ANF without using the host stack for nested lambdas or control flow.
 pub fn anf(body: &Anf, reps: &Table) -> String {
     render(Visit::Anf(body), reps)
 }
+
 /// Print Flat IR with the same binder notation as ANF.
 pub fn flat(body: &Flat, reps: &Table) -> String {
     render(Visit::Flat(body), reps)
 }
+
 fn render(first: Visit<'_>, reps: &Table) -> String {
     let mut out = String::new();
     let mut work = vec![first];
@@ -152,6 +159,7 @@ fn render(first: Visit<'_>, reps: &Table) -> String {
     }
     out
 }
+
 fn alternative(c: &crate::core::AltCon) -> String {
     match c {
         crate::core::AltCon::Con(c) => c.name.clone(),

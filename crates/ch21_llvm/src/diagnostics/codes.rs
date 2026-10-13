@@ -11,6 +11,7 @@ macro_rules! codes {
         pub const REGISTRY: &[(ErrorCode, &str)] = &[$((ErrorCode::$variant, $description)),*];
     };
 }
+
 codes! {
     Lex => ("E0001", "invalid token"), Parse => ("E0002", "invalid syntax"),
     Layout => ("E0003", "invalid layout"), ProjectionDot => ("E0004", "invalid projection dot"),

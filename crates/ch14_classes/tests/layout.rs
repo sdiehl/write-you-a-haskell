@@ -2,6 +2,7 @@ use ch14_classes::{
     elaborate, eval, layout, lexer::Token, parse, session::Session,
     typecheck,
 };
+
 fn run(source: &str) -> String {
     let mut sess = Session::default();
     let file = sess.sources.add("layout.fun", source.into());
@@ -11,6 +12,7 @@ fn run(source: &str) -> String {
     let core = elaborate::elaborate(&mut sess, typed).unwrap();
     eval::run(&core, 10000).unwrap()
 }
+
 #[test]
 fn implicit_explicit_and_inline_blocks() {
     for source in [
@@ -34,6 +36,7 @@ fn implicit_explicit_and_inline_blocks() {
         assert_eq!(run(source), "42", "{source}");
     }
 }
+
 #[test]
 fn future_layout_keywords_are_lexical_only() {
     let mut sess = Session::default();
@@ -50,12 +53,14 @@ fn future_layout_keywords_are_lexical_only() {
         3
     );
 }
+
 fn formatted(source: &str) -> String {
     let mut sess = Session::default();
     let file = sess.sources.add("format.fun", source.into());
     ch14_classes::format::format(&mut sess, file)
         .unwrap_or_else(|_| panic!("{source}\n{:?}", sess.diagnostics))
 }
+
 #[test]
 fn formatter_preserves_comments_and_is_idempotent() {
     for source in [
@@ -83,6 +88,7 @@ fn formatter_preserves_comments_and_is_idempotent() {
         assert_eq!(comment_texts(source), comment_texts(&first));
     }
 }
+
 #[test]
 fn signatures_are_checked_and_restrict_uses() {
     for source in [
@@ -116,6 +122,7 @@ fn signatures_are_checked_and_restrict_uses() {
         assert_eq!(sess.diagnostics[0].code.as_str(), code, "{source}");
     }
 }
+
 #[test]
 fn operators_fixities_sections_and_haskell_negation() {
     for (source, expected) in [
@@ -164,6 +171,7 @@ fn operators_fixities_sections_and_haskell_negation() {
         assert_eq!(sess.diagnostics[0].code.as_str(), "E0002", "{source}");
     }
 }
+
 fn without_spans(
     mut program: ch14_classes::ast::Program,
 ) -> ch14_classes::ast::Program {
@@ -326,6 +334,7 @@ fn without_spans(
     }
     program
 }
+
 #[test]
 fn formatter_round_trips_every_parseable_corpus_ast() {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -353,6 +362,7 @@ fn formatter_round_trips_every_parseable_corpus_ast() {
         );
     }
 }
+
 #[test]
 fn extended_syntax_snapshots() {
     for (name, pass) in [

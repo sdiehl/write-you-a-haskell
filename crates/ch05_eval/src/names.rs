@@ -33,6 +33,7 @@ pub fn free(expr: &Expr) -> BTreeSet<String> {
         _ => BTreeSet::new(),
     }
 }
+
 fn all_names(expr: &Expr, names: &mut BTreeSet<String>) {
     match &expr.kind {
         Kind::Var(n) => {
@@ -60,6 +61,7 @@ fn all_names(expr: &Expr, names: &mut BTreeSet<String>) {
         _ => {}
     }
 }
+
 // ANCHOR: binder
 fn binder(
     name: &str,

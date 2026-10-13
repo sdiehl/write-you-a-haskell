@@ -51,6 +51,7 @@ fn derived_syntax_snapshots_are_ordinary_checked_instances() {
         assert_eq!(eval::run(&core, 1_000_000).unwrap(), "()");
     }
 }
+
 #[test]
 fn deriving_and_ranges_format_idempotently() {
     let mut sess = Session::default();

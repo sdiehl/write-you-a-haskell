@@ -7,18 +7,21 @@ use crate::{
     types::{Scheme, Type},
 };
 use std::collections::BTreeMap;
+
 /// Nominal identity retains a spelling for types printed outside the session.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct TyConId {
     pub index: u32,
     pub name: String,
 }
+
 /// Constructor identities are globally unique; runtime tags are per datatype.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ConId {
     pub index: u32,
     pub name: String,
 }
+
 /// The arity of every parameter is kind `*` until Chapter 13.
 #[derive(Clone, Debug)]
 pub struct TyConInfo {
@@ -26,6 +29,7 @@ pub struct TyConInfo {
     pub arity: usize,
     pub constructors: Vec<ConId>,
 }
+
 /// Constructor fields refer to quantified variables numbered in parameter order.
 #[derive(Clone, Debug)]
 pub struct ConInfo {
@@ -35,12 +39,14 @@ pub struct ConInfo {
     pub fields: Vec<Type>,
     pub scheme: Scheme,
 }
+
 /// A compilation unit shares one closed table, with no references to inference cells.
 #[derive(Clone, Debug, Default)]
 pub struct DataEnv {
     pub types: Vec<TyConInfo>,
     pub constructors: Vec<ConInfo>,
 }
+
 impl DataEnv {
     pub fn constructor(&self, name: &str) -> Option<&ConInfo> {
         self.constructors.iter().find(|c| c.id.name == name)
@@ -153,6 +159,7 @@ impl DataEnv {
         Ok(Type::Con(info.id.clone(), args))
     }
 }
+
 /// Declare all type heads before checking fields, permitting recursive datatypes.
 pub fn collect(
     sess: &mut Session,

@@ -13,6 +13,7 @@ use std::{
     path::PathBuf,
     process::ExitCode,
 };
+
 #[derive(Clone, Copy, Debug, ValueEnum)]
 enum Pass {
     Tokens,
@@ -30,12 +31,14 @@ enum Pass {
     Llvm,
     LlvmOpt,
 }
+
 #[derive(Clone, Copy, ValueEnum)]
 enum Color {
     Auto,
     Always,
     Never,
 }
+
 #[derive(Clone, Copy, ValueEnum)]
 enum Engine {
     Jit,
@@ -43,6 +46,7 @@ enum Engine {
     Anf,
     Flat,
 }
+
 #[derive(Parser)]
 #[command(name = "fun-ch22", about = "Chapter 22: JIT and the REPL")]
 struct Cli {
@@ -65,6 +69,7 @@ struct Cli {
     #[arg(short = 'O', global = true, default_value_t = 2, value_parser = clap::value_parser!(u8).range(0..=3))]
     optimization: u8,
 }
+
 #[derive(Subcommand)]
 enum Command {
     Build {
@@ -92,12 +97,14 @@ enum Command {
     },
     Repl,
 }
+
 struct BackendOptions<'a> {
     engine: Engine,
     simplify: bool,
     output: Option<&'a std::path::Path>,
     optimization: u8,
 }
+
 fn compile(
     sess: &mut Session,
     file: FileId,
@@ -339,6 +346,7 @@ fn compile(
         }
     }
 }
+
 fn process(
     source: String,
     name: String,
@@ -388,6 +396,7 @@ fn process(
     let _ = io::stdout().flush();
     if success { sess.exit_code } else { 1 }
 }
+
 fn main() -> ExitCode {
     let cli = Cli::parse();
     let (file, run, pass) = match &cli.command {

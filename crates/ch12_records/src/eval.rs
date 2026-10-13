@@ -4,7 +4,9 @@ use crate::{
     core::{self, Bind, BindGroup, Expr, Id, Lit},
 };
 use std::rc::Rc;
+
 type Env = Vec<(Id, Value)>;
+
 #[derive(Clone, Debug)]
 /// A closure captures outer declarations and an optional immutable recursive-group recipe.
 pub enum Value {
@@ -17,11 +19,13 @@ pub enum Value {
         recursive: Option<Rc<Vec<Bind>>>,
     },
 }
+
 impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.print(f, 0)
     }
 }
+
 impl Value {
     fn print(
         &self,
@@ -106,6 +110,7 @@ impl Value {
 pub fn normalize(n: i64) -> i64 {
     (n << 1) >> 1
 }
+
 /// Rebuild a recursive group's closures from a shared immutable recipe. The
 /// recipe captures the outer environment, never the closures themselves.
 // ANCHOR: recursive-closures
@@ -130,6 +135,7 @@ fn recursive_values(bindings: Rc<Vec<Bind>>, env: Rc<Env>) -> Env {
     values
 }
 // ANCHOR_END: recursive-closures
+
 fn bind_group(
     group: &BindGroup,
     env: &mut Env,
@@ -149,6 +155,7 @@ fn bind_group(
     }
     Ok(())
 }
+
 fn evaluate(
     expr: &Expr,
     env: &Env,
@@ -259,6 +266,7 @@ fn evaluate(
         }
     }
 }
+
 fn primitive(
     op: Op,
     args: &[Value],
@@ -308,6 +316,7 @@ fn primitive(
     };
     Ok(Value::Lit(value))
 }
+
 /// Evaluate top-level values exactly once in dependency order, then select main's value.
 pub fn run(
     program: &core::Program,
@@ -333,6 +342,7 @@ fn failure(program: &core::Program, span: crate::source::Span) -> String {
         .unwrap_or("<unknown>:1:1");
     format!("pattern match failure at {site}")
 }
+
 // ANCHOR: match-pattern
 fn matches_pattern(p: &core::Pat, v: &Value, env: &mut Env) -> bool {
     match p {

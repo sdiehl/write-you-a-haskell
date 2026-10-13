@@ -3,6 +3,7 @@
 mod control;
 mod primitives;
 mod values;
+
 use crate::{flat, names::Id};
 use inkwell::{
     AddressSpace, OptimizationLevel,
@@ -23,31 +24,42 @@ use std::{
     path::Path,
     sync::OnceLock,
 };
+
 /// LLVM's Tail calling convention (llvm/IR/CallingConv.h).
 const TAIL_CC: u32 = 18;
+
 type Result<T> = std::result::Result<T, Error>;
+
 /// Builder, verifier, target and object-emission failures share one driver boundary.
 #[derive(Debug)]
 pub struct Error(pub String);
+
 impl From<BuilderError> for Error {
     fn from(e: BuilderError) -> Self {
         Self(e.to_string())
     }
 }
+
 impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(&self.0)
     }
 }
+
 impl std::error::Error for Error {}
+
 #[derive(Clone)]
 struct Join<'ctx> {
     block: BasicBlock<'ctx>,
     params: Vec<PhiValue<'ctx>>,
 }
+
 use values::Loc;
+
 type Env<'ctx> = BTreeMap<Id, Loc<'ctx>>;
+
 type Joins<'ctx> = BTreeMap<Id, Join<'ctx>>;
+
 /// All LLVM values borrow a caller-owned Context; no self-referential ownership.
 pub struct Backend<'ctx, 'program> {
     context: &'ctx Context,
@@ -63,6 +75,7 @@ pub struct Backend<'ctx, 'program> {
     jit: bool,
     inherited: BTreeSet<Id>,
 }
+
 impl<'ctx, 'program> Backend<'ctx, 'program> {
     /// Declare every entry first, then emit bodies and startup. Always verify.
     pub fn new(

@@ -6,12 +6,15 @@ use std::{
     time::Duration,
 };
 use testkit::{Engine, Fixture, Outcome};
+
 fn binary() -> &'static Path {
     Path::new(env!("CARGO_BIN_EXE_fun-ch24"))
 }
+
 fn programs() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/programs")
 }
+
 fn run(fixture: &Fixture, simplify: bool) -> (Outcome, usize) {
     let mut command = Command::new(binary());
     command.arg("run").arg(&fixture.path).args([
@@ -45,6 +48,7 @@ fn run(fixture: &Fixture, simplify: bool) -> (Outcome, usize) {
     outcome.stderr = format!("{trace}{after}").into_bytes();
     (outcome, steps)
 }
+
 #[test]
 fn simplification_preserves_observations_and_does_not_increase_work() {
     let fixtures: Vec<Fixture> = testkit::discover(&programs())
@@ -96,6 +100,7 @@ fn simplification_preserves_observations_and_does_not_increase_work() {
     );
     eprintln!("work oracle: {checked} successful ANF fixtures");
 }
+
 #[test]
 fn optimization_programs_agree_on_every_engine() {
     testkit::run_corpus(&testkit::Config {
@@ -112,6 +117,7 @@ fn optimization_programs_agree_on_every_engine() {
     })
     .unwrap();
 }
+
 #[test]
 fn reachability_preserves_failure_and_explains_function_dependencies() {
     let directory = tempfile::tempdir().unwrap();
@@ -174,6 +180,7 @@ fn lower(
     let anf = anf::convert(&mut sess, erase::erase(core));
     (sess, anf)
 }
+
 #[test]
 fn missing_or_contradictory_numeric_evidence_is_rejected() {
     let (_, mut p) = lower("main = 1 + 2");
@@ -204,6 +211,7 @@ fn missing_or_contradictory_numeric_evidence_is_rejected() {
             .contains("contradictory")
     );
 }
+
 #[test]
 fn a_lambda_used_twice_is_not_beta_reduced() {
     use ch24_gc::{

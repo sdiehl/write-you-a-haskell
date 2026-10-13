@@ -1,4 +1,5 @@
 use ch06_poly::{algorithm_w, parse, types::Type, union_find};
+
 fn agree(source: &str) -> Result<Type, &'static str> {
     let expr = parse(source).unwrap();
     let w = algorithm_w::check(&expr);
@@ -17,6 +18,7 @@ fn agree(source: &str) -> Result<Type, &'static str> {
         }
     }
 }
+
 #[test]
 fn principal_types_and_let_polymorphism() {
     for (source, expected) in [
@@ -42,6 +44,7 @@ fn principal_types_and_let_polymorphism() {
         assert_eq!(agree(source).unwrap().to_string(), expected);
     }
 }
+
 #[test]
 fn captured_variables_are_never_generalized() {
     for source in [
@@ -54,6 +57,7 @@ fn captured_variables_are_never_generalized() {
         assert_eq!(agree(source), Err("E0201"));
     }
 }
+
 #[test]
 fn cycles_fail_the_occurs_check() {
     for source in [
@@ -65,6 +69,7 @@ fn cycles_fail_the_occurs_check() {
         assert_eq!(agree(source), Err("E0202"));
     }
 }
+
 #[test]
 fn both_algorithms_agree_on_the_entire_corpus() {
     let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -76,6 +81,7 @@ fn both_algorithms_agree_on_the_entire_corpus() {
         }
     }
 }
+
 #[test]
 fn generated_terms_agree_including_invalid_programs() {
     fn generate(seed: &mut u64, depth: usize, names: &[String]) -> String {
@@ -135,6 +141,7 @@ fn generated_terms_agree_including_invalid_programs() {
     }
     assert!(valid > 100 && invalid > 100);
 }
+
 #[test]
 fn golden_corpus() {
     testkit::run_corpus(&testkit::Config {
@@ -146,6 +153,7 @@ fn golden_corpus() {
     })
     .unwrap();
 }
+
 #[test]
 fn principal_type_snapshots() {
     for (name, source) in [

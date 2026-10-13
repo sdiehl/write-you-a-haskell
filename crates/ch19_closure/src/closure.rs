@@ -7,6 +7,7 @@ use crate::{
     session::Session,
 };
 use std::{collections::BTreeMap, rc::Rc};
+
 struct Info {
     id: FuncId,
     lambda: Lambda,
@@ -14,11 +15,13 @@ struct Info {
     global: bool,
     escapes: bool,
 }
+
 struct Convert<'a> {
     sess: &'a mut Session,
     infos: BTreeMap<Var, Info>,
     order: Vec<Var>,
 }
+
 fn function(body: &anf::Body) -> Option<&Lambda> {
     if let Anf::Let(v, anf::Rhs::Lambda(l), b) = body.as_ref()
         && matches!(b.as_ref(),Anf::Ret(Atom::Var(w)) if v==w)
@@ -28,6 +31,7 @@ fn function(body: &anf::Body) -> Option<&Lambda> {
         None
     }
 }
+
 impl Convert<'_> {
     fn register(&mut self, v: &Var, l: &Lambda, global: bool) {
         let mut captures = free_vars(&l.body);
@@ -255,6 +259,7 @@ impl Convert<'_> {
         out.pop().unwrap()
     }
 }
+
 /// Every function is closed over explicit parameters, globals, and environment loads.
 pub fn convert(sess: &mut Session, program: anf::Program) -> flat::Program {
     let mut c = Convert {

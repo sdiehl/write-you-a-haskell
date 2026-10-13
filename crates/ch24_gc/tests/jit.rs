@@ -92,6 +92,7 @@ fn transcript(input: &str) -> testkit::Outcome {
     )
     .unwrap()
 }
+
 #[test]
 fn golden_repl_sessions() {
     let directory =
@@ -120,6 +121,7 @@ fn golden_repl_sessions() {
         );
     }
 }
+
 #[test]
 fn inspection_does_not_execute_and_includes_the_requested_ir() {
     let outcome = transcript(
@@ -133,6 +135,7 @@ fn inspection_does_not_execute_and_includes_the_requested_ir() {
     assert!(text.contains("rt_prim_putStr"));
     assert!(text.contains("$repl"));
 }
+
 #[test]
 fn installed_binary_uses_the_same_driver() {
     let output = Command::new(env!("CARGO_BIN_EXE_fun"))

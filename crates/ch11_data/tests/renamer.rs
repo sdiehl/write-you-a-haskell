@@ -1,6 +1,7 @@
 use ch11_data::{
     core, elaborate, eval, parse, rename, session::Session, typecheck,
 };
+
 fn execute(
     source: &str,
 ) -> Result<String, Vec<ch11_data::diagnostics::Diagnostic>> {
@@ -17,6 +18,7 @@ fn execute(
         Err(_) => Err(sess.diagnostics),
     }
 }
+
 #[test]
 fn forward_references_and_mutual_recursion() {
     for source in [
@@ -32,6 +34,7 @@ fn forward_references_and_mutual_recursion() {
         assert_eq!(execute(source).unwrap(), "42", "{source}");
     }
 }
+
 #[test]
 fn scope_errors_collect_and_suggest() {
     let errors = execute("hello = 1\nmain = helo + absent").unwrap_err();
@@ -57,6 +60,7 @@ fn scope_errors_collect_and_suggest() {
     assert_eq!(rename::distance("kitten", "sitting"), 3);
     assert_eq!(rename::distance("foo", "fo"), 1);
 }
+
 #[test]
 fn tarjan_agrees_with_reachability_and_orders_dependencies() {
     let mut seed = 17_u64;
@@ -108,6 +112,7 @@ fn tarjan_agrees_with_reachability_and_orders_dependencies() {
         }
     }
 }
+
 #[test]
 fn renaming_makes_shadowed_binders_distinct() {
     let mut sess = Session::default();

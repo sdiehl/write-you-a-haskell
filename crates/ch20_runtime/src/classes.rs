@@ -10,6 +10,7 @@ use crate::{
     types::{Predicate, Scheme, Type},
 };
 use std::collections::{BTreeMap, BTreeSet};
+
 #[derive(Clone, Debug)]
 pub struct Method {
     pub name: String,
@@ -18,6 +19,7 @@ pub struct Method {
     pub default: Option<ast::Binding>,
     pub id: Option<Id>,
 }
+
 #[derive(Clone, Debug)]
 pub struct Class {
     pub name: String,
@@ -27,6 +29,7 @@ pub struct Class {
     pub methods: Vec<Method>,
     pub span: Span,
 }
+
 #[derive(Clone, Debug)]
 pub struct Instance {
     pub class: String,
@@ -37,11 +40,13 @@ pub struct Instance {
     pub methods: Vec<String>,
     pub span: Span,
 }
+
 #[derive(Clone, Debug, Default)]
 pub struct Env {
     pub classes: Vec<Class>,
     pub instances: Vec<Instance>,
 }
+
 /// An immutable proof records superclass projections and instance application.
 #[derive(Clone, Debug)]
 // ANCHOR: evidence
@@ -50,6 +55,7 @@ pub enum Evidence {
     Instance(usize, Vec<Type>, Vec<Evidence>),
 }
 // ANCHOR_END: evidence
+
 fn error(
     code: ErrorCode,
     message: impl Into<String>,
@@ -57,6 +63,7 @@ fn error(
 ) -> Diagnostic {
     Diagnostic::error(code, message, span)
 }
+
 fn replace(t: &T, map: &BTreeMap<String, T>) -> T {
     match t {
         T::Name(n) => map.get(n).cloned().unwrap_or_else(|| t.clone()),
@@ -71,6 +78,7 @@ fn replace(t: &T, map: &BTreeMap<String, T>) -> T {
         }
     }
 }
+
 fn annotation(mut b: ast::Binding, ty: T) -> ast::Binding {
     b.rhs = ast::Expr {
         span: b.span,
@@ -78,6 +86,7 @@ fn annotation(mut b: ast::Binding, ty: T) -> ast::Binding {
     };
     b
 }
+
 impl Env {
     pub fn class(&self, name: &str) -> &Class {
         self.classes
@@ -221,6 +230,7 @@ impl Env {
         Ok(out)
     }
 }
+
 /// One-way matching binds only variables from an instance declaration.
 pub fn match_type(
     pattern: &Type,
@@ -248,6 +258,7 @@ pub fn match_type(
         _ => pattern == target,
     }
 }
+
 /// Check declarations and generate independently checked method implementations.
 pub fn collect(
     program: &mut ast::Program,

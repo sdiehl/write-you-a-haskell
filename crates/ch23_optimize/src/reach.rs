@@ -10,6 +10,7 @@ pub struct Reach {
     pub kept: Vec<Id>,
     pub witness: BTreeMap<Id, Option<Id>>,
 }
+
 /// Visit every reference, including captures hidden in nested lambdas, without recursion.
 fn references(body: &Body) -> BTreeSet<Id> {
     let mut found = BTreeSet::new();
@@ -72,6 +73,7 @@ fn references(body: &Body) -> BTreeSet<Id> {
     }
     found
 }
+
 /// A closure's body does not run during initialization. Calls and failure stay roots.
 pub fn discardable(body: &Body) -> bool {
     let mut todo = vec![body.as_ref()];
@@ -91,6 +93,7 @@ pub fn discardable(body: &Body) -> bool {
     }
     true
 }
+
 /// Follow dependencies from explicit roots and observable initializers in stable order.
 pub fn analyze(program: &Program, roots: &[Id]) -> Reach {
     let bodies = program
@@ -130,12 +133,14 @@ pub fn analyze(program: &Program, roots: &[Id]) -> Reach {
         witness,
     }
 }
+
 /// Filtering preserves the original dependency and initialization order.
 pub fn prune(program: &mut Program, reach: &Reach) {
     program
         .globals
         .retain(|(id, _)| reach.witness.contains_key(id));
 }
+
 /// Stable diagnostic spelling keeps unique-number churn out of the witness dump.
 pub fn display(reach: &Reach, original: usize) -> String {
     use std::fmt::Write;

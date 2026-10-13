@@ -1,6 +1,7 @@
 //! Class evidence becomes ordinary typed constructors, lambdas, and projections.
 use super::*;
 use crate::{classes::Evidence, types::Predicate};
+
 /// Declare dictionary types before elaborating any method or instance.
 pub(super) fn declare(
     typed: &TypedProgram,
@@ -76,6 +77,7 @@ pub(super) fn declare(
     }
     dicts
 }
+
 impl Elaborator<'_> {
     // ANCHOR: dictionary-type
     pub(super) fn dictionary_type(&self, class: &str, ty: Type) -> Type {

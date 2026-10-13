@@ -9,12 +9,14 @@ use crate::{
     types::{self, Predicate, Scheme, Type},
 };
 use std::collections::{BTreeMap, BTreeSet};
+
 /// Indexed lookup with an undo log keeps lexical scope entry and exit cheap.
 #[derive(Default)]
 struct Scope {
     values: BTreeMap<Id, Scheme>,
     undo: Vec<(Id, Option<Scheme>)>,
 }
+
 impl Scope {
     fn len(&self) -> usize {
         self.undo.len()
@@ -41,9 +43,11 @@ impl Scope {
         }
     }
 }
+
 // ANCHOR: field-wanted
 /// A field site's position distinguishes updates of several named slots.
 pub type FieldSite = (u32, usize);
+
 /// Field constraints never enter a polymorphic scheme.
 #[derive(Clone)]
 struct FieldWanted {
@@ -55,6 +59,7 @@ struct FieldWanted {
     level: u32,
 }
 // ANCHOR_END: field-wanted
+
 // ANCHOR: store
 #[derive(Clone)]
 struct Meta {
@@ -62,6 +67,7 @@ struct Meta {
     level: u32,
     solution: Option<Type>,
 }
+
 #[derive(Clone, Default)]
 struct Infer {
     classes: crate::classes::Env,
@@ -78,6 +84,7 @@ struct Infer {
     parameters: BTreeMap<Id, Type>,
     expression_types: BTreeMap<u32, Type>,
 }
+
 impl Infer {
     fn field(
         &mut self,
@@ -1144,6 +1151,7 @@ pub struct TypedProgram {
     pub parameters: BTreeMap<Id, Type>,
     pub expression_types: BTreeMap<u32, Type>,
 }
+
 /// Check dependency-ordered groups; each recursive component generalizes together.
 pub fn check(
     sess: &mut Session,
@@ -1152,6 +1160,7 @@ pub fn check(
     let program = crate::rename::rename(sess, program)?;
     check_renamed(sess, program)
 }
+
 /// Type inference consumes only unique identifiers and explicit dependency groups.
 pub fn check_renamed(
     sess: &mut Session,
@@ -1160,6 +1169,7 @@ pub fn check_renamed(
     let syn = crate::desugar::desugar(sess, program)?;
     check_syn(sess, syn)
 }
+
 /// Check the desugared, scoped program and record its elaboration evidence.
 pub fn check_syn(
     sess: &mut Session,

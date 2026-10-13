@@ -1,10 +1,12 @@
 mod support;
+
 use ch17_prelude::{
     core::{self, Expr, Type},
     elaborate, eval, match_compile, parse,
     session::Session,
     typecheck,
 };
+
 fn compile(source: &str) -> (Session, core::Program) {
     let mut sess = Session::default();
     let file = sess.sources.add("match.fun", source.into());
@@ -14,6 +16,7 @@ fn compile(source: &str) -> (Session, core::Program) {
     core::lint(&core).unwrap();
     (sess, core)
 }
+
 #[test]
 fn decision_trees_preserve_nested_matching_and_guards() {
     let cases = [
@@ -58,6 +61,7 @@ fn decision_trees_preserve_nested_matching_and_guards() {
         insta::assert_snapshot!(name, support::dump(source, &after));
     }
 }
+
 #[test]
 fn usefulness_finds_missing_and_redundant_clauses() {
     for (source, codes) in [
@@ -86,6 +90,7 @@ fn usefulness_finds_missing_and_redundant_clauses() {
         }
     }
 }
+
 #[test]
 fn lint_rejects_non_tail_and_unsaturated_jumps() {
     for non_tail in [false, true] {
@@ -140,6 +145,7 @@ fn lint_rejects_non_tail_and_unsaturated_jumps() {
         );
     }
 }
+
 #[test]
 fn usefulness_agrees_with_exhaustive_boolean_enumeration() {
     use core::Pat;

@@ -7,10 +7,12 @@ use crate::{
     source::Span,
     syn,
 };
+
 struct Desugar<'a> {
     sess: &'a mut Session,
     data: &'a DataEnv,
 }
+
 impl Desugar<'_> {
     fn node(&mut self, kind: Kind, span: Span) -> Expr {
         Expr {
@@ -308,6 +310,7 @@ impl Desugar<'_> {
         }
     }
 }
+
 /// Produce Syn after names are resolved, preserving row scopes and guard order.
 pub fn desugar(
     sess: &mut Session,

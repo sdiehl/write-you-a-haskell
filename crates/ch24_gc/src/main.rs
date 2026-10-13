@@ -13,6 +13,7 @@ use std::{
     path::PathBuf,
     process::ExitCode,
 };
+
 #[derive(Clone, Copy, Debug, ValueEnum)]
 enum Pass {
     Tokens,
@@ -31,12 +32,14 @@ enum Pass {
     Llvm,
     LlvmOpt,
 }
+
 #[derive(Clone, Copy, ValueEnum)]
 enum Color {
     Auto,
     Always,
     Never,
 }
+
 #[derive(Clone, Copy, ValueEnum)]
 enum Engine {
     Jit,
@@ -44,6 +47,7 @@ enum Engine {
     Anf,
     Flat,
 }
+
 #[derive(Parser)]
 #[command(
     name = "fun-ch24",
@@ -73,6 +77,7 @@ struct Cli {
     #[arg(long, global = true, value_parser = ["boehm", "copying"], default_value = "boehm")]
     gc: String,
 }
+
 #[derive(Subcommand)]
 enum Command {
     Build {
@@ -100,6 +105,7 @@ enum Command {
     },
     Repl,
 }
+
 struct BackendOptions<'a> {
     engine: Engine,
     simplify: bool,
@@ -108,6 +114,7 @@ struct BackendOptions<'a> {
     optimization: u8,
     copying: bool,
 }
+
 fn compile(
     sess: &mut Session,
     file: FileId,
@@ -398,6 +405,7 @@ fn compile(
         }
     }
 }
+
 fn process(
     source: String,
     name: String,
@@ -449,6 +457,7 @@ fn process(
     let _ = io::stdout().flush();
     if success { sess.exit_code } else { 1 }
 }
+
 fn main() -> ExitCode {
     let cli = Cli::parse();
     if cli.gc == "copying"

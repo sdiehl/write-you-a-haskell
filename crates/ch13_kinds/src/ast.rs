@@ -9,6 +9,7 @@ pub struct Expr {
     pub kind: Kind,
     pub span: Span,
 }
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 /// The forms of the extended lambda calculus.
 pub enum Kind {
@@ -39,6 +40,7 @@ pub enum Kind {
     Tuple(Vec<Expr>),
     Error,
 }
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 /// Monomorphic integer arithmetic and comparisons.
 pub enum Op {
@@ -53,6 +55,7 @@ pub enum Op {
     Le,
 }
 // ANCHOR_END: ast
+
 impl Op {
     pub fn text(self) -> &'static str {
         match self {
@@ -76,6 +79,7 @@ impl Op {
         }
     }
 }
+
 impl Expr {
     pub fn new(kind: Kind, file: FileId, start: usize, end: usize) -> Self {
         Self {
@@ -229,6 +233,7 @@ impl Expr {
         Ok(())
     }
 }
+
 impl fmt::Display for Expr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.print(f, 0)
@@ -243,6 +248,7 @@ pub struct Binding {
     pub rhs: Expr,
     pub span: Span,
 }
+
 /// A single source file with declarations in source order.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Program {
@@ -252,6 +258,7 @@ pub struct Program {
     pub aliases: Vec<TypeAlias>,
     pub span: Span,
 }
+
 impl Program {
     /// Preserve source order: each declaration scopes over only itself and later declarations.
     pub fn expression(&self) -> Expr {
@@ -272,6 +279,7 @@ impl Program {
         body
     }
 }
+
 /// Haskell-style quoted characters and primitive UTF-8 strings.
 pub fn quote(text: &str, delimiter: char) -> String {
     let mut result = String::from(delimiter);
@@ -294,6 +302,7 @@ pub fn quote(text: &str, delimiter: char) -> String {
     result.push(delimiter);
     result
 }
+
 /// Free names account for lexical shadowing and recursive local binding scope.
 pub fn free(expr: &Expr) -> std::collections::BTreeSet<String> {
     use std::collections::BTreeSet;
@@ -387,6 +396,7 @@ pub enum TypeSyntax {
     App(Box<TypeSyntax>, Box<TypeSyntax>),
     Arrow(Box<TypeSyntax>, Box<TypeSyntax>),
 }
+
 /// Declarations are collected before signatures are attached to their bindings.
 pub enum Declaration {
     Data(DataDecl),
@@ -404,6 +414,7 @@ pub enum Associativity {
     Right,
     None,
 }
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Fixity {
     pub associativity: Associativity,
@@ -420,6 +431,7 @@ pub struct DataDecl {
     pub constructors: Vec<ConstructorDecl>,
     pub span: Span,
 }
+
 /// Positional fields are strict and ordered as declared.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ConstructorDecl {
@@ -445,6 +457,7 @@ pub struct Pat {
     pub kind: PatKind,
     pub span: Span,
 }
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 /// Constructor names remain unresolved until the renamer visits the pattern.
 pub enum PatKind {
@@ -459,12 +472,14 @@ pub enum PatKind {
     List(Vec<Pat>),
     Tuple(Vec<Pat>),
 }
+
 /// Guards fall through to the next equation when every Boolean test fails.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum RowBody {
     Plain(Box<Expr>),
     Guarded(Vec<(Expr, Expr)>),
 }
+
 /// Where declarations share one scope across all guards and their right-hand sides.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Row {
@@ -473,6 +488,7 @@ pub struct Row {
     pub locals: Vec<Binding>,
     pub span: Span,
 }
+
 impl Pat {
     pub fn names(&self) -> Vec<String> {
         match &self.kind {
@@ -494,6 +510,7 @@ impl Pat {
         }
     }
 }
+
 impl Row {
     fn free(&self) -> std::collections::BTreeSet<String> {
         let mut names = match &self.body {
@@ -521,6 +538,7 @@ impl Row {
         names
     }
 }
+
 impl std::fmt::Display for Pat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self.kind {
@@ -560,6 +578,7 @@ impl std::fmt::Display for Pat {
         }
     }
 }
+
 impl std::fmt::Display for Row {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for p in &self.patterns {

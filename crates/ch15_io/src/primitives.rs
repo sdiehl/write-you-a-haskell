@@ -6,11 +6,13 @@ use crate::{
     eval::Value,
     types::{Scheme, Type},
 };
+
 macro_rules! primitives {($($variant:ident => $name:literal),* $(,)?)=>{
     #[derive(Clone,Copy,Debug,PartialEq,Eq)] pub enum Prim {$($variant),*}
     pub const ALL:&[Prim]=&[$(Prim::$variant),*];
     impl Prim {pub fn name(self)->&'static str {match self {$(Self::$variant=>$name),*}}}
 };}
+
 primitives! {
     IntAdd=>"prim_intAdd",IntSub=>"prim_intSub",IntMul=>"prim_intMul",IntNeg=>"prim_intNeg",IntQuot=>"prim_intQuot",IntRem=>"prim_intRem",IntDiv=>"prim_intDiv",IntMod=>"prim_intMod",IntEq=>"prim_intEq",IntLt=>"prim_intLt",IntLe=>"prim_intLe",
     DblAdd=>"prim_dblAdd",DblSub=>"prim_dblSub",DblMul=>"prim_dblMul",DblDiv=>"prim_dblDiv",DblNeg=>"prim_dblNeg",DblSqrt=>"prim_dblSqrt",DblExp=>"prim_dblExp",DblLog=>"prim_dblLog",DblSin=>"prim_dblSin",DblCos=>"prim_dblCos",DblPow=>"prim_dblPow",DblEq=>"prim_dblEq",DblLt=>"prim_dblLt",DblLe=>"prim_dblLe",
@@ -18,6 +20,7 @@ primitives! {
     StrAppend=>"prim_strAppend",StrLength=>"prim_strLength",StrEq=>"prim_strEq",StrCompare=>"prim_strCompare",StrUnpack=>"prim_strUnpack",StrPack=>"prim_strPack",
     ShowInt=>"prim_showInt",ShowDouble=>"prim_showDouble",ShowChar=>"prim_showChar",ShowString=>"prim_showString",ReadInt=>"prim_readInt",Error=>"prim_error",PutStr=>"prim_putStr",GetLine=>"prim_getLine",Exit=>"prim_exit"
 }
+
 /// Every literal and primitive has a fixed type; only error quantifies a result.
 pub fn signature(op: Op, data: &DataEnv) -> Scheme {
     use Prim::*;
@@ -93,9 +96,11 @@ pub fn signature(op: Op, data: &DataEnv) -> Scheme {
     }
     scheme
 }
+
 fn normalize(n: i64) -> i64 {
     (n << 1) >> 1
 }
+
 /// Formatting starts from Rust's shortest round-trip digits, then normalizes notation.
 pub fn show_double(n: f64) -> String {
     if n.is_nan() {
@@ -151,6 +156,7 @@ pub fn show_double(n: f64) -> String {
         body
     }
 }
+
 /// Primitive execution returns the language error text, without a process exit.
 pub fn evaluate(
     p: Prim,

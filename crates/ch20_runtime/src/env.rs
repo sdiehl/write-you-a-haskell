@@ -3,6 +3,7 @@
 use std::{cmp::Ordering, rc::Rc};
 
 type Link<K, V> = Option<Rc<Node<K, V>>>;
+
 #[derive(Clone, Debug)]
 struct Node<K, V> {
     key: K,
@@ -11,19 +12,23 @@ struct Node<K, V> {
     right: Link<K, V>,
     height: u32,
 }
+
 /// An immutable scope root with path-copying updates. Cloning shares all bindings.
 #[derive(Clone, Debug)]
 pub struct Env<K, V> {
     root: Link<K, V>,
 }
+
 impl<K, V> Default for Env<K, V> {
     fn default() -> Self {
         Self { root: None }
     }
 }
+
 fn height<K, V>(node: &Link<K, V>) -> u32 {
     node.as_ref().map_or(0, |n| n.height)
 }
+
 impl<K: Clone, V: Clone> Node<K, V> {
     fn refresh(&mut self) {
         self.height = 1 + height(&self.left).max(height(&self.right));
@@ -71,6 +76,7 @@ impl<K: Clone, V: Clone> Node<K, V> {
         }
     }
 }
+
 impl<K, V> Env<K, V> {
     pub fn new() -> Self {
         Self::default()
@@ -94,6 +100,7 @@ impl<K, V> Env<K, V> {
         }
     }
 }
+
 impl<K: Ord + Clone, V: Clone> Env<K, V> {
     pub fn get(&self, key: &K) -> Option<&V> {
         let mut next = self.root.as_deref();
@@ -152,9 +159,11 @@ impl<K: Ord + Clone, V: Clone> Env<K, V> {
         }
     }
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
     fn updates_share_untouched_scopes_and_keep_logarithmic_depth() {
         let mut env = Env::new();

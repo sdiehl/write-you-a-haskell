@@ -2,10 +2,12 @@
 //! Thread registration follows bdwgc's public gc.h (GC_allow_register_threads).
 use crate::layout::{self, Word};
 use std::{ffi::c_void, ptr, sync::Once};
+
 #[repr(C)]
 struct StackBase {
     mem_base: *mut c_void,
 }
+
 // SAFETY: these declarations match bdwgc 8.x gc.h on the supported 64-bit targets.
 unsafe extern "C" {
     fn GC_init();
@@ -20,8 +22,11 @@ unsafe extern "C" {
     fn GC_remove_roots(start: *mut c_void, end: *mut c_void);
     fn GC_gcollect();
 }
+
 static INIT: Once = Once::new();
+
 struct Registration(bool);
+
 impl Drop for Registration {
     fn drop(&mut self) {
         if self.0 {
@@ -32,6 +37,7 @@ impl Drop for Registration {
         }
     }
 }
+
 thread_local! {
     static THREAD: Registration = {
         // SAFETY: INIT completed first; StackBase matches gc.h on our supported targets.
@@ -46,6 +52,7 @@ thread_local! {
         }
     };
 }
+
 /// Call on the main thread before starting runtime worker threads.
 #[unsafe(no_mangle)]
 pub extern "C" fn rt_init() {
@@ -59,6 +66,7 @@ pub extern "C" fn rt_init() {
     });
     THREAD.with(|_| {});
 }
+
 fn checked(p: *mut c_void) -> *mut c_void {
     if p.is_null() {
         eprintln!("fun: out of memory");
@@ -67,6 +75,7 @@ fn checked(p: *mut c_void) -> *mut c_void {
     assert_eq!(p as usize % layout::WORD_BYTES, 0);
     p
 }
+
 /// Allocate total words, including the header, with pointer scanning enabled.
 #[unsafe(no_mangle)]
 pub extern "C" fn rt_alloc(words: usize) -> *mut Word {
@@ -77,6 +86,7 @@ pub extern "C" fn rt_alloc(words: usize) -> *mut Word {
     // SAFETY: the initialized collector returns suitably aligned storage of this size.
     checked(unsafe { GC_malloc(bytes.max(8)) }).cast()
 }
+
 /// Allocate bytes for a pointer-free object; callers initialize its header and payload.
 #[unsafe(no_mangle)]
 pub extern "C" fn rt_alloc_atomic(bytes: usize) -> *mut u8 {
@@ -84,10 +94,12 @@ pub extern "C" fn rt_alloc_atomic(bytes: usize) -> *mut u8 {
     // SAFETY: the initialized collector returns aligned storage, never scanned as pointers.
     checked(unsafe { GC_malloc_atomic(bytes.max(8)) }).cast()
 }
+
 /// A registered, independently owned range. Rust's ordinary heap is not scanned by Boehm.
 pub struct Roots {
     words: Box<[Word]>,
 }
+
 impl Roots {
     pub fn new(words: &[Word]) -> Self {
         // Unregistered guard words prevent Boehm merging adjacent root ranges.
@@ -110,6 +122,7 @@ impl Roots {
         &self.words[1..self.words.len() - 1]
     }
 }
+
 impl Drop for Roots {
     fn drop(&mut self) {
         if self.words.len() > 2 {
@@ -124,6 +137,7 @@ impl Drop for Roots {
         }
     }
 }
+
 /// Force a collection for ABI validation. Live words must be on registered stacks or roots.
 pub fn collect() {
     rt_init();
@@ -132,6 +146,7 @@ pub fn collect() {
         GC_gcollect();
     }
 }
+
 /// Allocate a scanned object, protecting fields even when supplied in a Rust Vec.
 pub fn object(kind: u8, tag: u32, fields: &[Word]) -> Word {
     let roots = Roots::new(fields);
@@ -148,6 +163,7 @@ pub fn object(kind: u8, tag: u32, fields: &[Word]) -> Word {
     }
     p as Word
 }
+
 pub fn constructor(tag: u32, fields: &[Word]) -> Word {
     if fields.is_empty() {
         layout::immediate(tag)
@@ -155,6 +171,7 @@ pub fn constructor(tag: u32, fields: &[Word]) -> Word {
         object(layout::CON, tag, fields)
     }
 }
+
 pub fn double(n: f64) -> Word {
     let p = rt_alloc_atomic(16).cast::<Word>();
     // SAFETY: a DOUBLE consists of one header and one unscanned f64 word.
@@ -164,6 +181,7 @@ pub fn double(n: f64) -> Word {
     }
     p as Word
 }
+
 pub fn string(s: &str) -> Word {
     let payload = 1 + s.len().div_ceil(8);
     let size = u32::try_from(payload).expect("string too large");
@@ -179,6 +197,7 @@ pub fn string(s: &str) -> Word {
     }
     p as Word
 }
+
 /// # Safety
 /// w must point to a live, aligned heap object with a valid header.
 pub unsafe fn header(w: Word) -> Word {
@@ -186,6 +205,7 @@ pub unsafe fn header(w: Word) -> Word {
     // SAFETY: required live object header is the first word.
     unsafe { (w as *const Word).read() }
 }
+
 /// # Safety
 /// w must be a live object and index must name a payload word.
 pub unsafe fn field(w: Word, index: usize) -> Word {
@@ -195,6 +215,7 @@ pub unsafe fn field(w: Word, index: usize) -> Word {
         (w as *const Word).add(index + 1).read()
     }
 }
+
 /// # Safety
 /// w must be a live DOUBLE object.
 pub unsafe fn unbox_double(w: Word) -> f64 {
@@ -204,6 +225,7 @@ pub unsafe fn unbox_double(w: Word) -> f64 {
         f64::from_bits(field(w, 0))
     }
 }
+
 /// # Safety
 /// w must be a live STRING, kept rooted for the returned borrow's entire lifetime.
 pub unsafe fn text<'a>(w: Word) -> &'a str {
@@ -232,6 +254,7 @@ pub unsafe fn text<'a>(w: Word) -> &'a str {
 pub struct GlobalRoot {
     words: Box<[std::cell::UnsafeCell<Word>; 3]>,
 }
+
 impl GlobalRoot {
     pub fn new(value: Word) -> Self {
         rt_init();
@@ -256,6 +279,7 @@ impl GlobalRoot {
         unsafe { self.words[1].get().read() }
     }
 }
+
 impl Drop for GlobalRoot {
     fn drop(&mut self) {
         // SAFETY: unregister exactly this live range before freeing its backing allocation.

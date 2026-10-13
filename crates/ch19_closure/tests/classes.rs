@@ -1,6 +1,7 @@
 use ch19_closure::{
     core, elaborate, eval, parse, session::Session, typecheck,
 };
+
 fn compile(source: &str, prelude: bool) -> (String, core::Program) {
     let mut sess = Session::default();
     sess.options.no_prelude = !prelude;
@@ -12,6 +13,7 @@ fn compile(source: &str, prelude: bool) -> (String, core::Program) {
     core::lint(&core).unwrap();
     (description, core)
 }
+
 #[test]
 fn dictionary_snapshots_are_typed_core() {
     let cases = [
@@ -86,6 +88,7 @@ fn dictionary_snapshots_are_typed_core() {
         insta::assert_snapshot!(name, format!("{declarations}\n{groups}"));
     }
 }
+
 #[test]
 fn qualified_types_simplify_superclasses_without_defaulting() {
     for (source, expected) in [
@@ -99,6 +102,7 @@ fn qualified_types_simplify_superclasses_without_defaulting() {
         assert_eq!(compile(source, true).0, expected);
     }
 }
+
 #[test]
 fn missing_dictionary_arguments_fail_independent_lint() {
     let (_, mut program) = compile(
@@ -128,6 +132,7 @@ fn missing_dictionary_arguments_fail_independent_lint() {
     );
     assert!(core::lint(&program).unwrap_err().contains("type mismatch"));
 }
+
 #[test]
 fn double_formats_and_round_trips() {
     use ch19_closure::primitives::show_double;
@@ -161,6 +166,7 @@ fn double_formats_and_round_trips() {
         }
     }
 }
+
 #[test]
 fn floating_literals_remain_monomorphic() {
     let (_, program) =

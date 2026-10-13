@@ -7,10 +7,12 @@ use crate::{
     source::{FileId, Span},
 };
 use lalrpop_util::{ParseError, lalrpop_mod};
+
 lalrpop_mod!(
     #[allow(clippy::all)]
     parser
 );
+
 /// Fold equation parameters rightward into curried lambdas, rejecting duplicate parameters.
 pub fn lambda(
     file: FileId,
@@ -34,6 +36,7 @@ pub fn lambda(
     }
     Ok(body)
 }
+
 pub fn binding(
     file: FileId,
     l: usize,
@@ -48,6 +51,7 @@ pub fn binding(
         span: Span::new(file, l, r),
     })
 }
+
 /// Parse an explicit-brace program from a session's source file.
 pub fn parse(sess: &mut Session, file: FileId) -> Result<Program, Stop> {
     let tokens = crate::layout::layout(sess, file)?;
@@ -73,6 +77,7 @@ pub fn parse(sess: &mut Session, file: FileId) -> Result<Program, Stop> {
         }
     }
 }
+
 fn diagnostic(
     file: FileId,
     error: ParseError<usize, Token, Diagnostic>,
@@ -189,6 +194,7 @@ pub fn declarations(
     }
     Ok(bindings)
 }
+
 fn signature(
     syntax: &crate::ast::TypeSyntax,
     span: Span,
@@ -255,6 +261,7 @@ pub fn program(
         span,
     })
 }
+
 pub fn fixity(
     associativity: crate::ast::Associativity,
     precedence: i64,

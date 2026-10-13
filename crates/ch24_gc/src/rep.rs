@@ -5,6 +5,7 @@ pub enum Rep {
     Double,
     Word,
 }
+
 impl std::fmt::Display for Rep {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(match self {
@@ -21,7 +22,9 @@ use crate::{
     names::Id,
 };
 use std::collections::BTreeMap;
+
 pub type Table = BTreeMap<Id, Rep>;
+
 /// Missing evidence is an internal error, never an invitation to infer a storage tag.
 pub fn get(table: &Table, id: &Id) -> Result<Rep, String> {
     table
@@ -29,12 +32,14 @@ pub fn get(table: &Table, id: &Id) -> Result<Rep, String> {
         .copied()
         .ok_or_else(|| format!("missing representation evidence for {id}"))
 }
+
 pub fn atom(table: &Table, a: &Atom) -> Result<Rep, String> {
     match a {
         Atom::Var(v) | Atom::Global(v) => get(table, v),
         Atom::Lit(l) => Ok(crate::erase::literal_rep(l)),
     }
 }
+
 /// Numeric operands are checked against the primitive's declared signature.
 pub fn primitive(
     table: &Table,
@@ -85,6 +90,7 @@ pub fn primitive(
     }
     Ok(())
 }
+
 /// Copy evidence to the beta continuation's fresh result. No type classification occurs here.
 pub fn beta_results(program: &mut crate::anf::Program) {
     let mut todo = program
@@ -177,6 +183,7 @@ pub fn lint_anf(program: &crate::anf::Program) -> Result<(), String> {
     }
     Ok(())
 }
+
 pub fn lint_flat(program: &crate::flat::Program) -> Result<(), String> {
     use crate::flat::{Flat, Rhs};
     let mut todo = program

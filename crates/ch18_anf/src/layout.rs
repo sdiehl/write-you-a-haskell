@@ -15,6 +15,7 @@ enum Item {
     Close,
     Semi,
 }
+
 impl Layout for Item {
     fn v_open() -> Self {
         Self::Open
@@ -26,6 +27,7 @@ impl Layout for Item {
         Self::Semi
     }
 }
+
 fn opener(t: &Token) -> bool {
     matches!(t, Token::Let | Token::Where | Token::Of | Token::Do)
 }
@@ -68,7 +70,9 @@ pub fn layout(
     }
 }
 // ANCHOR_END: layout
+
 type Failure = (usize, usize, &'static str);
+
 fn region(
     source: &str,
     tokens: &[Spanned],

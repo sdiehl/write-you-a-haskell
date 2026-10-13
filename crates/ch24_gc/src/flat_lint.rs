@@ -1,12 +1,14 @@
 //! Structural checks after types have been erased.
 use crate::flat::{Atom, Body, Flat, FuncId, Program, Rhs, Var};
 use std::collections::{BTreeMap, BTreeSet};
+
 struct Check<'a> {
     program: &'a Program,
     environment: Option<(Var, usize)>,
     globals: BTreeSet<Var>,
     seen: BTreeSet<Var>,
 }
+
 impl Check<'_> {
     fn bind(&mut self, v: &Var) -> Result<(), String> {
         crate::rep::get(&self.program.reps, v)?;
@@ -194,6 +196,7 @@ impl Check<'_> {
         Ok(())
     }
 }
+
 /// Check each lifted function in isolation: there are no implicit free variables.
 pub fn lint(program: &Program) -> Result<(), String> {
     crate::rep::lint_flat(program)?;

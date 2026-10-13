@@ -7,18 +7,21 @@ use crate::{
     types::{Scheme, Type},
 };
 use std::collections::BTreeMap;
+
 /// Nominal identity retains a spelling for types printed outside the session.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct TyConId {
     pub index: u32,
     pub name: String,
 }
+
 /// Constructor identities are globally unique; runtime tags are per datatype.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ConId {
     pub index: u32,
     pub name: String,
 }
+
 /// A nominal constructor carries its inferred closed kind and source arity.
 #[derive(Clone, Debug)]
 pub struct TyConInfo {
@@ -27,6 +30,7 @@ pub struct TyConInfo {
     pub kind: crate::kinds::Kind,
     pub constructors: Vec<ConId>,
 }
+
 /// Constructor fields refer to quantified variables numbered in parameter order.
 #[derive(Clone, Debug)]
 pub struct ConInfo {
@@ -37,6 +41,7 @@ pub struct ConInfo {
     pub fields: Vec<Type>,
     pub scheme: Scheme,
 }
+
 /// A compilation unit shares one closed table, with no references to inference cells.
 #[derive(Clone, Debug, Default)]
 pub struct DataEnv {
@@ -45,6 +50,7 @@ pub struct DataEnv {
     pub kinds: BTreeMap<String, crate::kinds::Kind>,
     pub constructors: Vec<ConInfo>,
 }
+
 impl DataEnv {
     /// Resolve source-order named fields to declaration-order slots.
     pub fn fields(
@@ -210,6 +216,7 @@ impl DataEnv {
         Ok(Type::Con(info.id.clone(), args))
     }
 }
+
 /// Declare all type heads before checking fields, permitting recursive datatypes.
 pub fn collect(
     sess: &mut Session,

@@ -3,15 +3,18 @@ use ch03_lambda::{
     names::{self, Term},
     normal, parse,
 };
+
 fn cbv(source: &str, fuel: usize) -> Result<String, String> {
     eval::evaluate(&parse(source).unwrap(), &vec![], &mut fuel.clone())
         .map(|v| v.to_string())
 }
+
 fn normal(source: &str) -> String {
     normal::reduce(parse(source).unwrap(), 10000, |_| {})
         .unwrap()
         .to_string()
 }
+
 #[test]
 fn closures_capture_definition_scope() {
     assert_eq!(
@@ -29,6 +32,7 @@ fn closures_capture_definition_scope() {
         "divide by zero"
     );
 }
+
 #[test]
 fn substitution_cannot_capture_free_or_nested_bound_names() {
     let value = parse("y").unwrap();
@@ -50,6 +54,7 @@ fn substitution_cannot_capture_free_or_nested_bound_names() {
         "let x = y in x"
     );
 }
+
 #[test]
 fn debruijn_erases_alpha_names_but_preserves_free_names() {
     let a =
@@ -63,6 +68,7 @@ fn debruijn_erases_alpha_names_but_preserves_free_names() {
         Term::Free("x".into())
     );
 }
+
 #[test]
 fn church_numerals_and_ski() {
     let church = "let two = \\f -> \\x -> f (f x) in let plus = \\m -> \\n -> \\f -> \\x -> m f (n f x) in plus two two (\\x -> x + 1) 0";
@@ -72,6 +78,7 @@ fn church_numerals_and_ski() {
     assert_eq!(cbv(ski, 1000).unwrap(), "42");
     assert_eq!(normal(ski), "42");
 }
+
 #[test]
 fn y_combinator_terminates_only_under_normal_order() {
     let source = "let y = \\f -> (\\x -> f (x x)) (\\x -> f (x x)) in y (\\self -> \\n -> if n == 0 then 1 else n * self (n - 1)) 5";
@@ -84,6 +91,7 @@ fn y_combinator_terminates_only_under_normal_order() {
     );
     assert_eq!(normal(&format!("(\\unused -> 42) ({omega})")), "42");
 }
+
 #[test]
 fn printer_inserts_only_needed_parentheses() {
     for (source, expected) in [
@@ -105,6 +113,7 @@ fn printer_inserts_only_needed_parentheses() {
         );
     }
 }
+
 #[test]
 fn golden_corpus() {
     testkit::run_corpus(&testkit::Config {
@@ -116,6 +125,7 @@ fn golden_corpus() {
     })
     .unwrap();
 }
+
 #[test]
 fn debruijn_snapshots() {
     for (name, source) in [

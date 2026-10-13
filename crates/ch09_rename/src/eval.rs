@@ -5,7 +5,9 @@ use crate::{
     names::Id,
 };
 use std::rc::Rc;
+
 type Env = Vec<(Id, Value)>;
+
 #[derive(Clone, Debug)]
 /// A closure captures outer declarations and an optional immutable recursive-group recipe.
 pub enum Value {
@@ -17,6 +19,7 @@ pub enum Value {
         recursive: Option<Rc<Vec<Bind>>>,
     },
 }
+
 impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -25,9 +28,11 @@ impl std::fmt::Display for Value {
         }
     }
 }
+
 pub fn normalize(n: i64) -> i64 {
     (n << 1) >> 1
 }
+
 /// Rebuild a recursive group's closures from a shared immutable recipe. The
 /// recipe captures the outer environment, never the closures themselves.
 // ANCHOR: recursive-closures
@@ -48,6 +53,7 @@ fn recursive_values(bindings: Rc<Vec<Bind>>, env: Rc<Env>) -> Env {
     values
 }
 // ANCHOR_END: recursive-closures
+
 fn bind_group(
     group: &BindGroup,
     env: &mut Env,
@@ -66,6 +72,7 @@ fn bind_group(
     }
     Ok(())
 }
+
 fn evaluate(
     expr: &Expr,
     env: &Env,
@@ -133,6 +140,7 @@ fn evaluate(
         }
     }
 }
+
 fn primitive(op: Op, args: &[Value]) -> Result<Value, String> {
     if let [Value::Lit(Lit::String(a)), Value::Lit(Lit::String(b))] = args
         && op == Op::Append
@@ -166,6 +174,7 @@ fn primitive(op: Op, args: &[Value]) -> Result<Value, String> {
     };
     Ok(Value::Lit(value))
 }
+
 /// Evaluate top-level values exactly once in dependency order, then select main's value.
 pub fn run(
     program: &core::Program,
