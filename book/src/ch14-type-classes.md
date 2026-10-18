@@ -73,7 +73,7 @@ main = same [1,2] [1,2]
 `Ord` provides an `Eq` superclass, so the signature supplies enough evidence.
 An absent instance reports `E0210`. Malformed or overlapping instances and missing
 methods report `E0211`. A constraint whose variable is absent from the result
-type reports `E0230`: for example, `show Nothing` cannot choose the element's
+type reports `E0230`. For example, `show Nothing` cannot choose the element's
 `Show` instance. An explicit `Maybe Int` annotation resolves that ambiguity.
 
 `Double` adds floating arithmetic, comparisons, conversions, and mathematical
@@ -88,6 +88,29 @@ The type `Eq a => a -> a -> Bool` says we can compare two values of `a` if
 someone supplies equality for `a`. The part before `=>` is the _context_. When
 we use a function with this type, inference creates a request for that equality
 operation. We call this a _wanted_ constraint.
+
+### Pass Equality by Hand
+
+Let's temporarily write dictionary passing as ordinary functions. The names
+below are explanatory notation for the translated program.
+
+```text
+same d x y = d.eq x y
+same intEq 3 3
+```
+
+We have turned the `Eq a` requirement into the parameter `d`. At the integer
+call, the compiler supplies `intEq`. Nothing needs to discover the instance
+while this call runs.
+
+Lists make the construction more interesting. A dictionary builder
+`listEq d` compares empty lists directly and uses `d.eq` on corresponding
+heads before comparing the tails. Comparing integer lists therefore needs
+`same (listEq intEq) xs ys`. The wanted `Eq [Int]` leads us to the list
+instance, whose prerequisite is `Eq Int`. Solving that prerequisite gives us
+the argument for the builder. Instance search has constructed a program!
+
+We can now connect that small translation to the constraint solver.
 
 Some requests have immediate answers, such as the instance for `Int`. Others
 remain requests about a type variable. When we generalize a binding, those can

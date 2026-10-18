@@ -45,6 +45,7 @@ Explicit braces put several declarations into one input. A file loaded with
 
 ```fun
 make x = \y -> x + y
+
 saved = make 40
 ```
 
@@ -78,6 +79,16 @@ half the lifetime problem. The code address must remain executable too. The
 Boehm collector understands heap reachability, but does not own LLVM's machine
 code or know when an execution engine can be discarded [@boehm1988].
 
+Let's follow the `saved` example through three inputs. After accepting
+`make`, we retain its code. After accepting `saved = make 40`, we also retain
+the resulting function value and everything it references. A later `saved 2`
+needs both. Keeping the heap object while discarding the earlier machine code
+would leave us with a function whose entry address is unusable.
+
+Now enter `broken = missingName`. Renaming fails, so we discard the candidate
+and can still call `saved 2`. This recovery concerns compiler errors. A native
+runtime failure still terminates the session.
+
 We give a session ownership of all its execution engines. Each engine owns one
 input's module. A separate table holds global words in registered root slots.
 Earlier modules can therefore remain immutable, and later modules import their
@@ -97,7 +108,7 @@ executing them [@pierce2002].
 
 A native executable starts with `main`, initializes globals, executes the IO
 action, and exits. A REPL cannot exit after every successful input. JIT lowering
-instead emits a C-callable `void fun_entry(void)`: initialize new globals,
+instead emits a C-callable `void fun_entry(void)`. We initialize new globals,
 apply the query action to unit, then return. Fast entries still use `tailcc`.
 Closure calls still use the same C eval/apply path. Calls across that ABI
 boundary are explicitly `notail`. A wide-call regression caught LLVM inferring
@@ -264,7 +275,7 @@ captured data and the machine code it points to must still be there.
 
 - [Inkwell ExecutionEngine documentation](https://thedan64.github.io/inkwell/inkwell/execution_engine/struct.ExecutionEngine.html),
   particularly symbol mappings and the safety contract of `get_function`.
-- [Compiler Crates: Inkwell](https://sdiehl.github.io/compiler-crates/inkwell.html),
+- [Inkwell in Compiler Crates](https://sdiehl.github.io/compiler-crates/inkwell.html),
   for LLVM construction through the Rust bindings.
 - Closures, partial applications, and slow entries [@marlow2004].
 - Conservative roots and cooperation with a runtime [@boehm1988].

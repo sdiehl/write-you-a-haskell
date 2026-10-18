@@ -47,17 +47,17 @@ unwrap (Wrap x) = x
 main = unwrap (Wrap (Just 42))
 ```
 
-`Wrap` has kind `(* -> *) -> * -> *`. A recursive declaration such as
-`data Fix f = Fix (f (Fix f))` gives `Fix` kind `(* -> *) -> *`. Declaration
-dependencies are grouped into strongly connected components. Each component
-is inferred before its unconstrained kind variables default to `*`.
+`Wrap` has kind `(* -> *) -> * -> *`. Let's work out where those arrows
+come from before looking at the inference code.
 
 ```fun
 type Pair a = (a,a)
+
 type Count = Int
 
 addPair :: Pair Count -> Count
 addPair (x,y) = x + y
+
 main = addPair (20,22)
 ```
 
@@ -78,8 +78,26 @@ $$
 {\Gamma \vdash f\ a : \sigma}\;\text{(Application)}
 $$
 
+### Follow One Field
+
+In `data Wrap f a = Wrap (f a)`, the field `f a` must describe a value, so
+its kind is `*`. Give `a` an unknown kind `k`. Application then requires
+`f` to have kind `k -> *`. That's all the field tells us. Once the declaration
+group is checked, we default the still unknown `k` to `*`.
+
+Now read the declaration's parameters from left to right. `Wrap` accepts an
+`f` of kind `* -> *`, then an `a` of kind `*`, and produces a value type.
+We get `(* -> *) -> * -> *`. `Wrap Maybe Int` fits each slot. `Wrap Int Int`
+fails at the first one because `Int` cannot accept a type argument.
+
+The familiar unifier does most of this work. Its arrows now connect kinds
+instead of types. For recursive declarations we first give every head a
+provisional kind, check the whole dependency group, and only then default
+what remains unknown. Defaulting earlier could commit us before another
+field supplies its constraints.
+
 Function arguments and results must each have kind `*`. A constructor field must
-also have kind `*`: a value cannot inhabit the unapplied type constructor
+also have kind `*`. A value cannot inhabit the unapplied type constructor
 `Maybe`. The distinction between kinds and types follows the presentation of
 higher-order type operators in Pierce [@pierce2002]. Fun infers kinds but does
 not add type-level lambdas or explicit kind annotations.
@@ -136,7 +154,7 @@ $ cargo run -q -- check tests/programs/kinds/synonym-self.fun
 E0303
 ```
 
-The last command fails and points to the bad kind application. Try a partially
+The last command rejects a cycle in the synonym definitions. Try a partially
 applied datatype constructor next, then a partially applied synonym. The former
 can be useful at a higher kind, while the latter is rejected by our synonym
 rules. Having the same apparent number of missing arguments doesn't make the

@@ -85,6 +85,12 @@ shape of an application, but it won't have a typing derivation.
 
 ### Typing and Safety
 
+Let's read the notation before using it. In $\Gamma \vdash e : \tau$, gamma
+is our collection of assumptions, $e$ is the expression, and $\tau$ is its
+type. We read the whole judgment as “under these assumptions, e has type tau.”
+Below a rule's bar is the claim we want to establish. Above it are the facts
+we need about the smaller pieces. The bar means “if these hold, so does this.”
+
 A typing environment maps names to types. Reading a variable looks up its nearest
 binding. A lambda extends that environment while checking its body. Application
 checks its argument against the function's domain [@pierce2002].
@@ -105,6 +111,13 @@ Arithmetic takes integers, while comparisons return booleans. A `let` checks its
 right-hand side before extending the environment, so it remains non-recursive.
 There is no implicit quantification. An identity annotated `Int -> Int` cannot
 also accept `Bool`.
+
+For `\(x : Int) -> x + 1`, we add `x` with type `Int` to our assumptions.
+Both operands of `+` then have type `Int`, so the body has type `Int` too.
+The abstraction rule packages that reasoning into `Int -> Int`. Applying the
+function to `41` satisfies App and gives an `Int`. Applying it to `True`
+leaves us trying to equate `Bool` with `Int`. We cannot complete that rule,
+which is exactly where the checker should stop.
 
 Two useful ideas explain what we've gained. _Preservation_ says that taking an
 evaluation step doesn't change an expression's type. If we start with an `Int`
@@ -184,8 +197,8 @@ check of `1 / 0` is expected. Its type is `Int`, even though execution fails.
 ## Further Reading
 
 Pierce gives the formal progress and preservation proofs [@pierce2002].
-Damas and Milner motivate the next step beyond simple types:
-principal type schemes and polymorphic `let` [@damas1982].
+Damas and Milner motivate principal type schemes and polymorphic `let`,
+our next step beyond simple types [@damas1982].
 Takenobu Tani's Type Introduction Illustrated for Casual Haskellers
 ([pdf](https://takenobu-hs.github.io/downloads/type_introduction_illustrated.pdf)
 / [github](https://github.com/takenobu-hs/type-introduction-illustrated)) draws

@@ -138,7 +138,7 @@ and constructor family determine the next problem:
    rows headed by other constructors, and make the same expansion in the query.
 2. **Wildcard candidate, complete family.** If every constructor of the column's
    datatype appears, specialize for each. Any useful branch supplies a witness.
-3. **Wildcard candidate, incomplete family.** Search the default matrix: retain
+3. **Wildcard candidate, incomplete family.** Search the default matrix. Retain
    only wildcard-headed rows and drop their first column. A useful suffix can
    be prefixed by a missing constructor. Literal domains are handled through
    this path, choosing a literal absent from the tested heads.
@@ -200,8 +200,8 @@ The helper looks up the declaration and substitutes its parameters:
 ```
 
 For example, specializing `Just` at `Maybe Int` binds an `Int`, not the declaration's
-uninstantiated type variable. The same rule matters for a record projection:
-its single-constructor match now becomes a tag branch and ordinary field binders.
+uninstantiated type variable. The same rule matters for a record projection.
+Its single-constructor match now becomes a tag branch and ordinary field binders.
 Core lint independently checks these instantiated types.
 
 `Compiler::tree` handles the matrix recursively. An empty matrix becomes

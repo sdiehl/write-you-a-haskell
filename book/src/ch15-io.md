@@ -80,6 +80,24 @@ $$
 \mathsf{Monad}\ m \Rightarrow m\ \alpha \to (\alpha \to m\ \beta) \to m\ \beta
 $$
 
+Let's expand a small program before worrying about its representation.
+
+```fun
+main = do
+  name <- getLine
+  putStrLn name
+```
+
+The sequencing becomes `getLine >>= (\name -> putStrLn name)`. The lambda
+is essential. We cannot construct the second action using `name` until the
+first action supplies it. Building this combined action reads nothing and
+prints nothing. When the driver runs it, we read a line, pass the result to
+the lambda, and run the action it returns.
+
+For comparison, `let unused = putStrLn "hello" in pure ()` constructs a
+printing action and discards it. Running the resulting action prints nothing.
+We still evaluate pure arguments strictly when constructing an action.
+
 For IO, the source checker treats `IO` as an abstract nominal constructor. Core
 represents an action as a function from unit to its result:
 
@@ -107,7 +125,7 @@ lazy evaluation must not be imported into Fun's operational account.
 The monad laws describe intended instance behavior. The compiler checks types,
 not those equations. In particular, equations involving nontermination need
 care in a strict language. Dictionary passing remains the mechanism from
-[Chapter 14](ch14-type-classes.md): no new class dispatch appears in the evaluator.
+[Chapter 14](ch14-type-classes.md). No new class dispatch appears in the evaluator.
 
 ## Implementation
 
@@ -121,7 +139,7 @@ source identifier.
 #![function!("../../crates/ch15_io/src/desugar.rs", do_block)]
 ```
 
-This placement differs from a separate post-renaming desugaring pass: generated
+This placement differs from a separate post-renaming desugaring pass. The generated
 bindings go through the same scope checker as handwritten ones. The helper
 `do_pattern` validates the pattern-shaped syntax on the left of `<-`. The
 span-bearing `DoFail` node is later translated into an ordinary error call with
@@ -129,7 +147,7 @@ its file, line, and column. No do node reaches Core.
 
 Only the Prelude's trusted `FileId` lets the checker relate its IO implementation
 to unit-taking functions. User-visible schemes remain nominal. After
-elaboration, `io_lower::lower` traverses all Core types before lint: binder
+elaboration, `io_lower::lower` traverses all Core types before lint, including binder
 types, type applications, constructor fields, match result types, and dictionary
 types. Replacing only `IO a` at the outermost level would miss higher-kinded
 uses such as a `Monad IO` dictionary. The traversal also replaces the unapplied

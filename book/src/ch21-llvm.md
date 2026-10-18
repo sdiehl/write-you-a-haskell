@@ -66,6 +66,24 @@ Imagine two paths that meet at a join. One supplies `10`, the other `20`.
 The phi takes the value associated with whichever path we arrived from. It
 doesn't test the original condition again.
 
+We can write that merge as a tiny LLVM fragment. Assume the condition is
+already an `i1`. We use raw integers here only to isolate the control flow.
+
+```llvm
+left:
+  br label %merge
+right:
+  br label %merge
+merge:
+  %value = phi i64 [ 10, %left ], [ 20, %right ]
+  ret i64 %value
+```
+
+An earlier conditional branch chooses `left` or `right`. When we enter
+`merge`, the predecessor selects the incoming value. Our real translation
+supplies tagged Fun words, but the correspondence is the same. A join
+parameter becomes `%value`, and each jump contributes one incoming pair.
+
 There is an easy codegen mistake here. Emitting one Flat operation can create
 several LLVM blocks. Division, for example, adds a zero check. The phi's incoming
 edge must name the block we actually leave after that check, not the block
@@ -258,7 +276,7 @@ particular transformation.
 
 Separate stress tests execute the native recursion programs with a 512 KiB
 stack. Another loop allocates at least 100 million words under a 64 MiB Boehm
-heap limit. Together these test two different obligations: tail transfers must
+heap limit. Together these test two different obligations. Tail transfers must
 release call frames, and dead heap objects must remain collectible. Passing
 LLVM verification alone establishes neither.
 
@@ -277,7 +295,7 @@ LLVM verification alone establishes neither.
 
 ## Further Reading
 
-- [Compiler Crates: Inkwell](https://sdiehl.github.io/compiler-crates/inkwell.html),
+- [Inkwell in Compiler Crates](https://sdiehl.github.io/compiler-crates/inkwell.html),
   for building LLVM modules through Rust.
 - [LLVM Language Reference](https://llvm.org/docs/LangRef.html), especially
   calls, phi nodes, integer overflow flags, and pointer arithmetic.

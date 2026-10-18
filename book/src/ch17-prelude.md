@@ -92,6 +92,21 @@ would check a handwritten one. The Haskell Report specifies the structural
 behavior [@haskell2010]. We adapt it to Fun's records, primitive strings, and
 smaller `Show` interface.
 
+For `data Choice a = Empty | One a`, we could write the essential equality
+cases ourselves.
+
+```fun
+instance Eq a => Eq (Choice a) where
+  (==) Empty Empty = True
+  (==) (One x) (One y) = x == y
+  (==) _ _ = False
+```
+
+The middle clause explains the `Eq a` requirement. We need equality for the
+stored values. The other clauses only inspect constructor tags. Deriving
+builds these same decisions from the declaration and sends the result through
+our ordinary instance checker.
+
 A parameter used in a field usually introduces a corresponding instance
 constraint. A phantom parameter does not. For `data Token a = Token Int`,
 equality needs no `Eq a` dictionary because no value of type `a` is examined.

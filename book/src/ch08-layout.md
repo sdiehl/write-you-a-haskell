@@ -39,6 +39,7 @@ inside it. Several local declarations may share a `let` block.
 addTwo x = x + y
   where
     y = 2
+
 main = let result = addTwo 40 in result
 ```
 
@@ -49,6 +50,7 @@ but it cannot make the implementation more polymorphic than it is.
 ```fun
 id :: a -> a
 id x = x
+
 main = let { n :: Int; n = id 42; } in n
 ```
 
@@ -58,11 +60,13 @@ to the left at precedence 9. Named functions become operators inside backticks.
 
 ```fun
 infixr 5 %%
+
 a %% b = a * 10 + b
+
 main = 1 %% 2 %% 3
 ```
 
-This program prints `33` because it means `1 %% (2 %% 3)`. Sections supply one argument:
+This program prints `33` because it means `1 %% (2 %% 3)`. Sections supply one argument.
 `(40 +)` and `(+ 2)` are functions. `(- 2)` instead means negation. Unary minus
 has precedence 6, so `-2 * 3 + 4` means `(-(2 * 3)) + 4`. Write parentheses around
 negation used after an operator of precedence 6 or greater.
@@ -85,6 +89,7 @@ scale x = result
   where
     doubled = x + x
     result = doubled * 3
+
 main = let n = 7 in scale n
 ```
 
@@ -117,7 +122,7 @@ main = do
   putStrLn "done"
 ```
 
-Its explicit form is:
+We can make those delimiters explicit too:
 
 ```fun
 { main = do
@@ -145,6 +150,12 @@ associativities at the same precedence require parentheses [@haskell2010].
 A signature makes a promise. If we write `a -> a`, we mean the function works
 for any `a` its caller chooses. The checker mustn't make that promise true by
 quietly choosing `a = Int`.
+
+Compare `id x = x` with `inc x = x + 1`. We can promise `Int -> Int` for
+either function. If we promise `a -> a`, only identity qualifies. Were we to
+check `inc` by solving that promised `a` as `Int`, we'd accept a function
+that cannot handle the boolean its caller is allowed to supply. We need a
+variable that stands for the caller's choice and refuses to become `Int`.
 
 We enforce this by replacing the signature's quantified variables with rigid
 identities, called _skolems_. Inference variables can be solved, but a skolem

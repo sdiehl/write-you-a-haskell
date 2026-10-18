@@ -76,7 +76,7 @@ compiler, so install Rust through rustup next.
 ### Rust and the Repository
 
 Follow the [canonical Rust installation guide](https://rust-lang.org/tools/install/).
-On either platform, its rustup installer is:
+We can install Rust and open the repository with these commands:
 
 ```sh
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh

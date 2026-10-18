@@ -45,13 +45,14 @@ answer that question.
 data Point = Point { x :: Int, y :: Int }
 
 move p = p { x = p.x + 1 }
+
 main = move (Point { y = 4, x = 3 })
 ```
 
 Construction must supply every field exactly once. Its expressions run in written
 order, even when that differs from declaration order. Positional construction and
 patterns remain available. A record pattern may omit fields, which become
-wildcards: `Point { x = n }` binds only the first coordinate.
+wildcards. For example, `Point { x = n }` binds only the first coordinate.
 
 Projection and update bind more tightly than application. Thus `f p.x` means
 `f (p.x)`, and `f p { x = 3 }` means `f (p { x = 3 })`. The section `(.x)` is
@@ -89,6 +90,14 @@ For a unique field name, the checker immediately unifies the receiver with that
 record type, using fresh parameters. Otherwise it waits for the receiver's nominal
 head to become known. Before generalizing a binding group it repeats resolution
 to a fixpoint. Any remaining field wanted produces `E0245` and an annotation hint.
+
+Suppose both `Point` and `Size` declare an `x` field. In `\p -> p.x`, the
+field name alone cannot tell us which record we mean. Now give that lambda
+the signature `Point -> Int`. Checking the signature identifies `p` as a
+`Point`, so the waiting field obligation can resolve to its `x` slot.
+Without such information, we report ambiguity. We don't export a function
+that accepts every record with an `x` field. That would require a different
+type system.
 
 GHC's record-dot proposal is useful prior art for the surface syntax. Its
 `HasField` mechanism supports a different form of overloaded access. Fun's field

@@ -40,7 +40,9 @@ functions belong to the same recursive component:
 
 ```fun
 even n = if n == 0 then True else odd (n - 1)
+
 odd n = if n == 0 then False else even (n - 1)
+
 main = even 100
 ```
 
@@ -70,6 +72,13 @@ Now treat each group as one node. The resulting graph has no cycles, so we can
 process its dependencies first. That's the order our type checker needs. A
 helper outside a recursive group can have its type generalized before its callers
 use it [@haskell2010].
+
+Let's add `id x = x` and `main = id (even 4)` to the example. The dependency
+arrows are `main → id`, `main → even`, `even → odd`, and `odd → even`.
+We can check `id` and the `even`/`odd` group independently, but both must be
+ready before `main`. We generalize `id` as soon as its own group is finished.
+Grouping every declaration together would unnecessarily make its uses share
+one provisional type while checking the whole block.
 
 Inside a recursive component, allocate one provisional monotype per binder and
 infer all bodies against them. Unify those provisional types with the results.
@@ -134,7 +143,7 @@ polymorphic scheme for `g` would be unsound. A regression test rejects a subsequ
 
 ### Recursive closures
 
-The interpreter stores an immutable recipe for every recursive group: its lambda
+The interpreter stores an immutable recipe for every recursive group, containing its lambda
 bodies and the outer environment. Entering one of these closures reconstructs the
 group's bindings before adding the function argument. No closure needs a mutable
 pointer to itself, and there is no reference-counting cycle.

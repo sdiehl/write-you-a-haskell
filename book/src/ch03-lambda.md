@@ -171,8 +171,8 @@ Indices make renaming simple, but moving terms across binders still requires
 care. Inside `\a -> (\x -> \b -> x) a`, the argument `a` has index 0 at its
 original location. After reduction the result is `\a -> \b -> a`, where the
 same occurrence needs index 1. Copying the old zero would accidentally select
-`b`. An evaluator that substitutes directly into indexed terms needs _shifting_:
-adjust references to surrounding binders when a term moves into or out of a
+`b`. An evaluator that substitutes directly into indexed terms needs _shifting_.
+We adjust references to surrounding binders when a term moves into or out of a
 scope, while leaving its internally bound references alone.
 
 Here we use indices for conversion and comparison. The normal-order reducer
@@ -181,7 +181,7 @@ That keeps each example focused. Later Fun passes use unique names so their
 dumps remain readable. Nameless terms are a useful tool for understanding
 binding, not a requirement for every compiler IR.
 
-### S, K, and I: Functions Without Binders
+### S, K, and I. Functions Without Binders
 
 A _combinator_ is a lambda term with no free variables. It needs no bindings
 from its surroundings. Three small combinators are enough to express the

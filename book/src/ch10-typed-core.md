@@ -36,7 +36,9 @@ We can still write polymorphic functions without spelling out their type argumen
 
 ```fun
 id x = x
+
 number = id 42
+
 main = id True
 ```
 
@@ -182,7 +184,7 @@ Core distinguishes global references from local variables. Its binder annotation
 are checked against the declared environment, so attaching a plausible-looking
 type to an otherwise wrong occurrence cannot evade lint.
 
-An internal variable absent from every enclosing scheme needs a closed witness:
+An internal variable absent from every enclosing scheme needs a closed witness.
 `(\f -> 42) (\x -> x)` is an example. We use `Int` for these erased annotations.
 This does not default source expressions or resolve ambiguous class constraints.
 
@@ -229,6 +231,7 @@ polymorphic binding below still fails before `main` is selected:
 
 ```fun
 unused = (\x -> \y -> y) (div 1 0)
+
 main = 42
 ```
 

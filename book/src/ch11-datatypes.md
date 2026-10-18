@@ -81,12 +81,13 @@ If all guards fail, matching continues with the next equation.
 ```fun
 select all@(x : xs) | x < 0 = xs
 select all = all
+
 main = select [-1,2,3]
 ```
 
 A `where` block belongs to its entire equation, including every guard. A `case`
 alternative may also have guards and a `where` block. Pattern lambdas and strict,
-non-recursive pattern bindings work as well: `let (x,y) = (20,22) in x + y`.
+non-recursive pattern bindings work as well, as in `let (x,y) = (20,22) in x + y`.
 Types remain first-order here. A datatype parameter has kind `*`, so `Tree Int` is
 valid but applying a parameter as in `f Int` waits for Chapter 13.
 
@@ -102,6 +103,14 @@ A datatype declaration supplies a polymorphic scheme for each constructor. For
 example, `Node` has type `Tree a -> a -> Tree a -> Tree a`, quantified over `a`.
 Each occurrence instantiates that scheme with fresh metavariables, just as a
 polymorphic function occurrence does [@haskell2010; @pierce2002].
+
+Suppose we match `Just 42` against `Just x`. The scrutinee has type
+`Maybe Int`. We instantiate `Just` as `a -> Maybe a`, then matching its
+result with the scrutinee fixes `a` to `Int`. Its field therefore gives us
+`x` with type `Int` inside this branch. Matching `Nothing` introduces no
+bindings. Both branches still have to produce the same result type.
+The pattern rule below records this process, including the new bindings we
+carry into the branch body.
 
 For a constructor with instantiated field types, a pattern judgment returns the
 bindings introduced by its subpatterns:
@@ -239,5 +248,5 @@ successful tree traversal might miss.
 
 The Haskell Report specifies datatype declarations, patterns, guards, and local
 scopes [@haskell2010]. Pierce develops the connection between data introductions
-and eliminations [@pierce2002]. Maranget's papers explain the later steps: warning
+and eliminations [@pierce2002]. Maranget's papers explain the later steps of warning
 analysis and decision-tree compilation [@maranget2007; @maranget2008].

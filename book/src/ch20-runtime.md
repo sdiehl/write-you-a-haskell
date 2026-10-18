@@ -188,7 +188,7 @@ code address. Calling the PAP with `22` combines the saved `20` with `22`, then
 enters the closure with both arguments. The closure's capture remains `10`.
 
 A string stores a byte count followed by UTF-8 bytes padded to whole words.
-For `"hi"`, the payload has two words: the count and one word of byte storage.
+For `"hi"`, the payload has two words, holding the count and one word of byte storage.
 The padding is not part of the string, and no terminating zero is required.
 
 ```text
@@ -240,7 +240,7 @@ continues with the returned closure and remaining arguments. `rt_apply1` through
 capture slots only during unpublished recursive-group initialization.
 
 The loop in apply does not guarantee native tail-call elimination through C
-slow entries: the entry itself may call apply again. Chapter 21's known fast
+slow entries. The entry itself may call apply again. Chapter 21's known fast
 calls need their own LLVM tail-call convention. The iterative ANF and Flat
 machines already avoid recursive host calls, but that is a property of those
 interpreters, not an automatic property of the C ABI.
@@ -260,7 +260,7 @@ its sign, and special values spell `NaN`, `Infinity`, and `-Infinity`. We check
 boundary values through both the safe API and the word ABI, including whether
 finite values survive a print-and-read round trip with the same bits. `readInt` accepts optional surrounding whitespace
 and a decimal sign, then rejects values outside the signed 63-bit range.
-Floating `round` uses ties-to-even and saturates. NaN converts to zero.
+Floating `round` uses ties-to-even and saturates. NaN converts to zero:
 
 ## Running It
 

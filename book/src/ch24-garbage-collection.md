@@ -89,6 +89,20 @@ objects we've copied but haven't inspected yet. When we scan one, its fields
 may lead us to more objects, which we append at `free`. Eventually `scan` catches
 up. We've found the whole live graph!
 
+Let's trace sharing with two roots pointing to the same one-field object A.
+A's field points to B, which has no pointer fields.
+
+| Step                        | Roots                                      | Copied objects awaiting inspection |
+| --------------------------- | ------------------------------------------ | ---------------------------------- |
+| Copy through the first root | First root points to A′, second still to A | A′                                 |
+| Follow the second root      | Both now point directly to A′              | A′                                 |
+| Scan A′                     | Both still point to A′                     | B′, after updating A′'s field      |
+| Scan B′                     | Both still point to A′                     | None                               |
+
+We copied A only once. Its forwarding address let the second root find the
+existing copy. The same mechanism handles a field pointing back to an object
+we have already copied, so a cycle doesn't send us around forever.
+
 Now swap the spaces and resume allocation after `free`. Sharing and cycles are
 handled by forwarding addresses, and the scan itself never recurses through
 Rust's call stack.
@@ -107,6 +121,12 @@ machine stack. Each generated function owns an array of tagged-word slots.
 Native integer and floating-point intermediates need no root. A tagged result
 that might be a pointer is stored in a slot, and subsequent uses reload it.
 Collection changes the slot, so a reload sees the new address.
+
+Suppose a local `xs` holds address A and the next allocation moves that list
+to A′. Updating a root slot from A to A′ is only half the job. If we kept A
+in a register and used it afterward, we'd still read the abandoned space.
+We must reload `xs` from its updated slot after the allocation. Rooting and
+reloading together preserve the reference.
 
 Arguments need the same care. Boxing a later Double argument may move an earlier
 argument. Codegen first saves converted arguments in scratch roots, then reloads

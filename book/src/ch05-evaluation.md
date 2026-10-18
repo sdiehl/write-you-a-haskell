@@ -109,6 +109,26 @@ function immediately, so errors in that initialization are still strict.
 This is a teaching implementation of explicit recursion, not a general lazy
 binding mechanism.
 
+### Write Down the Waiting Work
+
+Let's evaluate `1 + (2 * 3)`. After finding `1`, we still owe an addition,
+but first we need the right operand. While finding that operand, we also owe
+a multiplication. We can write these obligations down, with the next one first.
+This is a sketch of the arithmetic steps, not the machine's full trace.
+
+| Current work | Waiting work                                 |
+| ------------ | -------------------------------------------- |
+| Evaluate `1` | Evaluate `2 * 3`, then add                   |
+| Evaluate `2` | Evaluate `3`, then multiply, then add to `1` |
+| Evaluate `3` | Multiply by `2`, then add to `1`             |
+| Return `6`   | Add to `1`                                   |
+| Return `7`   | Nothing                                      |
+
+We can perform this work in a loop once we represent the obligations as data.
+`Left` remembers an unevaluated right operand and its environment. `Right`
+remembers the left integer while we finish the right side. We've taken the
+information hidden in Rust's call stack and given it names.
+
 `cek.rs` separates control from continuation frames. The frame variants are the
 places where the tree evaluator would otherwise wait for a recursive call.
 

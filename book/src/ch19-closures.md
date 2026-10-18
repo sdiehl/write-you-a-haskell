@@ -31,19 +31,18 @@ laying out the objects in native memory.
 
 ## The Language, Now
 
-Here's a small function that remembers `x` and can be passed to `map`.
+Let's return a local function that remembers a boolean.
 
 ```fun
-{{#include ../../crates/ch19_closure/tests/programs/closure/capture-return.fun}}
+make flag = let { pick x = if flag then x else False; } in pick
+
+main = print (make True False)
 ```
 
-Every call of the returned function needs the supplied value `20`. Here ANF
-uncurrying merges the adjacent lambdas into one global function, so its partial
-application retains that value in a PAP. The overloaded addition also needs a
-`Num` dictionary. Local lambdas separated by a binding or branch instead require
-explicit captured environments. Partial application, oversaturated application,
-recursive local functions, and class dictionaries used as values must all keep
-working. `--engine=flat` is now the default. Core and ANF remain selectable.
+The local binding separates the lambdas, so `pick` needs an explicit captured
+environment. After `make True` returns, its call is over, but `pick` still
+needs that `True`. We cannot leave it in the finished call's storage.
+`--engine=flat` is now the default. Core and ANF remain selectable.
 
 A closure environment is compiler-created storage. The source language gains
 no mutable field or reference operation. The only mutation introduced here
@@ -58,12 +57,34 @@ them directly. For each remaining free variable, conversion chooses a stable
 slot, stores the value when constructing the closure, and replaces lexical
 access with an environment load in the lifted function.
 
+For our example, we can sketch the converted pieces in explanatory notation.
+
+```text
+pick_code(env, x) =
+  let flag = env[0]
+  if flag then x else False
+
+make(flag) = closure(pick_code, [flag])
+```
+
+Calling `make True` stores `True` in slot zero of a new environment. To call
+the returned function with `False`, we enter `pick_code` with that environment
+and the argument. Loading slot zero recovers `True`, so the result is `False`.
+A second call `make False` shares the same code but gets its own environment.
+That's why a code address alone cannot represent these functions.
+
 Closure conversion and lambda lifting are related but different choices.
 Closure conversion packages captured values into an environment. Lambda lifting
 can instead add them as explicit function parameters when call sites permit it
 [@appel1992]. This chapter keeps one environment mechanism for local functions,
 even non-escaping ones. Optional lambda lifting is deferred. A known local call
 can still bypass general apply while passing its environment explicitly.
+
+The existing `capture-return.fun` example takes another route. Its adjacent
+lambdas merge during ANF conversion, and applying `make` to too few arguments
+retains its dictionary and integer argument in a PAP. We still preserve a
+value for later, but now it is a supplied argument rather than a free variable.
+Let's see how the calling protocol handles that case.
 
 A source function can be called a little at a time. Our lifted machine function
 expects a fixed number of arguments. How do we reconcile those two views?
@@ -217,8 +238,8 @@ that a long tail-recursive sum keeps a bounded number of pending continuations.
 
 ## Exercises
 
-1. **Warm-up.** Trace how uncurrying and partial application preserve the example's
-   integer argument and `Num` dictionary.
+1. **Warm-up.** Find the capture slot for `flag` in the opening example's Flat
+   dump. Compare it with the PAP in `capture-return.fun`.
 2. **Intermediate.** Change a local function from saturated-only use to returning
    it as a value. Explain the resulting call classification.
 3. **Intermediate.** Trace a PAP receiving another argument, followed by an

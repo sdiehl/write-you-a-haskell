@@ -74,16 +74,16 @@ $$
 Read this as “under the assumptions in gamma, expression e has type tau.” The
 symbols keep repeated sentences short:
 
-| Notation                              | Meaning                                                                  |
-| ------------------------------------- | ------------------------------------------------------------------------ |
-| $e$                                   | A program expression, such as `x`, `42`, or `f x`.                       |
-| $\tau$, $\alpha$, $\beta$             | A type, or a type variable standing for a type.                          |
-| $\sigma$                              | A type scheme, possibly quantifying type variables.                      |
-| $\Gamma$                              | The typing environment: names and the types or schemes we know for them. |
-| $\Gamma, x : \tau$                    | Extend the environment with a local assumption about `x`.                |
-| $\vdash$                              | “Under these assumptions, we can establish …”                            |
-| $\alpha \to \beta$                    | A function accepting an $\alpha$ and returning a $\beta$.                |
-| $\forall \alpha.\; \alpha \to \alpha$ | A scheme whose user may choose the type replacing $\alpha$.              |
+| Notation                              | Meaning                                                              |
+| ------------------------------------- | -------------------------------------------------------------------- |
+| $e$                                   | A program expression, such as `x`, `42`, or `f x`.                   |
+| $\tau$, $\alpha$, $\beta$             | A type, or a type variable standing for a type.                      |
+| $\sigma$                              | A type scheme, possibly quantifying type variables.                  |
+| $\Gamma$                              | The typing environment holds names and their known types or schemes. |
+| $\Gamma, x : \tau$                    | Extend the environment with a local assumption about `x`.            |
+| $\vdash$                              | “Under these assumptions, we can establish …”                        |
+| $\alpha \to \beta$                    | A function accepting an $\alpha$ and returning a $\beta$.            |
+| $\forall \alpha.\; \alpha \to \alpha$ | A scheme whose user may choose the type replacing $\alpha$.          |
 
 The colon asserts a type. It does not evaluate the expression. Gamma contains
 static assumptions, not runtime values. In this chapter it maps let-bound names

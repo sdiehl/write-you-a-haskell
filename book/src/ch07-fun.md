@@ -65,7 +65,7 @@ supported.
 
 `run` still prints the value of `main`, including quotes and escapes for strings.
 It does not yet execute `IO`. Integer `div` and `mod` are curried built-in
-functions with floor semantics: `div 7 (-3)` is `-3`, and `mod 7 (-3)` is `-2`.
+functions with floor semantics. For example, `div 7 (-3)` is `-3`, and `mod 7 (-3)` is `-2`.
 The old calculator's truncating division fixture changes accordingly.
 
 ## Theory

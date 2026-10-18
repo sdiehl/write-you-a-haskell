@@ -56,6 +56,36 @@ is a literal or a reference to an available value. A right-hand side performs
 one operation on atoms, and a `Let` gives the result a name. Nested evaluation
 has become an explicit sequence [@flanagan1993].
 
+For an unknown `f`, we can sketch the order in `f (g x) (h y)` like this.
+The notation shows individual curried calls before any safe batching.
+
+```text
+let gx = g x
+let next = f gx
+let hy = h y
+let result = next hy
+return result
+```
+
+Notice where `f gx` sits. If that call fails, we never evaluate `h y`.
+Naming both arguments first would quietly change our strict language.
+
+Branches need one more idea. In `(if b then 10 else 20) + 3`, both paths
+owe the same addition. We can name that remaining work once.
+
+```text
+join finish(value) =
+  let result = value + 3
+  return result
+case b of
+  True  -> jump finish(10)
+  False -> jump finish(20)
+```
+
+This is explanatory ANF notation. We pass the selected value to `finish`
+without copying its body into both branches. A join is local control flow,
+so we cannot return it or store it in a list like an ordinary function.
+
 Conversion receives a context describing what to do with a result. At the end
 of a function it returns the atom. Inside an expression it binds the atom and
 continues. At the end of a case alternative it can jump to a shared continuation.
@@ -64,7 +94,7 @@ for join points discussed by Maurer and colleagues [@maurer2017]. It does not
 turn every function into a function that explicitly receives a continuation.
 
 Type erasure is justified by the role of System F's type abstractions and
-applications: they select and describe computations but do not themselves
+applications. They select and describe computations but do not themselves
 perform runtime work [@pierce2002]. Dictionary arguments are different. They
 contain actual method implementations and must remain as ordinary values.
 IO already has its unit-function representation before erasure.
@@ -171,7 +201,7 @@ and over-application preserves the boundary after the known prefix. The
 `anf_simplify` propagates atoms, selects known-constructor branches, removes
 unused total right-hand sides, and reduces immediately applied saturated
 lambdas. Calls, effects, and potentially failing primitives are retained. The
-beta rule also checks whether the function escapes: passing a function to itself,
+beta rule also checks whether the function escapes. Passing a function to itself,
 as in the inherited `id id` example, means its binding cannot simply be deleted.
 Structural ANF lint independently checks names, scopes, join arities, and fresh
 binders before execution.
