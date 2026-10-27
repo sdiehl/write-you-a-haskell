@@ -15,7 +15,7 @@ path = "src/main.rs"
 ariadne = "0.6"
 clap = { version = "4.5", features = ["derive"] }
 fun-rt = { package = "fun-rt-22", path = "rt" }
-inkwell = { version = "=0.10.0", default-features = false, features = [
+inkwell = { version = "=0.11.0", default-features = false, features = [
   "llvm22-1-prefer-dynamic",
   "target-x86",
   "target-aarch64",
@@ -24,7 +24,7 @@ lalrpop-util = "0.23.1"
 logos = "0.16.1"
 marginalia = "0.4.0"
 offsides = "0.2.1"
-rustyline = "18"
+rustyline = "19"
 
 [build-dependencies]
 lalrpop = "0.23.1"
