@@ -17,7 +17,7 @@ lalrpop-util = "0.23.1"
 logos = "0.16.1"
 marginalia = "0.4.0"
 offsides = "0.2.1"
-rustyline = "18"
+rustyline = "19"
 
 [build-dependencies]
 lalrpop = "0.23.1"
